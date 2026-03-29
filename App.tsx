@@ -695,170 +695,21 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {/* Algorithm Help Modal */}
-      {isAlgorithmHelpOpen && (
-        <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setIsAlgorithmHelpOpen(false)}>
+      {/* Dynamic Help Modal */}
+      {activeHelpModal && HELP_CONTENT[activeHelpModal] && (
+        <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setActiveHelpModal(null)}>
           <div className="bg-white rounded-sm shadow-2xl max-w-3xl w-full max-h-[80vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <h2 className="text-lg font-bold text-academic-blue font-serif tracking-tight flex items-center gap-2">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                Analysis Algorithms
+                {HELP_CONTENT[activeHelpModal].title}
               </h2>
-              <button onClick={() => setIsAlgorithmHelpOpen(false)} className="text-gray-400 hover:text-academic-red transition-colors">
+              <button onClick={() => setActiveHelpModal(null)} className="text-gray-400 hover:text-academic-red transition-colors">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             <div className="p-6 overflow-y-auto font-sans text-sm text-gray-700 space-y-6">
-              
-              <div className="space-y-4">
-                <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
-                  <h3 className="font-bold text-academic-blue text-base mb-1">Levenshtein (Edit Distance)</h3>
-                  <p className="mb-2 text-gray-600">Calculates the minimum number of single-character edits (insertions, deletions, or substitutions) required to change one word into the other.</p>
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div><span className="font-bold text-green-600">Pros:</span> Highly accurate for exact character-level variations (typos, minor spelling changes).</div>
-                    <div><span className="font-bold text-red-500">Cons:</span> Computationally expensive for very long sequences; strict on word order.</div>
-                  </div>
-                  <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Detecting minor scribal errors, short texts, and close variants.</div>
-                </div>
-
-                <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
-                  <h3 className="font-bold text-academic-blue text-base mb-1">Jaccard (Set Similarity)</h3>
-                  <p className="mb-2 text-gray-600">Measures similarity between finite sample sets, defined as the size of the intersection divided by the size of the union of the sample sets.</p>
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div><span className="font-bold text-green-600">Pros:</span> Fast and completely ignores word order.</div>
-                    <div><span className="font-bold text-red-500">Cons:</span> Loses syntax and context; treats text as a "bag of words".</div>
-                  </div>
-                  <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Thematic similarity, overlapping vocabulary, and heavily rearranged texts.</div>
-                </div>
-
-                <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
-                  <h3 className="font-bold text-academic-blue text-base mb-1">Word-Level N-Gram</h3>
-                  <p className="mb-2 text-gray-600">Compares contiguous sequences of <em>n</em> words from the texts.</p>
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div><span className="font-bold text-green-600">Pros:</span> Captures local word order and exact phrasal matches.</div>
-                    <div><span className="font-bold text-red-500">Cons:</span> Fails if a single word in the phrase is changed, inserted, or misspelled.</div>
-                  </div>
-                  <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Plagiarism detection, identifying verbatim quotes, and formulaic language.</div>
-                </div>
-
-                <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
-                  <h3 className="font-bold text-academic-blue text-base mb-1">Character-Level N-Gram</h3>
-                  <p className="mb-2 text-gray-600">Compares contiguous sequences of <em>n</em> characters from the texts.</p>
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div><span className="font-bold text-green-600">Pros:</span> Robust to minor spelling variations, OCR errors, and morphological changes.</div>
-                    <div><span className="font-bold text-red-500">Cons:</span> Can produce false positives with similar-looking but semantically different words.</div>
-                  </div>
-                  <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Noisy texts, OCR output, and texts with inconsistent spelling.</div>
-                </div>
-
-                <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
-                  <h3 className="font-bold text-academic-blue text-base mb-1">Smith-Waterman (Local Alignment)</h3>
-                  <p className="mb-2 text-gray-600">Performs local sequence alignment to determine similar regions between two strings.</p>
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div><span className="font-bold text-green-600">Pros:</span> Excellent at finding highly similar substrings embedded within larger, divergent texts.</div>
-                    <div><span className="font-bold text-red-500">Cons:</span> Computationally heavy.</div>
-                  </div>
-                  <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Finding embedded quotes or reused passages in otherwise different documents.</div>
-                </div>
-
-                <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
-                  <h3 className="font-bold text-academic-blue text-base mb-1">Coptic-Aware (Vowel & Mark Norm)</h3>
-                  <p className="mb-2 text-gray-600">A specialized algorithm that normalizes supralinear strokes and vowels specific to the Coptic language before comparison.</p>
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div><span className="font-bold text-green-600">Pros:</span> Highly tailored for Coptic manuscript realities (scribal abbreviations, vowel variations).</div>
-                    <div><span className="font-bold text-red-500">Cons:</span> Only useful for Coptic texts.</div>
-                  </div>
-                  <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Coptic manuscript collation.</div>
-                </div>
-
-                <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
-                  <h3 className="font-bold text-academic-blue text-base mb-1">FastText-like (Subword N-Grams)</h3>
-                  <p className="mb-2 text-gray-600">Approximates FastText by breaking words into subword character n-grams to create a frequency vector, then computes cosine similarity.</p>
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div><span className="font-bold text-green-600">Pros:</span> Handles morphological variations and out-of-vocabulary words very well.</div>
-                    <div><span className="font-bold text-red-500">Cons:</span> It is a statistical approximation, not a pre-trained neural network.</div>
-                  </div>
-                  <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Highly inflected languages and texts with many morphological variants.</div>
-                </div>
-
-                <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
-                  <h3 className="font-bold text-academic-blue text-base mb-1">Word2Vec-like (Local Co-occurrence)</h3>
-                  <p className="mb-2 text-gray-600">Approximates Word2Vec by building an on-the-fly local co-occurrence matrix (context window) to capture distributional semantics.</p>
-                  <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div><span className="font-bold text-green-600">Pros:</span> Captures semantic similarity based on local context, even if exact words differ.</div>
-                    <div><span className="font-bold text-red-500">Cons:</span> Requires sufficient context within the provided texts to build meaningful vectors.</div>
-                  </div>
-                  <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Semantic matching, finding paraphrases, or thematic overlaps where vocabulary differs.</div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Threshold Help Modal */}
-      {isThresholdHelpOpen && (
-        <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setIsThresholdHelpOpen(false)}>
-          <div className="bg-white rounded-sm shadow-2xl max-w-lg w-full flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
-            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h2 className="text-lg font-bold text-academic-blue font-serif tracking-tight flex items-center gap-2">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                Similarity Threshold
-              </h2>
-              <button onClick={() => setIsThresholdHelpOpen(false)} className="text-gray-400 hover:text-academic-red transition-colors">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
-            </div>
-            <div className="p-6 font-sans text-sm text-gray-700 space-y-4">
-              <p className="text-gray-600">Determines the minimum similarity score (percentage) required for a match to be highlighted and reported.</p>
-              <div className="grid grid-cols-1 gap-4 text-xs">
-                <div className="border border-gray-100 rounded-sm p-3 bg-gray-50/50">
-                  <span className="font-bold text-green-600 block mb-1">High Threshold (80% - 100%)</span>
-                  Reduces false positives. Best for finding exact quotes, verbatim copying, or highly conserved passages. Might miss subtle text reuses or heavily edited sections.
-                </div>
-                <div className="border border-gray-100 rounded-sm p-3 bg-gray-50/50">
-                  <span className="font-bold text-academic-gold block mb-1">Medium Threshold (50% - 79%)</span>
-                  A balanced approach. Good for finding paraphrases, translations, or texts with moderate scribal variations.
-                </div>
-                <div className="border border-gray-100 rounded-sm p-3 bg-gray-50/50">
-                  <span className="font-bold text-red-500 block mb-1">Low Threshold (20% - 49%)</span>
-                  Catches highly fragmented, heavily corrupted, or loosely related texts. Will significantly increase noise and false positives.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* N-Size Help Modal */}
-      {isNSizeHelpOpen && (
-        <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setIsNSizeHelpOpen(false)}>
-          <div className="bg-white rounded-sm shadow-2xl max-w-lg w-full flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
-            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-              <h2 className="text-lg font-bold text-academic-blue font-serif tracking-tight flex items-center gap-2">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                N-Size / Window Size
-              </h2>
-              <button onClick={() => setIsNSizeHelpOpen(false)} className="text-gray-400 hover:text-academic-red transition-colors">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
-            </div>
-            <div className="p-6 font-sans text-sm text-gray-700 space-y-4">
-              <p className="text-gray-600">Defines the length of the sequence (number of words or characters) used as the base unit for comparison.</p>
-              <div className="grid grid-cols-1 gap-4 text-xs">
-                <div className="border border-gray-100 rounded-sm p-3 bg-gray-50/50">
-                  <span className="font-bold text-green-600 block mb-1">Larger N-Size (e.g., 5-10+)</span>
-                  Captures more context and drastically reduces random matches (noise). Best when looking for long, contiguous blocks of reused text. If set too high, it will fail to match texts with frequent small insertions or deletions.
-                </div>
-                <div className="border border-gray-100 rounded-sm p-3 bg-gray-50/50">
-                  <span className="font-bold text-red-500 block mb-1">Smaller N-Size (e.g., 1-4)</span>
-                  Highly flexible. Catches fragmented, heavily rearranged, or loosely paraphrased text. However, it will generate many false positives (e.g., matching common stop words or short, coincidental character sequences).
-                </div>
-              </div>
-              <div className="mt-4 text-xs bg-blue-50 text-blue-800 p-3 rounded-sm border border-blue-100">
-                <span className="font-bold">Pro Tip:</span> For word-level algorithms, 3-5 is usually optimal. For character-level algorithms, 5-10 is recommended to avoid matching random syllables.
-              </div>
+              {HELP_CONTENT[activeHelpModal].content}
             </div>
           </div>
         </div>
