@@ -156,6 +156,7 @@ const App: React.FC = () => {
                     <option value="jaccard">Jaccard (Set Similarity)</option>
                     <option value="word-ngram">Word-Level N-Gram</option>
                     <option value="char-ngram">Character-Level N-Gram</option>
+                    <option value="fasttext">FastText (Subword Embeddings)</option>
                   </select>
                 </div>
                 <div className="flex items-center gap-6">

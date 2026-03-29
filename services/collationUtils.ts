@@ -262,6 +262,27 @@ export const runAnalysis = (
     }
   } else {
     const n = config.windowSize;
+    
+    let tokenVectorsA: Record<string, number>[] = [];
+    let tokenVectorsB: Record<string, number>[] = [];
+
+    if (config.algorithm === 'fasttext') {
+      const getVector = (word: string) => {
+        const freq: Record<string, number> = {};
+        const padded = `<${word}>`;
+        for (let len = 3; len <= 6; len++) {
+          for (let i = 0; i <= padded.length - len; i++) {
+            const ng = padded.slice(i, i + len);
+            freq[ng] = (freq[ng] || 0) + 1;
+          }
+        }
+        freq[word] = (freq[word] || 0) + 1;
+        return freq;
+      };
+      tokenVectorsA = tokensA.map(t => getVector(t.normalized));
+      tokenVectorsB = tokensB.map(t => getVector(t.normalized));
+    }
+
     for (let i = 0; i <= tokensA.length - n; i++) {
       const sliceA = tokensA.slice(i, i + n);
       const phraseA = sliceA.map(t => t.text).join(' ');
@@ -278,6 +299,28 @@ export const runAnalysis = (
           const max = Math.max(normA.length, normB.length);
           sim = max === 0 ? 0 : (1 - dist / max) * 100;
         } else if (config.algorithm === 'coptic-aware') sim = calculateCopticSimilarity(phraseA, phraseB);
+        else if (config.algorithm === 'fasttext') {
+          const freqA: Record<string, number> = {};
+          const freqB: Record<string, number> = {};
+          for (let k = 0; k < n; k++) {
+            const vecA = tokenVectorsA[i + k];
+            for (const key in vecA) freqA[key] = (freqA[key] || 0) + vecA[key];
+            const vecB = tokenVectorsB[j + k];
+            for (const key in vecB) freqB[key] = (freqB[key] || 0) + vecB[key];
+          }
+          let dotProduct = 0;
+          let normA = 0;
+          let normB = 0;
+          for (const key in freqA) {
+            const a = freqA[key];
+            normA += a * a;
+            if (freqB[key]) dotProduct += a * freqB[key];
+          }
+          for (const key in freqB) {
+            normB += freqB[key] * freqB[key];
+          }
+          sim = normA === 0 || normB === 0 ? 0 : (dotProduct / (Math.sqrt(normA) * Math.sqrt(normB))) * 100;
+        }
 
         if (sim >= config.threshold) {
           matches.push({ sourceIndex: i, targetIndex: j, sourcePhrase: phraseA, targetPhrase: phraseB, similarity: sim, sourcePosition: i, targetPosition: j, length: n });
