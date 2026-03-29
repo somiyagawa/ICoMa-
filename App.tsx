@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { AnalysisConfig, AnalysisResult, Match } from './types';
 import { runAnalysis } from './services/collationUtils';
+import { Language, LANGUAGES, t } from './services/i18n';
 import Heatmap from './components/Heatmap';
 import NetworkGraph from './components/NetworkGraph';
 import ParallelViewer from './components/ParallelViewer';
@@ -49,6 +50,11 @@ const EXAMPLES = {
     label: 'Ancient Greek (Plato & Summary)',
     a: "Ὅτι μὲν ὑμεῖς, ὦ ἄνδρες Ἀθηναῖοι, πεπόνθατε ὑπὸ τῶν ἐμῶν κατηγόρων, οὐκ οἶδα· ἐγὼ δ' οὖν καὶ αὐτὸς ὑπ' αὐτῶν ὀλίγου ἐμαυτοῦ ἐπελαθόμην, οὕτω πιθανῶς ἔλεγον. Καίτοι ἀληθές γε ὡς ἔπος εἰπεῖν οὐδὲν εἰρήκασιν. Μάλιστα δὲ αὐτῶν ἓν ἐθαύμασα τῶν πολλῶν ὧν ἐψεύσαντο, τοῦτο ἐν ᾧ ἔλεγον ὡς χρῆν ὑμᾶς εὐλαβεῖσθαι μὴ ὑπ' ἐμοῦ ἐξαπατηθῆτε ὡς δεινοῦ ὄντος λέγειν.",
     b: "Πλάτωνος Ἀπολογία Σωκράτους. Ἄρχεται ὁ Σωκράτης λέγων: Ὅτι μὲν ὑμεῖς, ὦ ἄνδρες Ἀθηναῖοι, πεπόνθατε ὑπὸ τῶν ἐμῶν κατηγόρων, οὐκ οἶδα. Ἐγὼ δὲ καὶ αὐτὸς ὑπ' αὐτῶν ὀλίγου ἐμαυτοῦ ἐπελαθόμην, ἐπειδὴ οὕτω πιθανῶς ἔλεγον. Ἀλλὰ ἀληθές γε ὡς ἔπος εἰπεῖν οὐδὲν εἰρήκασιν. Ἐθαύμασα δὲ μάλιστα ἓν τῶν πολλῶν ὧν ἐψεύσαντο, ὅτε ἔλεγον ὡς χρῆν ὑμᾶς εὐλαβεῖσθαι μὴ ὑπ' ἐμοῦ ἐξαπατηθῆτε ὡς δεινοῦ ὄντος λέγειν."
+  },
+  old_japanese: {
+    label: 'Old Japanese (万葉集 & 注釈)',
+    a: "春過而　夏来良之　白妙之　衣乾有　天之香来山　（巻1・28　持統天皇）。田子之浦ゆ　うち出でてみれば　真白にそ　富士之高嶺に　雪者降りける　（巻3・318　山部赤人）。銀も金も玉も何せむに　優れる宝　子にしかめやも　（巻5・803　山上憶良）。今日　いく程經ぬか　君が逢はむ時のあたりまで　あぢきなく　そむきてあるを　我が盛りかも　（巻4・545　譲位皇后）。紅之　うすくもあらず　もゝの花　咲きたる君を　誰か忘れむ　（巻8・1420　大伴旅人）。妻問ふと　この月夜に　笹の葉の　ゆらぐを見てぞ　我が恋しぐき　（巻10・1895　未詳）。",
+    b: "万葉集注釈。春過而　夏来良之　白妙之　衣乾有　天之香来山　とは、春が過ぎて夏が来て、白妙なる衣を干す天のかぐはしき香来山のことなり。此は持統天皇の御製なり。又、田子之浦ゆ　うち出でてみれば　真白にそ　富士之高嶺に　雪者降りける　は山部赤人の作にして、富士の雄大なる眺望を詠みたるなり。銀も金も玉も何せむに　優れる宝　子にしかめやも　は山上憶良が子を慈しむ心を表現せる名歌なり。今日　いく程經ぬか　君が逢はむ時のあたりまで　とは愛する者との再会を待つ心切なる思いを詠みたり。妻問ふと　この月夜に　笹の葉の　ゆらぐを見てぞ　とは恋する者の心の動揺を自然現象になぞらへて詠めるなり。是等の歌は皆古代日本の情操の深さを示すものなり。"
   }
 };
 
@@ -291,6 +297,75 @@ const HELP_CONTENT: Record<string, { title: string, content: React.ReactNode }> 
         <p className="text-xs text-gray-600">The X-axis represents the position in Witness α, and the Y-axis represents the position in Witness β. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.</p>
       </div>
     )
+  },
+  heatmapView: {
+    title: "Position Correspondence (Heatmap)",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">A two-dimensional grid showing the positional correspondence of matching segments between the two witnesses.</p>
+        <p className="text-xs text-gray-600">Each coloured cell represents a detected match. The cell's position on the X-axis corresponds to where the match occurs in Witness α, and its Y-axis position corresponds to the location in Witness β. Colour intensity encodes similarity: warmer tones indicate higher similarity scores. Clicking a cell selects that match and highlights it across all visualizations.</p>
+        <div className="mt-2 text-xs bg-blue-50 text-blue-800 p-3 rounded-sm border border-blue-100">
+          <span className="font-bold">Interpretation:</span> A diagonal pattern suggests that both texts follow the same sequential order. Scattered cells indicate selective or fragmented reuse. Dense clusters reveal sections of heavy textual borrowing.
+        </div>
+      </div>
+    )
+  },
+  heatmapAxisAlpha: {
+    title: "X-Axis: Witness α Position",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">The horizontal axis represents the <strong>token position within Witness α</strong> (the primary text).</p>
+        <p className="text-xs text-gray-600">Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Witness α. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.</p>
+        <div className="mt-2 text-xs bg-blue-50 text-blue-800 p-3 rounded-sm border border-blue-100">
+          <span className="font-bold">Note:</span> The total range of this axis equals the total token count of Witness α, as displayed in the statistics dashboard above.
+        </div>
+      </div>
+    )
+  },
+  aiIntertextuality: {
+    title: "AI Intertextuality Analysis",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">An AI-powered analysis module that leverages large language models (LLMs) to detect and classify all forms of intertextual relationships between two witnesses.</p>
+        <p className="text-xs text-gray-600">Unlike the algorithmic methods (N-Gram, Levenshtein, etc.) which perform purely formal string comparisons, the AI analysis understands semantics, historical context, genre conventions, and the pragmatics of textual reuse. It can therefore detect allusions, thematic echoes, and structural parallels that escape purely computational methods.</p>
+        <div className="mt-2 text-xs bg-blue-50 text-blue-800 p-3 rounded-sm border border-blue-100">
+          <span className="font-bold">Supported Providers:</span> Claude (Anthropic), Gemini (Google), ChatGPT (OpenAI). You can run multiple models simultaneously for a comparative perspective.
+        </div>
+        <div className="mt-2 text-xs bg-yellow-50 text-yellow-800 p-3 rounded-sm border border-yellow-100">
+          <span className="font-bold">Privacy Note:</span> API keys are stored only in browser memory (never persisted) and sent only to the respective API provider.
+        </div>
+      </div>
+    )
+  },
+  aiIntertextualityMethod: {
+    title: "Intertextuality Classification Taxonomy",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">The AI analysis classifies each detected instance of intertextuality according to an eight-category taxonomy derived from classical and modern intertextuality theory (Kristeva, Genette, Hays):</p>
+        <div className="grid grid-cols-1 gap-2 text-xs">
+          <div className="border border-red-100 rounded-sm p-2 bg-red-50/50"><span className="font-bold text-red-700">Direct Quotation:</span> Verbatim or near-verbatim reproduction of a source text, often with explicit attribution markers (e.g., «...», φησίν, ϫⲉ).</div>
+          <div className="border border-purple-100 rounded-sm p-2 bg-purple-50/50"><span className="font-bold text-purple-700">Allusion:</span> An indirect reference relying on the reader's cultural or literary competence for recognition.</div>
+          <div className="border border-indigo-100 rounded-sm p-2 bg-indigo-50/50"><span className="font-bold text-indigo-700">Echo:</span> A faint, possibly unconscious, verbal or thematic reminiscence.</div>
+          <div className="border border-amber-100 rounded-sm p-2 bg-amber-50/50"><span className="font-bold text-amber-700">Paraphrase:</span> Restatement in different words preserving the original meaning.</div>
+          <div className="border border-teal-100 rounded-sm p-2 bg-teal-50/50"><span className="font-bold text-teal-700">Structural Parallel:</span> Similarity in organizational structure, argument flow, or narrative pattern.</div>
+          <div className="border border-cyan-100 rounded-sm p-2 bg-cyan-50/50"><span className="font-bold text-cyan-700">Thematic Reuse:</span> Adoption of motifs or topoi without direct verbal borrowing.</div>
+          <div className="border border-lime-100 rounded-sm p-2 bg-lime-50/50"><span className="font-bold text-lime-700">Formulaic Language:</span> Conventional phrases or genre-specific formulas shared across texts.</div>
+          <div className="border border-gray-100 rounded-sm p-2 bg-gray-50/50"><span className="font-bold text-gray-700">Other:</span> Any other intertextual relationship.</div>
+        </div>
+      </div>
+    )
+  },
+  heatmapAxisBeta: {
+    title: "Y-Axis: Witness β Position",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">The vertical axis represents the <strong>token position within Witness β</strong> (the comparandum).</p>
+        <p className="text-xs text-gray-600">Each unit on this axis corresponds to a token index in Witness β. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.</p>
+        <div className="mt-2 text-xs bg-blue-50 text-blue-800 p-3 rounded-sm border border-blue-100">
+          <span className="font-bold">Note:</span> The total range of this axis equals the total token count of Witness β. If Witness β is significantly shorter or longer than Witness α, the aspect ratio of the heatmap will reflect this asymmetry.
+        </div>
+      </div>
+    )
   }
 };
 
@@ -338,7 +413,11 @@ const App: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+  const [collationTrigger, setCollationTrigger] = useState(0);
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
+  const [lang, setLang] = useState<Language>('en');
+  const [fontSize, setFontSize] = useState<number>(14);
+  const [fontFamily, setFontFamily] = useState<string>('serif');
   const [activeHelpModal, setActiveHelpModal] = useState<string | null>(null);
 
   const performAnalysis = useCallback(() => {
@@ -348,8 +427,9 @@ const App: React.FC = () => {
     setTimeout(() => {
       const res = runAnalysis(sourceText, targetText, config);
       setResult(res);
-      setSelectedMatch(null); 
+      setSelectedMatch(null);
       setIsProcessing(false);
+      setCollationTrigger(prev => prev + 1);
     }, 50);
   }, [sourceText, targetText, config]);
 
@@ -358,19 +438,61 @@ const App: React.FC = () => {
     return [...result.matches].sort((a, b) => b.similarity - a.similarity);
   }, [result]);
 
+  const FONT_FAMILIES = [
+    { value: 'serif', label: 'Serif (Default)' },
+    { value: 'sans-serif', label: 'Sans-Serif' },
+    { value: 'monospace', label: 'Monospace' },
+    { value: '"Noto Serif", serif', label: 'Noto Serif' },
+    { value: '"Noto Sans Coptic", sans-serif', label: 'Noto Sans Coptic' },
+  ];
+
   return (
-    <div className="min-h-screen font-serif bg-academic-cream text-academic-blue pb-20 flex flex-col">
+    <div className="min-h-screen bg-academic-cream text-academic-blue pb-20 flex flex-col" style={{ fontFamily: fontFamily, fontSize: `${fontSize}px` }}>
       <header className="bg-gradient-to-r from-academic-lightBlue to-academic-blue text-white border-b-4 border-academic-red px-6 py-5 shadow-lg shrink-0">
         <div className="w-full flex justify-between items-center">
           <div>
             <div className="text-[10px] uppercase tracking-[0.2em] text-gray-300 mb-1 font-sans font-semibold">So Miyagawa Computational Linguistics Lab, University of Tsukuba</div>
-            <h1 className="text-3xl font-bold font-serif tracking-tight">ICoMa <span className="text-academic-gold font-light ml-3 text-xl opacity-80 italic">Intertextuality Collation Machine</span></h1>
+            <h1 className="text-3xl font-bold font-serif tracking-tight">{t(lang, 'ICoMa')} <span className="text-academic-gold font-light ml-3 text-xl opacity-80 italic">{t(lang, 'Intertextuality Collation Machine')}</span></h1>
           </div>
           <div className="hidden lg:flex items-center gap-6">
+             {/* Language Selector */}
+             <div>
+                <div className="text-[10px] text-gray-400 uppercase font-sans mb-1">Language</div>
+                <select
+                  value={lang}
+                  onChange={e => setLang(e.target.value as Language)}
+                  className="bg-white/10 border border-white/20 text-white text-[11px] px-2 py-1 rounded-sm focus:outline-none focus:ring-1 focus:ring-academic-gold cursor-pointer"
+                >
+                  {(Object.entries(LANGUAGES) as [Language, string][]).map(([code, name]) => (
+                    <option key={code} value={code} className="text-academic-blue bg-white">{name}</option>
+                  ))}
+                </select>
+             </div>
+
+             {/* Font Controls */}
+             <div>
+                <div className="text-[10px] text-gray-400 uppercase font-sans mb-1">Font</div>
+                <div className="flex items-center gap-1">
+                  <select
+                    value={fontFamily}
+                    onChange={e => setFontFamily(e.target.value)}
+                    className="bg-white/10 border border-white/20 text-white text-[10px] px-1.5 py-1 rounded-sm focus:outline-none focus:ring-1 focus:ring-academic-gold cursor-pointer max-w-[110px]"
+                  >
+                    {FONT_FAMILIES.map(f => (
+                      <option key={f.value} value={f.value} className="text-academic-blue bg-white">{f.label}</option>
+                    ))}
+                  </select>
+                  <button onClick={() => setFontSize(s => Math.max(10, s - 1))} className="bg-white/10 border border-white/20 text-white text-[11px] w-6 h-6 rounded-sm hover:bg-white/20 transition-colors flex items-center justify-center" title="Decrease font size">−</button>
+                  <span className="text-[10px] font-mono text-gray-300 w-7 text-center">{fontSize}</span>
+                  <button onClick={() => setFontSize(s => Math.min(24, s + 1))} className="bg-white/10 border border-white/20 text-white text-[11px] w-6 h-6 rounded-sm hover:bg-white/20 transition-colors flex items-center justify-center" title="Increase font size">+</button>
+                </div>
+             </div>
+
+             {/* Engine Status */}
              <div className="text-right">
-                <div className="text-[10px] text-gray-400 uppercase font-sans">Engine Status</div>
+                <div className="text-[10px] text-gray-400 uppercase font-sans">{t(lang, 'Engine Status')}</div>
                 <div className="text-xs text-green-400 font-mono flex items-center gap-2">
-                   <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> READY FOR COLLATION
+                   <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> {t(lang, 'READY FOR COLLATION')}
                 </div>
              </div>
           </div>
@@ -382,7 +504,7 @@ const App: React.FC = () => {
           {/* Input Section */}
           <div className="xl:col-span-8 bg-white p-6 border border-gray-200 shadow-md rounded-sm">
             <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-100 pb-4">
-              <span className="text-[10px] font-bold text-gray-400 uppercase flex items-center mr-2">Quick Load:</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase flex items-center mr-2">{t(lang, 'Quick Load')}:</span>
               {Object.entries(EXAMPLES).map(([key, val]) => (
                 <button key={key} onClick={() => { setSourceText(val.a); setTargetText(val.b); }} className="text-[10px] px-3 py-1.5 bg-gray-50 border border-gray-200 hover:bg-academic-blue hover:text-white hover:border-academic-blue transition-all uppercase font-mono rounded-sm shadow-sm">{val.label}</button>
               ))}
@@ -391,22 +513,22 @@ const App: React.FC = () => {
               <div className="flex flex-col">
                 <div className="flex justify-between items-center mb-2 px-1">
                    <div className="flex items-center">
-                     <span className="text-[11px] font-bold text-academic-blue uppercase tracking-wider">Witness α (Primary)</span>
+                     <span className="text-[11px] font-bold text-academic-blue uppercase tracking-wider">{t(lang, 'Witness α (Primary)')}</span>
                      <HelpButton topic="witnessAlpha" onClick={setActiveHelpModal} />
                    </div>
                    <span className="text-[9px] text-gray-400 font-mono">{sourceText.length} chars</span>
                 </div>
-                <textarea className="w-full h-40 p-4 text-sm font-coptic border border-gray-200 rounded-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-academic-gold/20 focus:border-academic-gold outline-none transition-all shadow-inner leading-relaxed" value={sourceText} onChange={(e) => setSourceText(e.target.value)} placeholder="Insert primary text (Source)..." dir="auto" />
+                <textarea className="w-full h-40 p-4 text-sm font-coptic border border-gray-200 rounded-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-academic-gold/20 focus:border-academic-gold outline-none transition-all shadow-inner leading-relaxed" value={sourceText} onChange={(e) => setSourceText(e.target.value)} placeholder={t(lang, 'Insert primary text (Source)...')} dir="auto" />
               </div>
               <div className="flex flex-col">
                 <div className="flex justify-between items-center mb-2 px-1">
                    <div className="flex items-center">
-                     <span className="text-[11px] font-bold text-academic-blue uppercase tracking-wider">Witness β (Comparandum)</span>
+                     <span className="text-[11px] font-bold text-academic-blue uppercase tracking-wider">{t(lang, 'Witness β (Comparandum)')}</span>
                      <HelpButton topic="witnessBeta" onClick={setActiveHelpModal} />
                    </div>
                    <span className="text-[9px] text-gray-400 font-mono">{targetText.length} chars</span>
                 </div>
-                <textarea className="w-full h-40 p-4 text-sm font-coptic border border-gray-200 rounded-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-academic-gold/20 focus:border-academic-gold outline-none transition-all shadow-inner leading-relaxed" value={targetText} onChange={(e) => setTargetText(e.target.value)} placeholder="Insert comparative text (Target)..." dir="auto" />
+                <textarea className="w-full h-40 p-4 text-sm font-coptic border border-gray-200 rounded-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-academic-gold/20 focus:border-academic-gold outline-none transition-all shadow-inner leading-relaxed" value={targetText} onChange={(e) => setTargetText(e.target.value)} placeholder={t(lang, 'Insert comparative text (Target)...')} dir="auto" />
               </div>
             </div>
           </div>
@@ -415,12 +537,12 @@ const App: React.FC = () => {
           <div className="xl:col-span-4 flex flex-col gap-6">
             <div className="bg-white p-6 border border-gray-200 shadow-md rounded-sm flex-1">
               <h2 className="text-xs font-bold uppercase text-gray-400 border-b border-gray-100 pb-2 mb-6 tracking-widest flex items-center justify-between">
-                <span>Collation Parameters</span>
+                <span>{t(lang, 'Collation Parameters')}</span>
                 <HelpButton topic="algorithm" onClick={setActiveHelpModal} />
               </h2>
               <div className="grid grid-cols-1 gap-6 mb-8">
                 <div>
-                  <label className="block text-[11px] font-bold text-academic-blue mb-2 uppercase">Analysis Algorithm</label>
+                  <label className="block text-[11px] font-bold text-academic-blue mb-2 uppercase">{t(lang, 'Analysis Algorithm')}</label>
                   <select value={config.algorithm} onChange={(e) => setConfig({ ...config, algorithm: e.target.value as any })} className="w-full p-2.5 border border-gray-200 rounded-sm text-xs bg-white focus:ring-2 focus:ring-academic-gold/20 outline-none shadow-sm">
                     <option value="smith-waterman">Smith-Waterman (Local Alignment)</option>
                     <option value="coptic-aware">Coptic-Aware (Vowel & Mark Norm)</option>
@@ -435,14 +557,14 @@ const App: React.FC = () => {
                 <div className="flex items-center gap-6">
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
-                      <label className="block text-[11px] font-bold text-academic-blue uppercase">Similarity Threshold: {config.threshold}%</label>
+                      <label className="block text-[11px] font-bold text-academic-blue uppercase">{t(lang, 'Similarity Threshold')}: {config.threshold}%</label>
                       <HelpButton topic="threshold" onClick={setActiveHelpModal} />
                     </div>
                     <input type="range" min="20" max="100" value={config.threshold} onChange={(e) => setConfig({ ...config, threshold: Number(e.target.value) })} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-academic-gold" />
                   </div>
                   <div className="w-20">
                     <div className="flex items-center justify-between mb-2">
-                      <label className="block text-[11px] font-bold text-academic-blue uppercase">N-Size</label>
+                      <label className="block text-[11px] font-bold text-academic-blue uppercase">{t(lang, 'N-Size / Window Size')}</label>
                       <HelpButton topic="nsize" onClick={setActiveHelpModal} />
                     </div>
                     <input type="number" min="1" max="20" value={config.windowSize} onChange={(e) => setConfig({...config, windowSize: Number(e.target.value)})} className="w-full p-1.5 border border-gray-200 rounded-sm text-xs shadow-sm" />
@@ -453,9 +575,9 @@ const App: React.FC = () => {
                 {isProcessing ? (
                    <>
                     <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    PROCESSING LARGE DATASET...
+                    {t(lang, 'PROCESSING LARGE DATASET...')}
                    </>
-                ) : 'RUN COLLATION ENGINE'}
+                ) : t(lang, 'RUN COLLATION ENGINE')}
               </button>
             </div>
             
@@ -478,38 +600,38 @@ const App: React.FC = () => {
             {/* Global Stats Dashboard */}
             <div className="bg-white px-8 py-6 rounded-sm border border-gray-200 shadow-lg flex flex-wrap justify-between items-center gap-8 divide-x divide-gray-100">
                <div className="flex flex-wrap gap-0">
-                 <StatItem 
-                   label="Mean Similarity" 
-                   value={`${result.stats.meanSimilarity.toFixed(1)}%`} 
-                   description="The average similarity score across all detected matches. High values (>90%) indicate verbatim quotations, while lower values suggest paraphrasing or textual evolution." 
+                 <StatItem
+                   label={t(lang, 'Mean Similarity')}
+                   value={`${result.stats.meanSimilarity.toFixed(1)}%`}
+                   description={t(lang, 'The average similarity score across all detected matches. High values (>90%) indicate verbatim quotations, while lower values suggest paraphrasing or textual evolution.')}
                    topic="meanSimilarity"
                    onHelpClick={setActiveHelpModal}
                  />
-                 <StatItem 
-                   label="Reuse Coverage" 
-                   value={`${result.stats.coverage.toFixed(1)}%`} 
-                   description="The percentage of the total text length occupied by detected reuses. A high coverage implies that one witness is largely derived from or identical to the other." 
+                 <StatItem
+                   label={t(lang, 'Reuse Coverage')}
+                   value={`${result.stats.coverage.toFixed(1)}%`}
+                   description={t(lang, 'The percentage of the total text length occupied by detected reuses. A high coverage implies that one witness is largely derived from or identical to the other.')}
                    topic="reuseCoverage"
                    onHelpClick={setActiveHelpModal}
                  />
-                 <StatItem 
-                   label="Alignments" 
-                   value={result.stats.totalAlignments} 
-                   description="Total number of distinct parallel passages identified by the algorithm." 
+                 <StatItem
+                   label={t(lang, 'Alignments')}
+                   value={result.stats.totalAlignments}
+                   description="Total number of distinct parallel passages identified by the algorithm."
                    topic="alignments"
                    onHelpClick={setActiveHelpModal}
                  />
-                 <StatItem 
-                   label="Unique N-Grams" 
-                   value={result.stats.uniqueNgrams} 
-                   description="The count of distinct matching sequences. If a specific phrase is reused 10 times, it counts as 10 alignments but only 1 unique N-gram." 
+                 <StatItem
+                   label={t(lang, 'Unique N-Grams')}
+                   value={result.stats.uniqueNgrams}
+                   description={t(lang, 'The count of distinct matching sequences. If a specific phrase is reused 10 times, it counts as 10 alignments but only 1 unique N-gram.')}
                    topic="uniqueNgrams"
                    onHelpClick={setActiveHelpModal}
                  />
                </div>
                <div className="flex flex-col gap-2 pl-8 border-l border-gray-100">
                   <div className="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1 flex items-center">
-                    Total Token Count
+                    {t(lang, 'Total Token Count')}
                     <HelpButton topic="totalTokenCount" onClick={setActiveHelpModal} />
                   </div>
                   <div className="flex gap-4">
@@ -522,7 +644,7 @@ const App: React.FC = () => {
             {/* Macro-level Alignment Flow */}
             <div className="bg-white p-6 rounded-sm border border-gray-200 shadow-lg">
               <h3 className="text-xs font-bold uppercase text-academic-blue tracking-widest mb-4 flex items-center">
-                Macro-Level Alignment Flow
+                {t(lang, 'Macro-Level Alignment Flow')}
                 <HelpButton topic="macroAlignment" onClick={setActiveHelpModal} />
               </h3>
               <AlignmentFlow matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} />
@@ -542,10 +664,10 @@ const App: React.FC = () => {
                    <div className="bg-white border border-gray-200 rounded-sm shadow-lg flex flex-col overflow-hidden">
                       <div className="bg-academic-paper px-4 py-3 border-b border-gray-200 flex justify-between items-center shrink-0">
                         <span className="text-[11px] font-bold uppercase text-academic-blue tracking-widest flex items-center">
-                          Match Gallery
+                          {t(lang, 'Match Gallery')}
                           <HelpButton topic="matchGallery" onClick={setActiveHelpModal} />
                         </span>
-                        <div className="px-2 py-0.5 bg-academic-gold/20 text-academic-gold text-[9px] font-bold rounded">TOP REUSES</div>
+                        <div className="px-2 py-0.5 bg-academic-gold/20 text-academic-gold text-[9px] font-bold rounded">{t(lang, 'TOP REUSES')}</div>
                       </div>
                       <div className="flex-1 overflow-y-auto p-3 space-y-3 custom-scrollbar bg-gray-50/20">
                         {sortedMatches.map((m, idx) => (
@@ -571,21 +693,21 @@ const App: React.FC = () => {
                         {sortedMatches.length === 0 && (
                           <div className="h-full flex flex-col items-center justify-center text-gray-300 py-20 px-10 text-center">
                             <svg className="w-12 h-12 mb-4 opacity-20" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                            <p className="text-xs uppercase font-bold tracking-widest">No Matches Detected</p>
-                            <p className="text-[10px] mt-1">Try lowering the threshold or increasing window size.</p>
+                            <p className="text-xs uppercase font-bold tracking-widest">{t(lang, 'No Matches Detected')}</p>
+                            <p className="text-[10px] mt-1">{t(lang, 'Try lowering the threshold or increasing window size.')}</p>
                           </div>
                         )}
                       </div>
                    </div>
                    {/* Heatmap (Position Correspondence) */}
-                   <Heatmap matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} />
+                   <Heatmap matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} onHelpClick={setActiveHelpModal} />
                 </div>
 
                 <div className="flex flex-col gap-8">
                    {/* Similarity Histogram */}
                    <div className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm">
                      <h3 className="text-[10px] font-bold uppercase text-academic-blue tracking-widest mb-2 flex items-center">
-                       Similarity Distribution
+                       {t(lang, 'Similarity Distribution')}
                        <HelpButton topic="similarityDistribution" onClick={setActiveHelpModal} />
                      </h3>
                      <SimilarityHistogram matches={result.matches} />
@@ -593,7 +715,7 @@ const App: React.FC = () => {
                    {/* Network Graph (Cluster Discovery) */}
                    <div className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm">
                      <h3 className="text-[10px] font-bold uppercase text-academic-blue tracking-widest mb-2 flex items-center">
-                       Cluster View (Network Graph)
+                       {t(lang, 'Cluster View (Network Graph)')}
                        <HelpButton topic="clusterView" onClick={setActiveHelpModal} />
                      </h3>
                      <NetworkGraph matches={result.matches} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} />
@@ -601,7 +723,7 @@ const App: React.FC = () => {
                    {/* Dispersion Plot (Distribution) */}
                    <div className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm">
                      <h3 className="text-[10px] font-bold uppercase text-academic-blue tracking-widest mb-2 flex items-center">
-                       Witness Dispersion
+                       {t(lang, 'Witness Dispersion')}
                        <HelpButton topic="witnessDispersion" onClick={setActiveHelpModal} />
                      </h3>
                      <DispersionPlot matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} />
@@ -611,19 +733,19 @@ const App: React.FC = () => {
             </div>
 
             {/* AI Intertextuality Analysis */}
-            <AIAnalysisPanel sourceText={sourceText} targetText={targetText} />
+            <AIAnalysisPanel sourceText={sourceText} targetText={targetText} onHelpClick={setActiveHelpModal} collationTrigger={collationTrigger} />
           </div>
         )}
 
         {/* AI Analysis available even without collation results */}
         {!result && (
-          <AIAnalysisPanel sourceText={sourceText} targetText={targetText} />
+          <AIAnalysisPanel sourceText={sourceText} targetText={targetText} onHelpClick={setActiveHelpModal} collationTrigger={collationTrigger} />
         )}
       </main>
       
       {/* Visual Footer */}
       <footer className="mt-auto py-6 border-t border-gray-200 bg-white text-center flex flex-col items-center gap-3">
-         <p className="text-[10px] text-gray-400 uppercase tracking-[0.3em]">Advanced Digital Humanities Collation Tool • v2.6.0 Enterprise</p>
+         <p className="text-[10px] text-gray-400 uppercase tracking-[0.3em]">{t(lang, 'Advanced Digital Humanities Collation Tool')} • v2.7.0 Enterprise</p>
          <div className="flex items-center gap-4 text-[10px] text-gray-500 uppercase tracking-widest">
             <div className="flex items-center gap-1">
               <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="hover:text-academic-blue transition-colors flex items-center gap-1">
@@ -635,7 +757,7 @@ const App: React.FC = () => {
             <span className="text-gray-300">|</span>
             <button onClick={() => setIsChangelogOpen(true)} className="hover:text-academic-blue transition-colors flex items-center gap-1">
               <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-              Changelog
+              {t(lang, 'Changelog')}
             </button>
             <span className="text-gray-300">|</span>
             <a href="https://github.com/somiyagawa/ICoMa-" target="_blank" rel="noopener noreferrer" className="hover:text-academic-blue transition-colors flex items-center gap-1">
@@ -660,6 +782,21 @@ const App: React.FC = () => {
               </button>
             </div>
             <div className="p-6 overflow-y-auto font-sans text-sm text-gray-700 space-y-6">
+              <div>
+                <h3 className="font-bold text-academic-blue text-base border-b border-gray-100 pb-2 mb-2">v2.7.0 Enterprise (March 2026)</h3>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Added <strong>Internationalization (i18n)</strong>: UI now available in English, 日本語, 中文, 한국어, Deutsch, and Latina.</li>
+                  <li>Added <strong>Old Japanese (万葉集 &amp; 注釈)</strong> example to Quick Load.</li>
+                  <li>Added <strong>SVG/PNG download</strong> and <strong>fullscreen mode</strong> for all visualization panels.</li>
+                  <li>Added <strong>font size and font family controls</strong> in the menu bar.</li>
+                  <li>Added interactive help modals (<strong>?</strong> buttons) for Heatmap axes (Witness α/β Position) and AI Intertextuality Analysis.</li>
+                  <li>Added <strong>confidence-based colour highlighting</strong> for AI analysis parallel passages, with per-category colour coding.</li>
+                  <li>AI Analysis now <strong>auto-re-runs</strong> when the Collation Engine is triggered.</li>
+                  <li>Fixed Claude API <strong>CORS / "Failed to fetch"</strong> issue via Vercel proxy rewrites.</li>
+                  <li>Heatmap component redesigned with titled header, axis labels, and help buttons.</li>
+                  <li>Confidence distribution mini-chart and category summary badges added to AI results.</li>
+                </ul>
+              </div>
               <div>
                 <h3 className="font-bold text-academic-blue text-base border-b border-gray-100 pb-2 mb-2">v2.6.0 Enterprise (March 2026)</h3>
                 <ul className="list-disc pl-5 space-y-1">

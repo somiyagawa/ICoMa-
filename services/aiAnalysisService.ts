@@ -177,10 +177,32 @@ const parseAIResponse = (raw: string, provider: AIProvider, model: string): AIAn
   }
 };
 
+// ─── Detect if running on deployed Vercel (use proxy) or localhost (direct) ───
+function getBaseUrl(provider: 'anthropic' | 'openai' | 'gemini'): { url: string; useProxy: boolean } {
+  const isDeployed = typeof window !== 'undefined' && !window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1');
+  if (isDeployed) {
+    // Use Vercel rewrites proxy to avoid CORS
+    const proxyMap = {
+      anthropic: '/api/anthropic/v1/messages',
+      openai: '/api/openai/v1/chat/completions',
+      gemini: '/api/gemini'
+    };
+    return { url: proxyMap[provider], useProxy: true };
+  }
+  const directMap = {
+    anthropic: 'https://api.anthropic.com/v1/messages',
+    openai: 'https://api.openai.com/v1/chat/completions',
+    gemini: 'https://generativelanguage.googleapis.com'
+  };
+  return { url: directMap[provider], useProxy: false };
+}
+
 // ─── Claude (Anthropic) API ───
 async function callClaude(apiKey: string, textA: string, textB: string, model?: string): Promise<AIAnalysisResult> {
   const selectedModel = model || 'claude-sonnet-4-20250514';
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
+  const { url } = getBaseUrl('anthropic');
+
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -209,7 +231,8 @@ async function callClaude(apiKey: string, textA: string, textB: string, model?: 
 // ─── Gemini (Google) API ───
 async function callGemini(apiKey: string, textA: string, textB: string, model?: string): Promise<AIAnalysisResult> {
   const selectedModel = model || 'gemini-2.0-flash';
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
+  const { url: baseUrl } = getBaseUrl('gemini');
+  const url = `${baseUrl}/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`;
 
   const response = await fetch(url, {
     method: 'POST',
@@ -237,7 +260,8 @@ async function callGemini(apiKey: string, textA: string, textB: string, model?: 
 // ─── ChatGPT (OpenAI) API ───
 async function callChatGPT(apiKey: string, textA: string, textB: string, model?: string): Promise<AIAnalysisResult> {
   const selectedModel = model || 'gpt-4o-mini';
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const { url } = getBaseUrl('openai');
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

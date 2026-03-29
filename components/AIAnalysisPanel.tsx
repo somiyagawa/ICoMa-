@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import {
   AIProvider,
   AIProviderConfig,
@@ -12,6 +12,8 @@ import {
 interface AIAnalysisPanelProps {
   sourceText: string;
   targetText: string;
+  onHelpClick?: (topic: string) => void;
+  collationTrigger?: number;
 }
 
 const PROVIDER_INFO: Record<AIProvider, { label: string; color: string; bgColor: string; borderColor: string; models: { value: string; label: string }[] }> = {
@@ -52,27 +54,72 @@ const PROVIDER_INFO: Record<AIProvider, { label: string; color: string; bgColor:
   }
 };
 
-const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  direct_quotation: { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' },
-  allusion: { bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-200' },
-  echo: { bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200' },
-  paraphrase: { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200' },
-  structural_parallel: { bg: 'bg-teal-50', text: 'text-teal-700', border: 'border-teal-200' },
-  thematic_reuse: { bg: 'bg-cyan-50', text: 'text-cyan-700', border: 'border-cyan-200' },
-  formulaic_language: { bg: 'bg-lime-50', text: 'text-lime-700', border: 'border-lime-200' },
-  other: { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-200' }
+const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string; highlight: string }> = {
+  direct_quotation: { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200', highlight: 'rgba(239,68,68,' },
+  allusion: { bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-200', highlight: 'rgba(147,51,234,' },
+  echo: { bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200', highlight: 'rgba(99,102,241,' },
+  paraphrase: { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200', highlight: 'rgba(245,158,11,' },
+  structural_parallel: { bg: 'bg-teal-50', text: 'text-teal-700', border: 'border-teal-200', highlight: 'rgba(20,184,166,' },
+  thematic_reuse: { bg: 'bg-cyan-50', text: 'text-cyan-700', border: 'border-cyan-200', highlight: 'rgba(6,182,212,' },
+  formulaic_language: { bg: 'bg-lime-50', text: 'text-lime-700', border: 'border-lime-200', highlight: 'rgba(132,204,22,' },
+  other: { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-200', highlight: 'rgba(156,163,175,' }
 };
 
+// ─── Confidence → colour utility ───
+function confidenceToColor(confidence: number, categoryType: string): string {
+  const base = CATEGORY_COLORS[categoryType]?.highlight || 'rgba(156,163,175,';
+  const alpha = Math.max(0.15, Math.min(0.55, confidence / 100 * 0.6));
+  return `${base}${alpha.toFixed(2)})`;
+}
+
+function confidenceToBorderColor(confidence: number, categoryType: string): string {
+  const base = CATEGORY_COLORS[categoryType]?.highlight || 'rgba(156,163,175,';
+  const alpha = Math.max(0.4, Math.min(0.9, confidence / 100));
+  return `${base}${alpha.toFixed(2)})`;
+}
+
+// ─── Confidence bar ───
+const ConfidenceBar: React.FC<{ value: number; categoryType: string }> = ({ value, categoryType }) => {
+  const color = confidenceToBorderColor(value, categoryType);
+  return (
+    <div className="flex items-center gap-1.5">
+      <div className="h-1.5 w-16 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-full rounded-full transition-all" style={{ width: `${value}%`, backgroundColor: color }} />
+      </div>
+      <span className="text-[10px] font-bold font-mono" style={{ color }}>{value}%</span>
+    </div>
+  );
+};
+
+// ─── HelpButton (local) ───
+const HelpButton = ({ topic, onClick }: { topic: string; onClick: (topic: string) => void }) => (
+  <button onClick={() => onClick(topic)} className="text-gray-400 hover:text-academic-blue transition-colors ml-1 focus:outline-none" title="Help">
+    <svg className="w-3.5 h-3.5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  </button>
+);
+
+// ─── Highlighted parallel passage card ───
 const MatchCard: React.FC<{ match: AIIntertextualityMatch; index: number }> = ({ match, index }) => {
   const [expanded, setExpanded] = useState(false);
   const colors = CATEGORY_COLORS[match.category.type] || CATEGORY_COLORS.other;
+  const bgHighlight = confidenceToColor(match.confidence, match.category.type);
+  const borderHighlight = confidenceToBorderColor(match.confidence, match.category.type);
 
   return (
     <div
-      className={`border rounded-sm transition-all cursor-pointer ${colors.border} ${expanded ? 'shadow-md' : 'shadow-sm hover:shadow-md'}`}
+      className="rounded-sm transition-all cursor-pointer overflow-hidden"
+      style={{
+        border: `2px solid ${borderHighlight}`,
+        boxShadow: expanded ? `0 2px 12px ${bgHighlight}` : 'none'
+      }}
       onClick={() => setExpanded(!expanded)}
     >
-      <div className="px-4 py-3 flex items-start justify-between gap-3">
+      {/* Confidence indicator strip */}
+      <div className="h-1" style={{ background: `linear-gradient(to right, ${borderHighlight} ${match.confidence}%, transparent ${match.confidence}%)` }} />
+
+      <div className="px-4 py-3 flex items-start justify-between gap-3" style={{ backgroundColor: expanded ? bgHighlight : 'white' }}>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
             <span className="text-[9px] font-mono font-bold text-gray-400">#{index + 1}</span>
@@ -80,9 +127,7 @@ const MatchCard: React.FC<{ match: AIIntertextualityMatch; index: number }> = ({
               {match.category.label}
             </span>
             {match.possibleSource && (
-              <span className="text-[9px] px-1.5 py-0.5 bg-yellow-50 text-yellow-700 border border-yellow-200 rounded-sm font-mono">
-                ext. source
-              </span>
+              <span className="text-[9px] px-1.5 py-0.5 bg-yellow-50 text-yellow-700 border border-yellow-200 rounded-sm font-mono">ext. source</span>
             )}
           </div>
           <div className="text-[11px] font-coptic text-academic-blue leading-snug line-clamp-2" dir="auto">
@@ -90,9 +135,7 @@ const MatchCard: React.FC<{ match: AIIntertextualityMatch; index: number }> = ({
           </div>
         </div>
         <div className="flex flex-col items-end gap-1 shrink-0">
-          <div className={`text-[11px] font-bold ${match.confidence >= 90 ? 'text-green-600' : match.confidence >= 70 ? 'text-blue-600' : 'text-academic-gold'}`}>
-            {match.confidence}%
-          </div>
+          <ConfidenceBar value={match.confidence} categoryType={match.category.type} />
           <svg className={`w-3.5 h-3.5 text-gray-400 transition-transform ${expanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
           </svg>
@@ -100,24 +143,54 @@ const MatchCard: React.FC<{ match: AIIntertextualityMatch; index: number }> = ({
       </div>
 
       {expanded && (
-        <div className="px-4 pb-4 space-y-3 border-t border-gray-100 pt-3">
+        <div className="px-4 pb-4 space-y-3 border-t pt-3" style={{ borderColor: borderHighlight, backgroundColor: bgHighlight }}>
+          {/* Side-by-side highlighted passages */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <div className="text-[9px] font-bold uppercase text-gray-400 mb-1">Witness α</div>
-              <div className="text-[11px] font-coptic bg-gray-50 p-2.5 rounded-sm border border-gray-100 leading-relaxed" dir="auto">
+              <div className="text-[9px] font-bold uppercase text-gray-500 mb-1 flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: borderHighlight }}></span>
+                Witness α
+              </div>
+              <div
+                className="text-[11px] font-coptic p-3 rounded-sm border leading-relaxed"
+                style={{ backgroundColor: bgHighlight, borderColor: borderHighlight }}
+                dir="auto"
+              >
                 {match.sourcePassage}
               </div>
             </div>
             <div>
-              <div className="text-[9px] font-bold uppercase text-gray-400 mb-1">Witness β</div>
-              <div className="text-[11px] font-coptic bg-gray-50 p-2.5 rounded-sm border border-gray-100 leading-relaxed" dir="auto">
+              <div className="text-[9px] font-bold uppercase text-gray-500 mb-1 flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: borderHighlight }}></span>
+                Witness β
+              </div>
+              <div
+                className="text-[11px] font-coptic p-3 rounded-sm border leading-relaxed"
+                style={{ backgroundColor: bgHighlight, borderColor: borderHighlight }}
+                dir="auto"
+              >
                 {match.targetPassage}
               </div>
             </div>
           </div>
+
+          {/* Confidence visual meter */}
+          <div className="flex items-center gap-3 py-1">
+            <span className="text-[9px] font-bold uppercase text-gray-400 shrink-0">Confidence</span>
+            <div className="flex-1 h-3 bg-white/60 rounded-full overflow-hidden border" style={{ borderColor: borderHighlight }}>
+              <div
+                className="h-full rounded-full transition-all flex items-center justify-end pr-1"
+                style={{ width: `${match.confidence}%`, backgroundColor: borderHighlight }}
+              >
+                <span className="text-[8px] font-bold text-white drop-shadow">{match.confidence}%</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Explanation */}
           <div>
-            <div className="text-[9px] font-bold uppercase text-gray-400 mb-1">Analysis</div>
-            <div className="text-[11px] text-gray-700 leading-relaxed font-sans">
+            <div className="text-[9px] font-bold uppercase text-gray-500 mb-1">Analysis</div>
+            <div className="text-[11px] text-gray-700 leading-relaxed font-sans bg-white/50 p-3 rounded-sm border" style={{ borderColor: `${borderHighlight}` }}>
               {match.explanation}
             </div>
           </div>
@@ -138,6 +211,53 @@ const MatchCard: React.FC<{ match: AIIntertextualityMatch; index: number }> = ({
   );
 };
 
+// ─── Confidence distribution mini-chart ───
+const ConfidenceChart: React.FC<{ matches: AIIntertextualityMatch[] }> = ({ matches }) => {
+  if (matches.length === 0) return null;
+  const buckets = [0, 0, 0, 0, 0]; // 0-20, 20-40, 40-60, 60-80, 80-100
+  matches.forEach(m => {
+    const idx = Math.min(4, Math.floor(m.confidence / 20));
+    buckets[idx]++;
+  });
+  const max = Math.max(...buckets, 1);
+  const labels = ['0-20', '20-40', '40-60', '60-80', '80-100'];
+  const colors = ['#ef4444', '#f59e0b', '#eab308', '#22c55e', '#10b981'];
+
+  return (
+    <div className="flex items-end gap-1 h-12">
+      {buckets.map((count, i) => (
+        <div key={i} className="flex flex-col items-center gap-0.5 flex-1">
+          <div
+            className="w-full rounded-t-sm transition-all"
+            style={{ height: `${(count / max) * 36}px`, backgroundColor: colors[i], minHeight: count > 0 ? '4px' : '0' }}
+          />
+          <span className="text-[7px] text-gray-400 font-mono">{labels[i]}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// ─── Category summary badges ───
+const CategorySummary: React.FC<{ matches: AIIntertextualityMatch[] }> = ({ matches }) => {
+  const counts: Record<string, number> = {};
+  matches.forEach(m => { counts[m.category.type] = (counts[m.category.type] || 0) + 1; });
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([cat, count]) => {
+        const colors = CATEGORY_COLORS[cat] || CATEGORY_COLORS.other;
+        const catInfo = INTERTEXTUALITY_CATEGORIES[cat];
+        return (
+          <div key={cat} className={`text-[9px] font-bold uppercase px-2 py-1 rounded-sm ${colors.bg} ${colors.text} ${colors.border} border flex items-center gap-1`}>
+            <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: `${colors.highlight}0.7)` }}></span>
+            {catInfo?.label || cat}: {count}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 const ResultView: React.FC<{ result: AIAnalysisResult }> = ({ result }) => {
   const info = PROVIDER_INFO[result.provider];
   const [filterCategory, setFilterCategory] = useState<string>('all');
@@ -146,7 +266,6 @@ const ResultView: React.FC<{ result: AIAnalysisResult }> = ({ result }) => {
     ? result.matches
     : result.matches.filter(m => m.category.type === filterCategory);
 
-  // Category counts for badges
   const categoryCounts: Record<string, number> = {};
   result.matches.forEach(m => {
     categoryCounts[m.category.type] = (categoryCounts[m.category.type] || 0) + 1;
@@ -170,13 +289,23 @@ const ResultView: React.FC<{ result: AIAnalysisResult }> = ({ result }) => {
 
   return (
     <div className="space-y-4">
-      {/* Provider header */}
+      {/* Provider header with stats */}
       <div className={`border rounded-sm p-4 ${info.borderColor} ${info.bgColor}`}>
-        <div className="flex justify-between items-center mb-2">
-          <div className={`text-xs font-bold ${info.color} uppercase tracking-wider`}>{info.label}</div>
-          <div className="text-[9px] text-gray-400 font-mono">{result.model} • {new Date(result.timestamp).toLocaleTimeString()}</div>
+        <div className="flex justify-between items-start mb-3">
+          <div>
+            <div className={`text-xs font-bold ${info.color} uppercase tracking-wider`}>{info.label}</div>
+            <div className="text-[9px] text-gray-400 font-mono mt-0.5">{result.model} • {new Date(result.timestamp).toLocaleTimeString()}</div>
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold font-serif text-academic-blue">{result.matches.length}</div>
+            <div className="text-[8px] uppercase text-gray-400 font-bold tracking-wider">matches</div>
+          </div>
         </div>
-        <div className="text-[12px] text-gray-700 leading-relaxed font-sans">{result.summary}</div>
+        <div className="text-[12px] text-gray-700 leading-relaxed font-sans mb-3">{result.summary}</div>
+        <div className="flex items-end justify-between gap-4">
+          <CategorySummary matches={result.matches} />
+          <ConfidenceChart matches={result.matches} />
+        </div>
       </div>
 
       {/* Category filter */}
@@ -205,7 +334,7 @@ const ResultView: React.FC<{ result: AIAnalysisResult }> = ({ result }) => {
       )}
 
       {/* Matches */}
-      <div className="space-y-2 max-h-[600px] overflow-y-auto pr-1 custom-scrollbar">
+      <div className="space-y-2 max-h-[700px] overflow-y-auto pr-1 custom-scrollbar">
         {filteredMatches.map((m, idx) => (
           <MatchCard key={m.id} match={m} index={idx} />
         ))}
@@ -227,7 +356,7 @@ const ResultView: React.FC<{ result: AIAnalysisResult }> = ({ result }) => {
   );
 };
 
-const AIAnalysisPanel: React.FC<AIAnalysisPanelProps> = ({ sourceText, targetText }) => {
+const AIAnalysisPanel: React.FC<AIAnalysisPanelProps> = ({ sourceText, targetText, onHelpClick, collationTrigger }) => {
   const [apiKeys, setApiKeys] = useState<Record<AIProvider, string>>({
     claude: '',
     gemini: '',
@@ -253,7 +382,6 @@ const AIAnalysisPanel: React.FC<AIAnalysisPanelProps> = ({ sourceText, targetTex
     chatgpt: false
   });
 
-  const hasAnyKey = Object.values(apiKeys).some(k => k.trim().length > 0);
   const activeProviders = (Object.keys(enabledProviders) as AIProvider[]).filter(
     p => enabledProviders[p] && apiKeys[p].trim().length > 0
   );
@@ -287,6 +415,17 @@ const AIAnalysisPanel: React.FC<AIAnalysisPanelProps> = ({ sourceText, targetTex
     }
   }, [activeProviders, apiKeys, selectedModels, sourceText, targetText]);
 
+  // Auto re-run AI analysis when collation engine runs (if providers are configured)
+  const prevTrigger = useRef(collationTrigger);
+  useEffect(() => {
+    if (collationTrigger !== undefined && collationTrigger > 0 && collationTrigger !== prevTrigger.current) {
+      prevTrigger.current = collationTrigger;
+      if (activeProviders.length > 0 && sourceText.trim() && targetText.trim()) {
+        runAnalysis();
+      }
+    }
+  }, [collationTrigger]);
+
   return (
     <div className="bg-white border border-gray-200 rounded-sm shadow-lg overflow-hidden">
       {/* Header */}
@@ -297,9 +436,11 @@ const AIAnalysisPanel: React.FC<AIAnalysisPanelProps> = ({ sourceText, targetTex
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
             </svg>
             AI Intertextuality Analysis
+            {onHelpClick && <HelpButton topic="aiIntertextuality" onClick={onHelpClick} />}
           </h2>
-          <div className="text-[10px] text-gray-300 uppercase tracking-wider mt-0.5">
+          <div className="text-[10px] text-gray-300 uppercase tracking-wider mt-0.5 flex items-center gap-1">
             Multi-Model Citation, Allusion & Echo Detection
+            {onHelpClick && <HelpButton topic="aiIntertextualityMethod" onClick={onHelpClick} />}
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -408,7 +549,6 @@ const AIAnalysisPanel: React.FC<AIAnalysisPanelProps> = ({ sourceText, targetTex
       {/* Results */}
       {results.length > 0 && (
         <div className="p-6">
-          {/* Tab navigation for multiple providers */}
           {results.length > 1 && (
             <div className="flex gap-1 mb-6 border-b border-gray-200 pb-2">
               <button
@@ -440,7 +580,6 @@ const AIAnalysisPanel: React.FC<AIAnalysisPanelProps> = ({ sourceText, targetTex
           {/* Comparative view */}
           {activeTab === 'all' && results.length > 1 && (
             <div className="space-y-6">
-              {/* Summary comparison table */}
               <div className="overflow-x-auto">
                 <table className="w-full text-[11px] font-sans">
                   <thead>
@@ -486,21 +625,15 @@ const AIAnalysisPanel: React.FC<AIAnalysisPanelProps> = ({ sourceText, targetTex
                   </tbody>
                 </table>
               </div>
-
-              {/* Individual results */}
               {results.map(r => (
                 <ResultView key={r.provider} result={r} />
               ))}
             </div>
           )}
 
-          {/* Single provider view */}
           {activeTab !== 'all' && (
             <ResultView result={results.find(r => r.provider === activeTab) || results[0]} />
           )}
-
-          {/* Single result (only one provider) */}
-          {results.length === 1 && activeTab !== 'all' && null}
         </div>
       )}
 

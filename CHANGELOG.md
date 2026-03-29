@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.7.0] - 2026-03-29
+### Added
+- Internationalization (i18n) system supporting 6 languages: English, 日本語, 中文, 한국어, Deutsch, Latina.
+- New service: `i18n.ts` with full UI translation coverage.
+- Old Japanese (万葉集 & 注釈) example added to Quick Load.
+- SVG/PNG download and fullscreen mode for all visualization panels.
+- New component: `ChartControls.tsx` (DownloadButtons, FullscreenButton, ChartToolbar).
+- Font size and font family controls in the menu bar.
+- Interactive help modals (?) for Heatmap axis labels (Witness α/β Position).
+- Interactive help modals for AI Intertextuality Analysis section and classification taxonomy.
+- Confidence-based colour highlighting for AI analysis parallel passages with per-category coding.
+- Confidence distribution mini-chart and category summary badges in AI results view.
+- AI Analysis auto-re-runs when the Collation Engine is triggered.
+
+### Fixed
+- Claude API "Failed to fetch" CORS issue resolved via Vercel proxy rewrites.
+- Gemini and OpenAI API calls also routed through Vercel proxy on deployed environments.
+
+### Changed
+- Heatmap component redesigned: titled header, HTML-based axis labels with help buttons (replacing SVG text).
+- AI match cards now use dynamic border/background colours scaled by confidence level.
+- `vercel.json` updated with API proxy rewrites for `/api/anthropic`, `/api/openai`, `/api/gemini`.
+
 ## [2.6.0] - 2026-03-29
 ### Added
 - AI Intertextuality Analysis system with multi-model support (Claude, Gemini, ChatGPT).
