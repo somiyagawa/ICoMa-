@@ -375,6 +375,64 @@ const algorithmHelpData: Record<Language, AlgorithmHelp[]> = {
       cons: "Contextum sufficientem in textibus praebitis necessitet ad vectores significatos aedificandum.",
       bestFor: "Conformatione semantica, invenire circumlocutiones, aut superposition[es] thematicas ubi vocabularium differt."
     }
+  ],
+  it: [
+    {
+      name: "Levenshtein (Distanza di Modifica)",
+      description: "Calcola il numero minimo di modifiche a singolo carattere (inserimenti, cancellazioni o sostituzioni) necessarie per trasformare una parola in un'altra.",
+      pros: "Altamente accurato per variazioni esatte a livello di carattere (errori di battitura, lievi cambiamenti ortografici).",
+      cons: "Computazionalmente costoso per sequenze molto lunghe; rigoroso sull'ordine delle parole.",
+      bestFor: "Rilevamento di errori minori di copiatura, testi brevi e varianti ravvicinate."
+    },
+    {
+      name: "Jaccard (Similarità di Insieme)",
+      description: "Misura la similarità tra insiemi campione finiti, definita come la dimensione dell'intersezione divisa per la dimensione dell'unione degli insiemi.",
+      pros: "Veloce e ignora completamente l'ordine delle parole.",
+      cons: "Perde sintassi e contesto; tratta il testo come un 'sacchetto di parole'.",
+      bestFor: "Similarità tematica, vocabolario sovrapposto e testi pesantemente riarrangiati."
+    },
+    {
+      name: "N-Gramma a Livello di Parola",
+      description: "Confronta sequenze contigue di n parole dai testi.",
+      pros: "Cattura l'ordine locale delle parole e le corrispondenze frasali esatte.",
+      cons: "Fallisce se una singola parola nella frase viene cambiata, inserita o scritta male.",
+      bestFor: "Rilevamento del plagio, identificazione di citazioni verbatim e linguaggio formulaico."
+    },
+    {
+      name: "N-Gramma a Livello di Carattere",
+      description: "Confronta sequenze contigue di n caratteri dai testi.",
+      pros: "Robusto rispetto a lievi variazioni ortografiche, errori OCR e cambiamenti morfologici.",
+      cons: "Può produrre falsi positivi con parole dall'aspetto simile ma semanticamente diverse.",
+      bestFor: "Testi con rumore, output OCR e testi con ortografia incoerente."
+    },
+    {
+      name: "Smith-Waterman (Allineamento Locale)",
+      description: "Esegue l'allineamento di sequenze locali per determinare regioni simili tra due stringhe.",
+      pros: "Eccellente nel trovare sottostringhe altamente simili incorporate in testi più grandi e divergenti.",
+      cons: "Computazionalmente pesante.",
+      bestFor: "Trovare citazioni incorporate o passaggi riutilizzati in documenti altrimenti diversi."
+    },
+    {
+      name: "Sensibile al Copto (Norm. Vocali e Segni)",
+      description: "Un algoritmo specializzato che normalizza i tratti sopralineari e le vocali specifiche della lingua copta prima del confronto.",
+      pros: "Altamente adattato alle realtà dei manoscritti copti (abbreviazioni scribali, variazioni vocaliche).",
+      cons: "Utile solo per testi copti.",
+      bestFor: "Collazione di manoscritti copti."
+    },
+    {
+      name: "Tipo FastText (N-Grammi di Sottoparole)",
+      description: "Approssima FastText scomponendo le parole in n-grammi di caratteri sottoparola per creare un vettore di frequenza, poi calcola la similarità del coseno.",
+      pros: "Gestisce molto bene le variazioni morfologiche e le parole fuori vocabolario.",
+      cons: "È un'approssimazione statistica, non una rete neurale pre-addestrata.",
+      bestFor: "Lingue altamente flesse e testi con molte varianti morfologiche."
+    },
+    {
+      name: "Tipo Word2Vec (Co-occorrenza Locale)",
+      description: "Approssima Word2Vec costruendo al volo una matrice di co-occorrenza locale (finestra di contesto) per catturare la semantica distribuzionale.",
+      pros: "Cattura la similarità semantica basata sul contesto locale, anche se le parole esatte differiscono.",
+      cons: "Richiede un contesto sufficiente nei testi forniti per costruire vettori significativi.",
+      bestFor: "Corrispondenza semantica, trovare parafrasi o sovrapposizioni tematiche dove il vocabolario differisce."
+    }
   ]
 };
 
@@ -438,6 +496,16 @@ const intertextualityHelpData: Record<Language, IntertextualityCategoryHelp[]> =
     { name: "Reusus Thematicus", description: "Adoptio motuum aut toporum sine emphatione verbi directa.", colorClass: "cyan" },
     { name: "Lingua Formulaica", description: "Phrases consuetas aut formulae genuinae quae in textibus distributa participantur.", colorClass: "lime" },
     { name: "Aliud", description: "Omnis alia relatio intertextualis.", colorClass: "gray" }
+  ],
+  it: [
+    { name: "Citazione Diretta", description: "Riproduzione verbatim o quasi-verbatim di un testo fonte, spesso con indicatori espliciti di attribuzione.", colorClass: "red" },
+    { name: "Allusione", description: "Riferimento indiretto a un altro testo, che si aspetta che il lettore lo riconosca senza citazione esplicita.", colorClass: "purple" },
+    { name: "Eco", description: "Somiglianza verbale sottile che ricorda un testo anteriore, potenzialmente inconscia o parte di una tradizione condivisa.", colorClass: "indigo" },
+    { name: "Parafrasi", description: "Riformulazione del contenuto di un testo fonte con parole diverse mantenendo il significato essenziale.", colorClass: "amber" },
+    { name: "Parallelo Strutturale", description: "Corrispondenza nella struttura sintattica, retorica o narrativa piuttosto che nella formulazione verbale.", colorClass: "teal" },
+    { name: "Riuso Tematico", description: "Condivisione di motivi, topoi o concetti tematici con un testo anteriore senza sovrapposizione verbale.", colorClass: "cyan" },
+    { name: "Linguaggio Formulaico", description: "Frasi convenzionali o fisse comuni a un genere, una tradizione o un periodo, non uniche a nessun singolo testo.", colorClass: "lime" },
+    { name: "Possibile Fonte Esterna", description: "Passaggi che possono derivare da un terzo testo non presente nell'analisi corrente.", colorClass: "gray" },
   ]
 };
 
@@ -1071,6 +1139,92 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
       title: "Taxonomia Classificationis Intertextualitatis",
       body: "Analysis AI quamlibet instantiam intertextualitatis detectam secundum taxonomiam octo-categoryam ex theoria intertextualitatis classicae et modernae (Kristeva, Genette, Hayes) derivatam classifitat. Categories infra repertas vide."
     }
+  },
+  it: {
+    algorithm: {
+      title: 'Algoritmi di Analisi',
+      body: 'ICoMa offre 8 algoritmi distinti per il rilevamento del riuso testuale. Ogni algoritmo ha punti di forza unici a seconda delle caratteristiche dei testi.',
+    },
+    threshold: {
+      title: 'Soglia di Similarità',
+      body: 'La soglia controlla la sensibilità minima per il rilevamento delle corrispondenze. Valori più bassi rilevano più corrispondenze (incluse quelle più deboli), mentre valori più alti mostrano solo corrispondenze forti.',
+      items: [
+        { label: 'Soglia Alta (80% - 100%)', text: 'Mostra solo citazioni quasi verbatim e corrispondenze molto strette. Ideale per identificare citazioni dirette.', colorClass: 'green' },
+        { label: 'Soglia Media (50% - 79%)', text: 'Bilancia tra rilevare parafrasi e ridurre il rumore. Punto di partenza consigliato per la maggior parte delle analisi.', colorClass: 'amber' },
+        { label: 'Soglia Bassa (20% - 49%)', text: 'Cattura allusioni tematiche sottili ed echi vaghi. Utile per l\'analisi intertestuale esplorativa ma può produrre molti falsi positivi.', colorClass: 'red' },
+      ],
+      tip: 'Iniziare con una soglia media (50-60%) e regolare in base ai risultati. Per testi copti con variazioni ortografiche, una soglia leggermente più bassa spesso funziona meglio.',
+    },
+    nsize: {
+      title: 'N-Dimensione / Dimensione Finestra',
+      body: 'Questo parametro controlla la dimensione dell\'unità di confronto. Per gli algoritmi N-gram, definisce la lunghezza della sequenza. Per Smith-Waterman, definisce la dimensione della finestra.',
+      items: [
+        { label: 'N-Dimensione Maggiore (es. 5-10+)', text: 'Rileva corrispondenze frasali più lunghe. Più specifico ma meno sensibile; ideale per trovare citazioni estese o passaggi paralleli.', colorClass: 'blue' },
+        { label: 'N-Dimensione Minore (es. 1-4)', text: 'Rileva sovrapposizioni a livello di parola più brevi. Più sensibile ma meno specifico; utile per il riuso lessicale e la condivisione di vocabolario.', colorClass: 'amber' },
+      ],
+      tip: 'Per la maggior parte dei testi, una N-dimensione di 3-5 offre un buon equilibrio. Per testi copti o testi con strutture morfologiche complesse, iniziare con 2-3.',
+    },
+    aiIntertextualityMethod: {
+      title: 'Tassonomia di Classificazione dell\'Intertestualità',
+      body: 'Il sistema di analisi IA classifica ogni passaggio rilevato secondo questa tassonomia accademica, basata sulla teoria dell\'intertestualità testuale. Le categorie sono progettate per catturare l\'intera gamma delle relazioni intertestuali.',
+    },
+    macroAlignment: {
+      title: 'Flusso di Allineamento Macro',
+      body: 'Questa visualizzazione mostra il flusso complessivo delle corrispondenze tra i due testi testimoni. Ogni banda connette le posizioni delle corrispondenze nel Testimone α (sinistra) alle posizioni nel Testimone β (destra).',
+      tip: 'Bande parallele suggeriscono struttura preservata; bande incrociate indicano riarrangiamento del testo.',
+    },
+    matchGallery: {
+      title: 'Galleria delle Corrispondenze',
+      body: 'Mostra tutte le corrispondenze rilevate classificate per punteggio di similarità. Cliccare qualsiasi corrispondenza per evidenziarla in tutte le visualizzazioni.',
+      tip: 'Usare il pulsante di ingrandimento per vedere le corrispondenze in formato classifica a schermo intero.',
+    },
+    heatmap: {
+      title: 'Corrispondenza Posizionale (Mappa di Calore)',
+      body: 'Una matrice bidimensionale dove ogni cella rappresenta una potenziale corrispondenza tra posizioni nei due testi testimoni.',
+    },
+    similarityDistribution: {
+      title: 'Distribuzione della Similarità',
+      body: 'Un istogramma che mostra la distribuzione dei punteggi di similarità tra tutte le corrispondenze rilevate.',
+      tip: 'Un picco vicino al 100% suggerisce citazione diretta; una distribuzione ampia suggerisce variazione stilistica.',
+    },
+    clusterView: {
+      title: 'Vista Cluster (Grafo di Rete)',
+      body: 'Rappresenta le corrispondenze come un grafo di rete dove frasi simili sono raggruppate insieme.',
+      tip: 'I cluster più grandi spesso rappresentano passaggi formulaici o tematicamente correlati.',
+    },
+    witnessDispersion: {
+      title: 'Dispersione del Testimone',
+      body: 'Mostra la distribuzione spaziale delle corrispondenze attraverso entrambi i testi testimoni.',
+      tip: 'Corrispondenze concentrate indicano riuso localizzato; corrispondenze sparse indicano influenza pervasiva.',
+    },
+    meanSimilarity: {
+      title: 'Similarità Media',
+      body: 'Il punteggio medio di similarità tra tutte le corrispondenze rilevate. Valori elevati (>90%) indicano citazioni verbatim, mentre valori inferiori suggeriscono parafrasi o evoluzione testuale.',
+    },
+    reuseCoverage: {
+      title: 'Copertura di Riuso',
+      body: 'La percentuale della lunghezza totale del testo occupata dai riusi rilevati. Un\'alta copertura implica che un testimone è in gran parte derivato dall\'altro o ad esso identico.',
+    },
+    alignments: {
+      title: 'Allineamenti',
+      body: 'Il numero totale di passaggi paralleli distinti identificati dall\'algoritmo.',
+    },
+    uniqueNgrams: {
+      title: 'N-Grammi Unici',
+      body: 'A differenza degli "Allineamenti", questa metrica elimina i duplicati. Una grande differenza tra Allineamenti e N-Grammi Unici indica un linguaggio formulaico altamente ripetitivo.',
+    },
+    totalTokenCount: {
+      title: 'Conteggio Totale Token',
+      body: 'Questo aiuta a contestualizzare la metrica "Copertura di Riuso". Se il Testimone α è molto più grande del Testimone β, una copertura del 100% di β potrebbe rappresentare solo il 5% della copertura di α.',
+    },
+    witnessAlpha: {
+      title: 'Testimone α (Primario)',
+      body: 'Il testo primario di riferimento — il "testo fonte" con cui viene confrontato il secondo testo. Nella filologia classica, questo è spesso il testo più antico o autorevole.',
+    },
+    witnessBeta: {
+      title: 'Testimone β (Comparandum)',
+      body: 'Il testo comparativo — il testo che viene confrontato con il Testimone α. Questo potrebbe essere un testimone successivo, una traduzione, un commento o un testo dipendente sospetto.',
+    },
   }
 };
 

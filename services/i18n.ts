@@ -1,9 +1,9 @@
 /**
  * Internationalization (i18n) System for ICoMa
- * Supports: English, Japanese, Chinese (Simplified), Korean, German, and Latin
+ * Supports: English, Japanese, Chinese (Simplified), Korean, German, Latin, and Italian
  */
 
-export type Language = 'en' | 'ja' | 'zh' | 'ko' | 'de' | 'la';
+export type Language = 'en' | 'ja' | 'zh' | 'ko' | 'de' | 'la' | 'it';
 
 export const LANGUAGES: Record<Language, string> = {
   en: 'English',
@@ -11,7 +11,8 @@ export const LANGUAGES: Record<Language, string> = {
   zh: '中文',
   ko: '한국어',
   de: 'Deutsch',
-  la: 'Latina'
+  la: 'Latina',
+  it: 'Italiano'
 };
 
 export const translations: Record<Language, Record<string, string>> = {
@@ -140,6 +141,62 @@ export const translations: Record<Language, Record<string, string>> = {
     // Privacy Note
     'Privacy Note: API keys are stored only in browser memory (never persisted) and sent only to the respective API provider.':
       'Privacy Note: API keys are stored only in browser memory (never persisted) and sent only to the respective API provider.',
+
+    // Header/UI Controls
+    'UI Language': 'UI Language',
+    'Font': 'Font',
+    'Decrease font size': 'Decrease font size',
+    'Increase font size': 'Increase font size',
+    'GitHub Issues': 'GitHub Issues',
+
+    // Algorithm Names
+    'Smith-Waterman (Local Alignment)': 'Smith-Waterman (Local Alignment)',
+    'Coptic-Aware (Vowel & Mark Norm)': 'Coptic-Aware (Vowel & Mark Norm)',
+    'Levenshtein (Edit Distance)': 'Levenshtein (Edit Distance)',
+    'Jaccard (Set Similarity)': 'Jaccard (Set Similarity)',
+    'Word-Level N-Gram': 'Word-Level N-Gram',
+    'Character-Level N-Gram': 'Character-Level N-Gram',
+    'FastText-like (Subword N-Grams)': 'FastText-like (Subword N-Grams)',
+    'Word2Vec-like (Local Co-occurrence)': 'Word2Vec-like (Local Co-occurrence)',
+
+    // N-Gram Info Box
+    'N-Gram Definition': 'N-Gram Definition',
+    'N-Gram Definition Text': 'An N-Gram is a contiguous sequence of n items from a given text. Character N-grams (e.g., n=4) are excellent for identifying similarities in scripts without spaces or with spelling variations. Word N-grams (e.g., n=3) focus on phrasal reuse while ignoring minor character mismatches.',
+
+    // Match Gallery
+    'matches ranked by similarity': 'matches ranked by similarity',
+    'Rank': 'Rank',
+    'Best Match': 'Best Match',
+    'pos': 'pos',
+    'Length': 'Length',
+    'tokens': 'tokens',
+
+    // Footer
+    'CC BY 4.0 License': 'CC BY 4.0 License',
+
+    // Chart Controls
+    'Zoom In': 'Zoom In',
+    'Zoom Out': 'Zoom Out',
+    'Reset Zoom': 'Reset Zoom',
+    'Download as SVG': 'Download as SVG',
+    'Download as PNG': 'Download as PNG',
+    'Help': 'Help',
+    'Exit Fullscreen': 'Exit Fullscreen',
+    'Press ESC or click to exit fullscreen': 'Press ESC or click to exit fullscreen',
+
+    // DiffView
+    'Exact Match': 'Exact Match',
+    'Diff': 'Diff',
+
+    // Font Family Options
+    'Serif (Default)': 'Serif (Default)',
+    'Sans-Serif': 'Sans-Serif',
+    'Monospace': 'Monospace',
+
+    // Misc
+    'chars': 'chars',
+    'Click to rename': 'Click to rename',
+    'Close': 'Close',
   },
 
   ja: {
@@ -267,6 +324,62 @@ export const translations: Record<Language, Record<string, string>> = {
     // プライバシーノート
     'Privacy Note: API keys are stored only in browser memory (never persisted) and sent only to the respective API provider.':
       'プライバシーに関する注意：APIキーはブラウザメモリにのみ保存され（永続化されない）、各APIプロバイダーにのみ送信されます。',
+
+    // ヘッダー/UI コントロール
+    'UI Language': 'UI言語',
+    'Font': 'フォント',
+    'Decrease font size': 'フォントサイズを縮小',
+    'Increase font size': 'フォントサイズを拡大',
+    'GitHub Issues': 'GitHub Issues',
+
+    // アルゴリズム名
+    'Smith-Waterman (Local Alignment)': 'Smith-Waterman（局所アラインメント）',
+    'Coptic-Aware (Vowel & Mark Norm)': 'コプト語対応（母音・記号正規化）',
+    'Levenshtein (Edit Distance)': 'レーベンシュタイン（編集距離）',
+    'Jaccard (Set Similarity)': 'ジャッカード（集合類似度）',
+    'Word-Level N-Gram': '単語レベルN-グラム',
+    'Character-Level N-Gram': '文字レベルN-グラム',
+    'FastText-like (Subword N-Grams)': 'FastText風（サブワードN-グラム）',
+    'Word2Vec-like (Local Co-occurrence)': 'Word2Vec風（局所共起）',
+
+    // N-グラム情報ボックス
+    'N-Gram Definition': 'N-グラムの定義',
+    'N-Gram Definition Text': 'N-グラムとは、与えられたテキストからn個の連続する要素の列です。文字N-グラム（例：n=4）は、スペースのない文字体系やスペルの変形がある場合の類似性の検出に適しています。単語N-グラム（例：n=3）は、細かな文字の不一致を無視しつつ、句レベルの再利用に焦点を当てます。',
+
+    // マッチギャラリー
+    'matches ranked by similarity': '類似度順にランク付けされたマッチ',
+    'Rank': 'ランク',
+    'Best Match': '最高マッチ',
+    'pos': '位置',
+    'Length': '長さ',
+    'tokens': 'トークン',
+
+    // フッター
+    'CC BY 4.0 License': 'CC BY 4.0 ライセンス',
+
+    // チャートコントロール
+    'Zoom In': 'ズームイン',
+    'Zoom Out': 'ズームアウト',
+    'Reset Zoom': 'ズームリセット',
+    'Download as SVG': 'SVGでダウンロード',
+    'Download as PNG': 'PNGでダウンロード',
+    'Help': 'ヘルプ',
+    'Exit Fullscreen': '全画面を終了',
+    'Press ESC or click to exit fullscreen': 'ESCキーまたはクリックで全画面を終了',
+
+    // DiffView
+    'Exact Match': '完全一致',
+    'Diff': '差分',
+
+    // フォントファミリーオプション
+    'Serif (Default)': 'セリフ（デフォルト）',
+    'Sans-Serif': 'サンセリフ',
+    'Monospace': '等幅',
+
+    // その他
+    'chars': '文字',
+    'Click to rename': 'クリックで名前を変更',
+    'Close': '閉じる',
   },
 
   zh: {
@@ -394,6 +507,62 @@ export const translations: Record<Language, Record<string, string>> = {
     // 隐私说明
     'Privacy Note: API keys are stored only in browser memory (never persisted) and sent only to the respective API provider.':
       '隐私说明：API密钥仅存储在浏览器内存中（从不持久化），仅发送给相应的API提供商。',
+
+    // 页眉/UI控制
+    'UI Language': 'UI语言',
+    'Font': '字体',
+    'Decrease font size': '缩小字号',
+    'Increase font size': '增大字号',
+    'GitHub Issues': 'GitHub Issues',
+
+    // 算法名称
+    'Smith-Waterman (Local Alignment)': 'Smith-Waterman（局部比对）',
+    'Coptic-Aware (Vowel & Mark Norm)': '科普特语适配（元音与标记归一化）',
+    'Levenshtein (Edit Distance)': 'Levenshtein（编辑距离）',
+    'Jaccard (Set Similarity)': 'Jaccard（集合相似度）',
+    'Word-Level N-Gram': '词级N元组',
+    'Character-Level N-Gram': '字符级N元组',
+    'FastText-like (Subword N-Grams)': 'FastText式（子词N元组）',
+    'Word2Vec-like (Local Co-occurrence)': 'Word2Vec式（局部共现）',
+
+    // N元组定义
+    'N-Gram Definition': 'N元组定义',
+    'N-Gram Definition Text': 'N元组是从给定文本中提取的n个连续项的序列。字符N元组（如n=4）非常适合识别无空格文字系统或拼写变体中的相似性。词N元组（如n=3）侧重于短语级重用，同时忽略细微的字符差异。',
+
+    // 匹配库
+    'matches ranked by similarity': '按相似度排序的匹配',
+    'Rank': '排名',
+    'Best Match': '最佳匹配',
+    'pos': '位置',
+    'Length': '长度',
+    'tokens': '令牌',
+
+    // 页脚
+    'CC BY 4.0 License': 'CC BY 4.0 许可证',
+
+    // 图表控制
+    'Zoom In': '放大',
+    'Zoom Out': '缩小',
+    'Reset Zoom': '重置缩放',
+    'Download as SVG': '下载为SVG',
+    'Download as PNG': '下载为PNG',
+    'Help': '帮助',
+    'Exit Fullscreen': '退出全屏',
+    'Press ESC or click to exit fullscreen': '按ESC或点击退出全屏',
+
+    // 差异视图
+    'Exact Match': '完全匹配',
+    'Diff': '差异',
+
+    // 字体族选项
+    'Serif (Default)': '衬线体（默认）',
+    'Sans-Serif': '无衬线体',
+    'Monospace': '等宽字体',
+
+    // 其他
+    'chars': '字符',
+    'Click to rename': '点击重命名',
+    'Close': '关闭',
   },
 
   ko: {
@@ -522,6 +691,62 @@ export const translations: Record<Language, Record<string, string>> = {
     // 개인정보 보호 주의
     'Privacy Note: API keys are stored only in browser memory (never persisted) and sent only to the respective API provider.':
       '개인정보 보호 주의: API 키는 브라우저 메모리에만 저장되며（지속되지 않음）, 각 API 제공자에게만 전송됩니다.',
+
+    // 헤더/UI 컨트롤
+    'UI Language': 'UI 언어',
+    'Font': '글꼴',
+    'Decrease font size': '글꼴 크기 축소',
+    'Increase font size': '글꼴 크기 확대',
+    'GitHub Issues': 'GitHub Issues',
+
+    // 알고리즘 이름
+    'Smith-Waterman (Local Alignment)': 'Smith-Waterman（지역 정렬）',
+    'Coptic-Aware (Vowel & Mark Norm)': '콥트어 대응（모음 및 부호 정규화）',
+    'Levenshtein (Edit Distance)': 'Levenshtein（편집 거리）',
+    'Jaccard (Set Similarity)': 'Jaccard（집합 유사도）',
+    'Word-Level N-Gram': '단어 수준 N-그램',
+    'Character-Level N-Gram': '문자 수준 N-그램',
+    'FastText-like (Subword N-Grams)': 'FastText식（하위 단어 N-그램）',
+    'Word2Vec-like (Local Co-occurrence)': 'Word2Vec식（지역 공기）',
+
+    // N-그램 정의
+    'N-Gram Definition': 'N-그램 정의',
+    'N-Gram Definition Text': 'N-그램은 주어진 텍스트에서 n개의 연속된 항목의 시퀀스입니다. 문자 N-그램（예: n=4）은 공백이 없는 문자 체계나 철자 변이에서 유사성을 식별하는 데 적합합니다. 단어 N-그램（예: n=3）은 미세한 문자 불일치를 무시하고 구절 수준의 재사용에 초점을 맞춥니다.',
+
+    // 매치 갤러리
+    'matches ranked by similarity': '유사도 순으로 정렬된 일치',
+    'Rank': '순위',
+    'Best Match': '최고 일치',
+    'pos': '위치',
+    'Length': '길이',
+    'tokens': '토큰',
+
+    // 바닥글
+    'CC BY 4.0 License': 'CC BY 4.0 라이선스',
+
+    // 차트 컨트롤
+    'Zoom In': '확대',
+    'Zoom Out': '축소',
+    'Reset Zoom': '확대/축소 초기화',
+    'Download as SVG': 'SVG로 다운로드',
+    'Download as PNG': 'PNG로 다운로드',
+    'Help': '도움말',
+    'Exit Fullscreen': '전체 화면 종료',
+    'Press ESC or click to exit fullscreen': 'ESC 키를 누르거나 클릭하여 전체 화면 종료',
+
+    // DiffView
+    'Exact Match': '완전 일치',
+    'Diff': '차이',
+
+    // 글꼴 패밀리 옵션
+    'Serif (Default)': '세리프（기본）',
+    'Sans-Serif': '산세리프',
+    'Monospace': '고정폭',
+
+    // 기타
+    'chars': '문자',
+    'Click to rename': '클릭하여 이름 변경',
+    'Close': '닫기',
   },
 
   de: {
@@ -649,6 +874,62 @@ export const translations: Record<Language, Record<string, string>> = {
     // Datenschutzhinweis
     'Privacy Note: API keys are stored only in browser memory (never persisted) and sent only to the respective API provider.':
       'Datenschutzhinweis: API-Schlüssel werden nur im Browserspeicher gespeichert (nie persistent) und nur an den jeweiligen API-Anbieter gesendet.',
+
+    // Kopfzeile/UI-Steuerelemente
+    'UI Language': 'UI-Sprache',
+    'Font': 'Schrift',
+    'Decrease font size': 'Schriftgröße verkleinern',
+    'Increase font size': 'Schriftgröße vergrößern',
+    'GitHub Issues': 'GitHub Issues',
+
+    // Algorithmusnamen
+    'Smith-Waterman (Local Alignment)': 'Smith-Waterman (Lokale Ausrichtung)',
+    'Coptic-Aware (Vowel & Mark Norm)': 'Koptisch-Sensitiv (Vokal- & Zeichennorm.)',
+    'Levenshtein (Edit Distance)': 'Levenshtein (Editierdistanz)',
+    'Jaccard (Set Similarity)': 'Jaccard (Mengenähnlichkeit)',
+    'Word-Level N-Gram': 'Wortebene N-Gramm',
+    'Character-Level N-Gram': 'Zeichenebene N-Gramm',
+    'FastText-like (Subword N-Grams)': 'FastText-artig (Teilwort-N-Gramme)',
+    'Word2Vec-like (Local Co-occurrence)': 'Word2Vec-artig (Lokale Kookkurrenz)',
+
+    // N-Gramm-Definition
+    'N-Gram Definition': 'N-Gramm-Definition',
+    'N-Gram Definition Text': 'Ein N-Gramm ist eine zusammenhängende Folge von n Elementen aus einem gegebenen Text. Zeichen-N-Gramme (z.B. n=4) eignen sich hervorragend zur Erkennung von Ähnlichkeiten in Schriften ohne Leerzeichen oder mit Schreibvariationen. Wort-N-Gramme (z.B. n=3) konzentrieren sich auf phrasenhafte Wiederverwendung und ignorieren geringfügige Zeichenabweichungen.',
+
+    // Übereinstimmungs-Galerie
+    'matches ranked by similarity': 'Übereinstimmungen nach Ähnlichkeit sortiert',
+    'Rank': 'Rang',
+    'Best Match': 'Beste Übereinstimmung',
+    'pos': 'Pos.',
+    'Length': 'Länge',
+    'tokens': 'Tokens',
+
+    // Fußzeile
+    'CC BY 4.0 License': 'CC BY 4.0 Lizenz',
+
+    // Diagrammsteuerelemente
+    'Zoom In': 'Vergrößern',
+    'Zoom Out': 'Verkleinern',
+    'Reset Zoom': 'Zoom zurücksetzen',
+    'Download as SVG': 'Als SVG herunterladen',
+    'Download as PNG': 'Als PNG herunterladen',
+    'Help': 'Hilfe',
+    'Exit Fullscreen': 'Vollbild beenden',
+    'Press ESC or click to exit fullscreen': 'ESC drücken oder klicken um Vollbild zu beenden',
+
+    // DiffView
+    'Exact Match': 'Exakte Übereinstimmung',
+    'Diff': 'Differenz',
+
+    // Schriftfamilienoptionen
+    'Serif (Default)': 'Serifen (Standard)',
+    'Sans-Serif': 'Serifenlos',
+    'Monospace': 'Festbreite',
+
+    // Sonstiges
+    'chars': 'Zeichen',
+    'Click to rename': 'Klicken zum Umbenennen',
+    'Close': 'Schließen',
   },
 
   la: {
@@ -777,6 +1058,245 @@ export const translations: Record<Language, Record<string, string>> = {
     // Monitio Secretarii
     'Privacy Note: API keys are stored only in browser memory (never persisted) and sent only to the respective API provider.':
       'Monitio Secretarii: Claves API in memoria navigationis tantum conservantur (numquam persistuntur) et ad praecisam API providentem mittuntur.',
+
+    // Capitis / Moderationes UI
+    'UI Language': 'Lingua UI',
+    'Font': 'Typus Litterarum',
+    'Decrease font size': 'Magnitudinem litterarum minuere',
+    'Increase font size': 'Magnitudinem litterarum augere',
+    'GitHub Issues': 'GitHub Issues',
+
+    // Nomina Algorithmi
+    'Smith-Waterman (Local Alignment)': 'Smith-Waterman (Congruentia Localis)',
+    'Coptic-Aware (Vowel & Mark Norm)': 'Coptica-Peritus (Norm. Vocalium & Signorum)',
+    'Levenshtein (Edit Distance)': 'Levenshtein (Distantia Emendationis)',
+    'Jaccard (Set Similarity)': 'Jaccard (Similitudo Copiis)',
+    'Word-Level N-Gram': 'N-Gramma Verborum',
+    'Character-Level N-Gram': 'N-Gramma Litterarum',
+    'FastText-like (Subword N-Grams)': 'FastText-similis (N-Grammata Subverbalia)',
+    'Word2Vec-like (Local Co-occurrence)': 'Word2Vec-similis (Cooccurrentia Localis)',
+
+    // Definitio N-Grammatis
+    'N-Gram Definition': 'Definitio N-Grammatis',
+    'N-Gram Definition Text': 'N-Gramma est series continua n elementorum ex textu dato. N-grammata litterarum (e.g., n=4) praestant ad similitudines inveniendas in scripturis sine spatiis vel cum variationibus orthographicis. N-grammata verborum (e.g., n=3) ad usum phraseologicum iteratum attendunt, discrepantias litterarum minores neglegentes.',
+
+    // Peristasium Congruentiae
+    'matches ranked by similarity': 'congruentiae similitudine ordinatae',
+    'Rank': 'Ordo',
+    'Best Match': 'Optima Congruentia',
+    'pos': 'pos.',
+    'Length': 'Longitudo',
+    'tokens': 'symbola',
+
+    // Subscriptio
+    'CC BY 4.0 License': 'Licentia CC BY 4.0',
+
+    // Moderationes Graphus
+    'Zoom In': 'Amplificare',
+    'Zoom Out': 'Diminuere',
+    'Reset Zoom': 'Amplificationem Restituere',
+    'Download as SVG': 'SVG Deponere',
+    'Download as PNG': 'PNG Deponere',
+    'Help': 'Auxilium',
+    'Exit Fullscreen': 'Plenum Conspectum Relinquere',
+    'Press ESC or click to exit fullscreen': 'ESC premere vel clicare ad plenum conspectum relinquendum',
+
+    // DiffView
+    'Exact Match': 'Congruentia Exacta',
+    'Diff': 'Differentia',
+
+    // Optiones Familiae Litterarum
+    'Serif (Default)': 'Serifatus (Praefinitus)',
+    'Sans-Serif': 'Sine Serifis',
+    'Monospace': 'Aequi Spatii',
+
+    // Varia
+    'chars': 'litterae',
+    'Click to rename': 'Clicare ad renominandum',
+    'Close': 'Claudere',
+  },
+
+  it: {
+    // Intestazione
+    'ICoMa': 'ICoMa',
+    'Intertextuality Collation Machine': 'Macchina di Collazione dell\'Intertestualità',
+    'Engine Status': 'Stato del Motore',
+    'READY FOR COLLATION': 'PRONTO PER LA COLLAZIONE',
+
+    // Sezione Caricamento Rapido
+    'Quick Load': 'Caricamento Rapido',
+
+    // Etichette Testimone
+    'Witness α (Primary)': 'Testimone α (Primario)',
+    'Witness β (Comparandum)': 'Testimone β (Comparandum)',
+
+    // Placeholder Input Testo
+    'Insert primary text (Source)...': 'Inserire il testo primario (Sorgente)...',
+    'Insert comparative text (Target)...': 'Inserire il testo comparativo (Obiettivo)...',
+
+    // Sezione Configurazione
+    'Collation Parameters': 'Parametri di Collazione',
+    'Analysis Algorithm': 'Algoritmo di Analisi',
+    'Similarity Threshold': 'Soglia di Similarità',
+    'N-Size / Window Size': 'N-Dimensione / Dimensione Finestra',
+
+    // Opzioni Algoritmo Analisi
+    'English (Text Reuse/Plagiarism)': 'Riuso Testuale / Plagio',
+
+    // Pulsanti
+    'RUN COLLATION ENGINE': 'AVVIA IL MOTORE DI COLLAZIONE',
+    'PROCESSING LARGE DATASET...': 'ELABORAZIONE DATASET DI GRANDI DIMENSIONI...',
+
+    // Etichette Statistiche
+    'Mean Similarity': 'Similarità Media',
+    'Reuse Coverage': 'Copertura di Riuso',
+    'Alignments': 'Allineamenti',
+    'Unique N-Grams': 'N-Grammi Unici',
+    'Total Token Count': 'Conteggio Totale Token',
+
+    // Descrizioni Statistiche
+    'The average similarity score across all detected matches. High values (>90%) indicate verbatim quotations, while lower values suggest paraphrasing or textual evolution.':
+      'Il punteggio medio di similarità tra tutte le corrispondenze rilevate. Valori elevati (>90%) indicano citazioni letterali, mentre valori inferiori suggeriscono parafrasi o evoluzione testuale.',
+    'The percentage of the total text length occupied by detected reuses. A high coverage implies that one witness is largely derived from or identical to the other.':
+      'La percentuale della lunghezza totale del testo occupata dai riusi rilevati. Un\'alta copertura implica che un testimone è in gran parte derivato dall\'altro o ad esso identico.',
+    'The count of distinct matching sequences. If a specific phrase is reused 10 times, it counts as 10 alignments but only 1 unique N-gram.':
+      'Il conteggio delle sequenze corrispondenti distinte. Se una frase specifica viene riutilizzata 10 volte, conta come 10 allineamenti ma solo 1 N-gramma unico.',
+    'Unlike "Alignments", this metric deduplicates the matches. If a specific phrase is reused 10 times, it counts as 10 alignments but only 1 unique N-gram. A large difference between Alignments and Unique N-Grams indicates highly repetitive formulaic language.':
+      'A differenza degli "Allineamenti", questa metrica elimina i duplicati. Se una frase specifica viene riutilizzata 10 volte, conta come 10 allineamenti ma solo 1 N-gramma unico. Una grande differenza tra Allineamenti e N-Grammi Unici indica un linguaggio formulaico altamente ripetitivo.',
+    'This helps contextualize the "Reuse Coverage" metric. If Witness α is much larger than Witness β, a 100% coverage of β might only represent a 5% coverage of α.':
+      'Questo aiuta a contestualizzare la metrica "Copertura di Riuso". Se il Testimone α è molto più grande del Testimone β, una copertura del 100% di β potrebbe rappresentare solo il 5% della copertura di α.',
+
+    // Titoli Visualizzazione
+    'Macro-Level Alignment Flow': 'Flusso di Allineamento Macro',
+    'Match Gallery': 'Galleria delle Corrispondenze',
+    'Position Correspondence (Heatmap)': 'Corrispondenza Posizionale (Mappa di Calore)',
+    'Similarity Distribution': 'Distribuzione della Similarità',
+    'Cluster View (Network Graph)': 'Vista Cluster (Grafo di Rete)',
+    'Witness Dispersion': 'Dispersione del Testimone',
+
+    // Descrizioni Visualizzazione
+    'The X-axis represents the position in Witness α, and the Y-axis represents the position in Witness β. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.':
+      'L\'asse X rappresenta la posizione nel Testimone α e l\'asse Y rappresenta la posizione nel Testimone β. Una linea diagonale perfetta indica una struttura identica. Cluster di punti fuori dalla diagonale indicano riarrangiamento strutturale o riuso localizzato.',
+    'Each coloured cell represents a detected match. The cell\'s position on the X-axis corresponds to where the match occurs in Witness α, and its Y-axis position corresponds to the location in Witness β. Colour intensity encodes similarity: warmer tones indicate higher similarity scores. Clicking a cell selects that match and highlights it across all visualizations.':
+      'Ogni cella colorata rappresenta una corrispondenza rilevata. La posizione della cella sull\'asse X corrisponde alla posizione della corrispondenza nel Testimone α, e la posizione sull\'asse Y corrisponde alla posizione nel Testimone β. L\'intensità del colore codifica la similarità: toni più caldi indicano punteggi di similarità più elevati. Cliccando una cella si seleziona la corrispondenza e la si evidenzia in tutte le visualizzazioni.',
+    'X-Axis: Witness α Position': 'Asse X: Posizione Testimone α',
+    'Y-Axis: Witness β Position': 'Asse Y: Posizione Testimone β',
+    'The horizontal axis represents the token position within Witness α (the primary text).':
+      'L\'asse orizzontale rappresenta la posizione del token nel Testimone α (il testo primario).',
+    'Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Witness α. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.':
+      'Ogni unità su questo asse corrisponde a un indice di token (parola o carattere, a seconda dell\'algoritmo selezionato) nel Testimone α. Una corrispondenza posizionata alla posizione 50 sull\'asse X significa che il segmento corrispondente inizia approssimativamente al 50° token del testo primario.',
+    'The vertical axis represents the token position within Witness β (the comparandum).':
+      'L\'asse verticale rappresenta la posizione del token nel Testimone β (il comparandum).',
+    'Each unit on this axis corresponds to a token index in Witness β. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.':
+      'Ogni unità su questo asse corrisponde a un indice di token nel Testimone β. Una corrispondenza posizionata alla posizione 30 sull\'asse Y significa che il segmento corrispondente inizia approssimativamente al 30° token del testo comparativo.',
+
+    // Galleria Corrispondenze
+    'TOP REUSES': 'PRINCIPALI RIUSI',
+    'No Matches Detected': 'Nessuna Corrispondenza Rilevata',
+    'Try lowering the threshold or increasing window size.': 'Provare a ridurre la soglia o aumentare la dimensione della finestra.',
+
+    // Sezione Analisi Intertestualità con IA
+    'AI Intertextuality Analysis': 'Analisi dell\'Intertestualità con IA',
+    'Multi-Model Citation, Allusion & Echo Detection': 'Rilevamento Multi-Modello di Citazioni, Allusioni ed Echi',
+    'Run AI Intertextuality Analysis': 'Esegui Analisi dell\'Intertestualità con IA',
+    'API Key': 'Chiave API',
+    'Model': 'Modello',
+    'Comparative View': 'Vista Comparativa',
+    'Scholarly Assessment': 'Valutazione Accademica',
+    'No AI Analysis Yet': 'Nessuna Analisi IA Ancora',
+    'Configure API keys and run analysis above.': 'Configurare le chiavi API ed eseguire l\'analisi sopra.',
+    'Show Configuration': 'Mostra Configurazione',
+    'Analyzing Intertextuality': 'Analizzando l\'Intertestualità',
+    'Intertextuality Classification Taxonomy': 'Tassonomia di Classificazione dell\'Intertestualità',
+    'Confidence': 'Confidenza',
+    'ext. source': 'fonte est.',
+    'Possible External Source': 'Possibile Fonte Esterna',
+    'No matches in this category.': 'Nessuna corrispondenza in questa categoria.',
+    'All Categories': 'Tutte le Categorie',
+    'matches': 'corrispondenze',
+    'Show Key': 'Mostra',
+    'Hide Key': 'Nascondi',
+    'Select Model': 'Seleziona Modello',
+    'Bug Report / Feature Request': 'Segnalazione Bug / Richiesta Funzionalità',
+
+    // Aiuto Soglia
+    'High Threshold (80% - 100%)': 'Soglia Alta (80% - 100%)',
+    'Medium Threshold (50% - 79%)': 'Soglia Media (50% - 79%)',
+    'Low Threshold (20% - 49%)': 'Soglia Bassa (20% - 49%)',
+
+    // Aiuto N-Size
+    'Larger N-Size (e.g., 5-10+)': 'N-Dimensione Maggiore (es. 5-10+)',
+    'Smaller N-Size (e.g., 1-4)': 'N-Dimensione Minore (es. 1-4)',
+
+    // Categorie Riuso IA
+    'Direct Quotation': 'Citazione Diretta',
+    'Paraphrased Reuse': 'Riuso Parafrasato',
+    'Structural Imitation': 'Imitazione Strutturale',
+    'Thematic Reuse': 'Riuso Tematico',
+
+    // Piè di Pagina
+    'Advanced Digital Humanities Collation Tool': 'Strumento Avanzato di Collazione per le Digital Humanities',
+    'Changelog': 'Registro delle Modifiche',
+
+    // Nota sulla Privacy
+    'Privacy Note: API keys are stored only in browser memory (never persisted) and sent only to the respective API provider.':
+      'Nota sulla privacy: le chiavi API sono memorizzate solo nella memoria del browser (mai persistite) e inviate solo al rispettivo fornitore API.',
+
+    // Controlli Intestazione/UI
+    'UI Language': 'Lingua UI',
+    'Font': 'Carattere',
+    'Decrease font size': 'Riduci Dimensione Carattere',
+    'Increase font size': 'Aumenta Dimensione Carattere',
+    'GitHub Issues': 'GitHub Issues',
+
+    // Nomi Algoritmi
+    'Smith-Waterman (Local Alignment)': 'Smith-Waterman (Allineamento Locale)',
+    'Coptic-Aware (Vowel & Mark Norm)': 'Consapevole del Copto (Normalizzazione Vocali & Segni)',
+    'Levenshtein (Edit Distance)': 'Levenshtein (Distanza di Modifica)',
+    'Jaccard (Set Similarity)': 'Jaccard (Similarità di Insieme)',
+    'Word-Level N-Gram': 'N-Gramma a Livello di Parola',
+    'Character-Level N-Gram': 'N-Gramma a Livello di Carattere',
+    'FastText-like (Subword N-Grams)': 'Simile a FastText (N-Grammi Subword)',
+    'Word2Vec-like (Local Co-occurrence)': 'Simile a Word2Vec (Co-occorrenza Locale)',
+
+    // Casella Informazioni N-Gramma
+    'N-Gram Definition': 'Definizione di N-Gramma',
+    'N-Gram Definition Text': 'Un N-Gramma è una sequenza continua di n elementi da un testo dato. Gli N-grammi di caratteri (ad es., n=4) sono eccellenti per identificare somiglianze in script senza spazi o con variazioni ortografiche. Gli N-grammi di parole (ad es., n=3) si concentrano sul riuso fraseologico ignorando leggeri errori di carattere.',
+
+    // Galleria Corrispondenze
+    'matches ranked by similarity': 'corrispondenze ordinate per similarità',
+    'Rank': 'Posizione',
+    'Best Match': 'Miglior Corrispondenza',
+    'pos': 'pos',
+    'Length': 'Lunghezza',
+    'tokens': 'token',
+
+    // Piè di Pagina
+    'CC BY 4.0 License': 'Licenza CC BY 4.0',
+
+    // Controlli Grafico
+    'Zoom In': 'Ingrandisci',
+    'Zoom Out': 'Riduci',
+    'Reset Zoom': 'Ripristina Zoom',
+    'Download as SVG': 'Scarica come SVG',
+    'Download as PNG': 'Scarica come PNG',
+    'Help': 'Aiuto',
+    'Exit Fullscreen': 'Esci da Schermo Intero',
+    'Press ESC or click to exit fullscreen': 'Premi ESC o fai clic per uscire dallo schermo intero',
+
+    // DiffView
+    'Exact Match': 'Corrispondenza Esatta',
+    'Diff': 'Differenza',
+
+    // Opzioni Famiglia Font
+    'Serif (Default)': 'Serif (Predefinito)',
+    'Sans-Serif': 'Sans-Serif',
+    'Monospace': 'Monospazio',
+
+    // Vario
+    'chars': 'caratteri',
+    'Click to rename': 'Fai clic per rinominare',
+    'Close': 'Chiudi',
   }
 };
 

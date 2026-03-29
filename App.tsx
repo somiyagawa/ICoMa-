@@ -86,10 +86,10 @@ const colorStyle = (colorClass?: string) => {
 // Helper to render localized help content
 const renderHelpContent = (topic: string, lang: Language): { title: string, content: React.ReactNode } | null => {
   const helpTopics = getHelpContent(lang);
-  const prosLabel = { en: 'Pros', ja: '長所', zh: '优点', ko: '장점', de: 'Vorteile', la: 'Commoditates' }[lang];
-  const consLabel = { en: 'Cons', ja: '短所', zh: '缺点', ko: '단점', de: 'Nachteile', la: 'Incommoda' }[lang];
-  const bestForLabel = { en: 'Best for', ja: '最適な用途', zh: '最适合', ko: '최적 용도', de: 'Am besten für', la: 'Optimum est' }[lang];
-  const tipLabel = { en: 'Pro Tip', ja: 'ヒント', zh: '提示', ko: '팁', de: 'Tipp', la: 'Consilium' }[lang];
+  const prosLabel = { en: 'Pros', ja: '長所', zh: '优点', ko: '장점', de: 'Vorteile', la: 'Commoditates', it: 'Vantaggi' }[lang];
+  const consLabel = { en: 'Cons', ja: '短所', zh: '缺点', ko: '단점', de: 'Nachteile', la: 'Incommoda', it: 'Svantaggi' }[lang];
+  const bestForLabel = { en: 'Best for', ja: '最適な用途', zh: '最适合', ko: '최적 용도', de: 'Am besten für', la: 'Optimum est', it: 'Ideale per' }[lang];
+  const tipLabel = { en: 'Pro Tip', ja: 'ヒント', zh: '提示', ko: '팁', de: 'Tipp', la: 'Consilium', it: 'Suggerimento' }[lang];
 
   if (topic === 'algorithm') {
     const algorithms = getAlgorithmHelp(lang);
@@ -317,7 +317,7 @@ const App: React.FC = () => {
           <div className="hidden lg:flex items-center gap-6">
              {/* Language Selector */}
              <div>
-                <div className="text-[10px] text-gray-400 uppercase font-sans mb-1">UI Language</div>
+                <div className="text-[10px] text-gray-400 uppercase font-sans mb-1">{t(lang, 'UI Language')}</div>
                 <select
                   value={lang}
                   onChange={e => setLang(e.target.value as Language)}
@@ -331,7 +331,7 @@ const App: React.FC = () => {
 
              {/* Font Controls */}
              <div>
-                <div className="text-[10px] text-gray-400 uppercase font-sans mb-1">Font</div>
+                <div className="text-[10px] text-gray-400 uppercase font-sans mb-1">{t(lang, 'Font')}</div>
                 <div className="flex items-center gap-1">
                   <select
                     value={fontFamily}
@@ -342,9 +342,9 @@ const App: React.FC = () => {
                       <option key={f.value} value={f.value} className="text-academic-blue bg-white">{f.label}</option>
                     ))}
                   </select>
-                  <button onClick={() => setFontSize(s => Math.max(10, s - 1))} className="bg-white/10 border border-white/20 text-white text-[11px] w-6 h-6 rounded-sm hover:bg-white/20 transition-colors flex items-center justify-center" title="Decrease font size">−</button>
+                  <button onClick={() => setFontSize(s => Math.max(10, s - 1))} className="bg-white/10 border border-white/20 text-white text-[11px] w-6 h-6 rounded-sm hover:bg-white/20 transition-colors flex items-center justify-center" title={t(lang, 'Decrease font size')}>−</button>
                   <span className="text-[10px] font-mono text-gray-300 w-7 text-center">{fontSize}</span>
-                  <button onClick={() => setFontSize(s => Math.min(24, s + 1))} className="bg-white/10 border border-white/20 text-white text-[11px] w-6 h-6 rounded-sm hover:bg-white/20 transition-colors flex items-center justify-center" title="Increase font size">+</button>
+                  <button onClick={() => setFontSize(s => Math.min(24, s + 1))} className="bg-white/10 border border-white/20 text-white text-[11px] w-6 h-6 rounded-sm hover:bg-white/20 transition-colors flex items-center justify-center" title={t(lang, 'Increase font size')}>+</button>
                 </div>
              </div>
 
@@ -361,7 +361,7 @@ const App: React.FC = () => {
                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
                  </svg>
-                 <span className="font-mono">GitHub Issues</span>
+                 <span className="font-mono">{t(lang, 'GitHub Issues')}</span>
                </div>
              </a>
 
@@ -397,11 +397,11 @@ const App: React.FC = () => {
                        onChange={(e) => setWitnessAlphaName(e.target.value)}
                        className="text-[11px] font-bold text-academic-blue tracking-wider bg-transparent border-b border-transparent hover:border-gray-300 focus:border-academic-blue focus:outline-none transition-colors px-1 py-0.5 min-w-0"
                        style={{ maxWidth: '200px' }}
-                       title="Click to rename Witness α"
+                       title={t(lang, 'Click to rename')}
                      />
                      <HelpButton topic="witnessAlpha" onClick={setActiveHelpModal} />
                    </div>
-                   <span className="text-[9px] text-gray-400 font-mono">{sourceText.length} chars</span>
+                   <span className="text-[9px] text-gray-400 font-mono">{sourceText.length} {t(lang, 'chars')}</span>
                 </div>
                 <textarea className="w-full h-40 p-4 font-coptic border border-gray-200 rounded-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-academic-gold/20 focus:border-academic-gold outline-none transition-all shadow-inner leading-relaxed" style={{ fontSize: `${fontSize}px` }} value={sourceText} onChange={(e) => setSourceText(e.target.value)} placeholder={t(lang, 'Insert primary text (Source)...')} dir="auto" />
               </div>
@@ -415,11 +415,11 @@ const App: React.FC = () => {
                        onChange={(e) => setWitnessBetaName(e.target.value)}
                        className="text-[11px] font-bold text-academic-blue tracking-wider bg-transparent border-b border-transparent hover:border-gray-300 focus:border-academic-blue focus:outline-none transition-colors px-1 py-0.5 min-w-0"
                        style={{ maxWidth: '200px' }}
-                       title="Click to rename Witness β"
+                       title={t(lang, 'Click to rename')}
                      />
                      <HelpButton topic="witnessBeta" onClick={setActiveHelpModal} />
                    </div>
-                   <span className="text-[9px] text-gray-400 font-mono">{targetText.length} chars</span>
+                   <span className="text-[9px] text-gray-400 font-mono">{targetText.length} {t(lang, 'chars')}</span>
                 </div>
                 <textarea className="w-full h-40 p-4 font-coptic border border-gray-200 rounded-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-academic-gold/20 focus:border-academic-gold outline-none transition-all shadow-inner leading-relaxed" style={{ fontSize: `${fontSize}px` }} value={targetText} onChange={(e) => setTargetText(e.target.value)} placeholder={t(lang, 'Insert comparative text (Target)...')} dir="auto" />
               </div>
@@ -437,14 +437,14 @@ const App: React.FC = () => {
                 <div>
                   <label className="block text-[11px] font-bold text-academic-blue mb-2 uppercase">{t(lang, 'Analysis Algorithm')}</label>
                   <select value={config.algorithm} onChange={(e) => setConfig({ ...config, algorithm: e.target.value as any })} className="w-full p-2.5 border border-gray-200 rounded-sm text-xs bg-white focus:ring-2 focus:ring-academic-gold/20 outline-none shadow-sm">
-                    <option value="smith-waterman">Smith-Waterman (Local Alignment)</option>
-                    <option value="coptic-aware">Coptic-Aware (Vowel & Mark Norm)</option>
-                    <option value="levenshtein">Levenshtein (Edit Distance)</option>
-                    <option value="jaccard">Jaccard (Set Similarity)</option>
-                    <option value="word-ngram">Word-Level N-Gram</option>
-                    <option value="char-ngram">Character-Level N-Gram</option>
-                    <option value="fasttext">FastText-like (Subword N-Grams)</option>
-                    <option value="word2vec">Word2Vec-like (Local Co-occurrence)</option>
+                    <option value="smith-waterman">{t(lang, 'Smith-Waterman (Local Alignment)')}</option>
+                    <option value="coptic-aware">{t(lang, 'Coptic-Aware (Vowel & Mark Norm)')}</option>
+                    <option value="levenshtein">{t(lang, 'Levenshtein (Edit Distance)')}</option>
+                    <option value="jaccard">{t(lang, 'Jaccard (Set Similarity)')}</option>
+                    <option value="word-ngram">{t(lang, 'Word-Level N-Gram')}</option>
+                    <option value="char-ngram">{t(lang, 'Character-Level N-Gram')}</option>
+                    <option value="fasttext">{t(lang, 'FastText-like (Subword N-Grams)')}</option>
+                    <option value="word2vec">{t(lang, 'Word2Vec-like (Local Co-occurrence)')}</option>
                   </select>
                 </div>
                 <div className="flex items-center gap-6">
@@ -477,12 +477,10 @@ const App: React.FC = () => {
             <div className="bg-academic-blue p-6 border border-academic-lightBlue rounded-sm shadow-md">
                <h3 className="text-xs font-bold text-academic-gold uppercase mb-3 tracking-widest flex items-center gap-2">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" fillRule="evenodd" clipRule="evenodd"></path></svg>
-                  N-Gram Definition
+                  {t(lang, 'N-Gram Definition')}
                </h3>
                <p className="text-[11px] leading-relaxed text-gray-300 font-sans italic">
-                 An <b>N-Gram</b> is a contiguous sequence of <i>n</i> items from a given text. 
-                 <b> Character N-grams</b> (e.g., n=4) are excellent for identifying similarities in scripts without spaces or with spelling variations. 
-                 <b> Word N-grams</b> (e.g., n=3) focus on phrasal reuse while ignoring minor character mismatches.
+                 {t(lang, 'N-Gram Definition Text')}
                </p>
             </div>
           </div>
@@ -572,7 +570,7 @@ const App: React.FC = () => {
                         </div>
                         {galleryFullscreen && (
                           <div className="flex items-center gap-4 mt-2 text-[10px] text-gray-500">
-                            <span className="font-mono">{sortedMatches.length} matches ranked by similarity</span>
+                            <span className="font-mono">{sortedMatches.length} {t(lang, 'matches ranked by similarity')}</span>
                             <div className="flex items-center gap-3">
                               <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full" style={{background:'#16a34a'}}></span> 95%+</span>
                               <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full" style={{background:'#2563eb'}}></span> 80-94%</span>
@@ -612,7 +610,7 @@ const App: React.FC = () => {
                                       </div>
                                       <div>
                                         <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
-                                          Rank #{idx + 1} {idx === 0 && '— Best Match'}{idx === 1 && '— 2nd'}{idx === 2 && '— 3rd'}
+                                          {t(lang, 'Rank')} #{idx + 1} {idx === 0 && `— ${t(lang, 'Best Match')}`}{idx === 1 && '— 2nd'}{idx === 2 && '— 3rd'}
                                         </span>
                                       </div>
                                     </div>
@@ -641,9 +639,9 @@ const App: React.FC = () => {
                                     />
                                     {/* Position info */}
                                     <div className="flex gap-4 mt-3 text-[9px] text-gray-400 font-mono">
-                                      <span>Witness α pos: {m.sourcePosition}</span>
-                                      <span>Witness β pos: {m.targetPosition}</span>
-                                      {m.length && <span>Length: {m.length} tokens</span>}
+                                      <span>{witnessAlphaName} {t(lang, 'pos')}: {m.sourcePosition}</span>
+                                      <span>{witnessBetaName} {t(lang, 'pos')}: {m.targetPosition}</span>
+                                      {m.length && <span>{t(lang, 'Length')}: {m.length} {t(lang, 'tokens')}</span>}
                                     </div>
                                   </div>
                                 </div>
@@ -668,7 +666,7 @@ const App: React.FC = () => {
                                 className={`group p-3 rounded border cursor-pointer transition-all duration-200 hover:shadow-md ${selectedMatch === m ? 'border-academic-red bg-academic-red/5 ring-1 ring-academic-red' : 'border-gray-200 bg-white hover:border-academic-gold'}`}
                               >
                                 <div className="flex justify-between items-center mb-2">
-                                  <span className="text-[9px] font-mono font-bold text-gray-400">Rank #{idx+1}</span>
+                                  <span className="text-[9px] font-mono font-bold text-gray-400">{t(lang, 'Rank')} #{idx+1}</span>
                                   <div className="flex items-center gap-2">
                                     <div className="h-1 w-12 bg-gray-100 rounded-full overflow-hidden">
                                       <div className="h-full bg-academic-gold" style={{ width: `${m.similarity}%` }}></div>
@@ -780,7 +778,7 @@ const App: React.FC = () => {
             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
               <h2 className="text-lg font-bold text-academic-blue font-serif tracking-tight flex items-center gap-2">
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                Changelog
+                {t(lang, 'Changelog')}
               </h2>
               <button onClick={() => setIsChangelogOpen(false)} className="text-gray-400 hover:text-academic-red transition-colors">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
