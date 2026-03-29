@@ -145,7 +145,7 @@ export const translations: Record<Language, Record<string, string>> = {
   ja: {
     // ヘッダー
     'ICoMa': 'ICoMa',
-    'Intertextuality Collation Machine': 'テキスト間性照合機',
+    'Intertextuality Collation Machine': '間テクスト性分析器',
     'Engine Status': 'エンジンステータス',
     'READY FOR COLLATION': '照合準備完了',
 
@@ -221,10 +221,10 @@ export const translations: Record<Language, Record<string, string>> = {
     'No Matches Detected': 'マッチが検出されませんでした',
     'Try lowering the threshold or increasing window size.': '閾値を下げるか、ウィンドウサイズを増やしてみてください。',
 
-    // AI テキスト間性分析セクション
-    'AI Intertextuality Analysis': 'AI テキスト間性分析',
+    // AI 間テクスト性分析セクション
+    'AI Intertextuality Analysis': 'AI 間テクスト性分析',
     'Multi-Model Citation, Allusion & Echo Detection': 'マルチモデル引用・暗示・反響検出',
-    'Run AI Intertextuality Analysis': 'AI テキスト間性分析を実行',
+    'Run AI Intertextuality Analysis': 'AI 間テクスト性分析を実行',
     'API Key': 'API キー',
     'Model': 'モデル',
     'Comparative View': '比較ビュー',
@@ -232,8 +232,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'No AI Analysis Yet': 'AI分析がまだ実行されていません',
     'Configure API keys and run analysis above.': '上記でAPIキーを設定して分析を実行してください。',
     'Show Configuration': '設定を表示',
-    'Analyzing Intertextuality': 'テキスト間性を分析中',
-    'Intertextuality Classification Taxonomy': 'テキスト間性分類タクソノミー',
+    'Analyzing Intertextuality': '間テクスト性を分析中',
+    'Intertextuality Classification Taxonomy': '間テクスト性分類タクソノミー',
     'Confidence': '確信度',
     'ext. source': '外部ソース',
     'Possible External Source': '外部ソースの可能性',

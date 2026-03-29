@@ -9,7 +9,7 @@ import DispersionPlot from './components/DispersionPlot';
 import AlignmentFlow from './components/AlignmentFlow';
 import SimilarityHistogram from './components/SimilarityHistogram';
 import AIAnalysisPanel from './components/AIAnalysisPanel';
-import ChartToolbar, { ZoomControls } from './components/ChartControls';
+import ChartToolbar, { ZoomControls, FullscreenButton } from './components/ChartControls';
 import { getHelpContent, getAlgorithmHelp, getIntertextualityCategoryHelp } from './services/helpContent';
 import DiffView from './components/DiffView';
 
@@ -225,6 +225,8 @@ const App: React.FC = () => {
   const networkRef = useRef<HTMLDivElement>(null);
   const dispersionRef = useRef<HTMLDivElement>(null);
   const matchGalleryScrollRef = useRef<HTMLDivElement>(null);
+  const matchGalleryContainerRef = useRef<HTMLDivElement>(null);
+  const [galleryFullscreen, setGalleryFullscreen] = useState(false);
 
   const performAnalysis = useCallback(() => {
     if (!sourceText || !targetText) return;
@@ -243,6 +245,15 @@ const App: React.FC = () => {
     if (!result) return [];
     return [...result.matches].sort((a, b) => b.similarity - a.similarity);
   }, [result]);
+
+  // Track fullscreen state for Match Gallery
+  useEffect(() => {
+    const handler = () => {
+      setGalleryFullscreen(!!document.fullscreenElement && document.fullscreenElement === matchGalleryContainerRef.current);
+    };
+    document.addEventListener('fullscreenchange', handler);
+    return () => document.removeEventListener('fullscreenchange', handler);
+  }, []);
 
   // Scroll Match Gallery to the selected match
   useEffect(() => {
@@ -528,48 +539,141 @@ const App: React.FC = () => {
               <div className="xl:col-span-5 flex flex-col gap-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[420px]">
                    {/* Match Gallery (Sidebar) */}
-                   <div className="bg-white border border-gray-200 rounded-sm shadow-lg flex flex-col overflow-hidden max-h-[420px]">
-                      <div className="bg-academic-paper px-4 py-3 border-b border-gray-200 flex justify-between items-center shrink-0">
-                        <span className="text-[11px] font-bold uppercase text-academic-blue tracking-widest flex items-center">
-                          {t(lang, 'Match Gallery')}
-                          <HelpButton topic="matchGallery" onClick={setActiveHelpModal} />
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <ZoomControls zoom={galleryZoom} onZoomChange={setGalleryZoom} />
-                          <div className="px-2 py-0.5 bg-academic-gold/20 text-academic-gold text-[9px] font-bold rounded">{t(lang, 'TOP REUSES')}</div>
+                   <div ref={matchGalleryContainerRef} className={`bg-white border border-gray-200 rounded-sm shadow-lg flex flex-col overflow-hidden ${galleryFullscreen ? '' : 'max-h-[420px]'}`} style={galleryFullscreen ? { background: '#f8f7f4' } : undefined}>
+                      <div className="bg-academic-paper px-4 py-3 border-b border-gray-200 shrink-0">
+                        <div className="flex justify-between items-center">
+                          <span className={`font-bold uppercase text-academic-blue tracking-widest flex items-center ${galleryFullscreen ? 'text-base' : 'text-[11px]'}`}>
+                            {t(lang, 'Match Gallery')}
+                            <HelpButton topic="matchGallery" onClick={setActiveHelpModal} />
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <ZoomControls zoom={galleryZoom} onZoomChange={setGalleryZoom} />
+                            <div className="w-px h-3 bg-gray-200"></div>
+                            <FullscreenButton containerRef={matchGalleryContainerRef} />
+                          </div>
                         </div>
-                      </div>
-                      <div ref={matchGalleryScrollRef} className="flex-1 overflow-y-auto p-3 space-y-3 custom-scrollbar bg-gray-50/20" style={{ transform: `scale(${galleryZoom})`, transformOrigin: 'top left', width: galleryZoom !== 1 ? `${100 / galleryZoom}%` : undefined }}>
-                        {sortedMatches.map((m, idx) => (
-                          <div
-                            key={idx}
-                            data-match-index={idx}
-                            onClick={() => setSelectedMatch(m)}
-                            className={`group p-3 rounded border cursor-pointer transition-all duration-200 hover:shadow-md ${selectedMatch === m ? 'border-academic-red bg-academic-red/5 ring-1 ring-academic-red' : 'border-gray-200 bg-white hover:border-academic-gold'}`}
-                          >
-                            <div className="flex justify-between items-center mb-2">
-                              <span className="text-[9px] font-mono font-bold text-gray-400">Rank #{idx+1}</span>
-                              <div className="flex items-center gap-2">
-                                <div className="h-1 w-12 bg-gray-100 rounded-full overflow-hidden">
-                                  <div className="h-full bg-academic-gold" style={{ width: `${m.similarity}%` }}></div>
-                                </div>
-                                <span className={`text-[11px] font-bold ${m.similarity >= 95 ? 'text-green-600' : (m.similarity >= 80 ? 'text-blue-600' : 'text-academic-gold')}`}>{m.similarity.toFixed(1)}%</span>
-                              </div>
+                        {galleryFullscreen && (
+                          <div className="flex items-center gap-4 mt-2 text-[10px] text-gray-500">
+                            <span className="font-mono">{sortedMatches.length} matches ranked by similarity</span>
+                            <div className="flex items-center gap-3">
+                              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full" style={{background:'#16a34a'}}></span> 95%+</span>
+                              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full" style={{background:'#2563eb'}}></span> 80-94%</span>
+                              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full" style={{background:'#b45309'}}></span> &lt;80%</span>
                             </div>
-                            <DiffView
-                              source={m.sourcePhrase}
-                              target={m.targetPhrase}
-                              similarity={m.similarity}
-                              fontSize={Math.max(10, fontSize - 2)}
-                            />
                           </div>
-                        ))}
-                        {sortedMatches.length === 0 && (
-                          <div className="h-full flex flex-col items-center justify-center text-gray-300 py-20 px-10 text-center">
-                            <svg className="w-12 h-12 mb-4 opacity-20" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                            <p className="text-xs uppercase font-bold tracking-widest">{t(lang, 'No Matches Detected')}</p>
-                            <p className="text-[10px] mt-1">{t(lang, 'Try lowering the threshold or increasing window size.')}</p>
+                        )}
+                      </div>
+                      <div ref={matchGalleryScrollRef} className={`flex-1 overflow-y-auto custom-scrollbar bg-gray-50/20 ${galleryFullscreen ? 'p-6' : 'p-3 space-y-3'}`} style={!galleryFullscreen ? { transform: `scale(${galleryZoom})`, transformOrigin: 'top left', width: galleryZoom !== 1 ? `${100 / galleryZoom}%` : undefined } : { transform: `scale(${galleryZoom})`, transformOrigin: 'top center', width: galleryZoom !== 1 ? `${100 / galleryZoom}%` : undefined, margin: '0 auto' }}>
+                        {galleryFullscreen ? (
+                          /* === FULLSCREEN RANKING VIEW === */
+                          <div className="max-w-5xl mx-auto space-y-4">
+                            {sortedMatches.map((m, idx) => {
+                              const isTop3 = idx < 3;
+                              const medalColors = ['#FFD700', '#C0C0C0', '#CD7F32'];
+                              const selected = selectedMatch === m;
+                              return (
+                                <div
+                                  key={idx}
+                                  data-match-index={idx}
+                                  onClick={() => setSelectedMatch(m)}
+                                  className={`rounded-lg border-2 cursor-pointer transition-all duration-200 hover:shadow-lg ${selected ? 'border-red-500 ring-2 ring-red-300 shadow-lg' : 'border-gray-200 hover:border-academic-gold'}`}
+                                  style={{ background: selected ? '#fef2f2' : '#fff' }}
+                                >
+                                  {/* Rank header bar */}
+                                  <div className="flex items-center justify-between px-5 py-3 border-b" style={{ borderColor: selected ? '#fecaca' : '#f3f4f6', background: isTop3 ? `${medalColors[idx]}11` : undefined }}>
+                                    <div className="flex items-center gap-3">
+                                      {/* Rank badge */}
+                                      <div className="flex items-center justify-center rounded-full font-bold text-white shrink-0" style={{
+                                        width: isTop3 ? '36px' : '28px',
+                                        height: isTop3 ? '36px' : '28px',
+                                        fontSize: isTop3 ? '15px' : '11px',
+                                        background: isTop3 ? medalColors[idx] : '#9ca3af',
+                                        boxShadow: isTop3 ? `0 2px 8px ${medalColors[idx]}66` : undefined,
+                                      }}>
+                                        {idx + 1}
+                                      </div>
+                                      <div>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                                          Rank #{idx + 1} {idx === 0 && '— Best Match'}{idx === 1 && '— 2nd'}{idx === 2 && '— 3rd'}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    {/* Similarity score + bar */}
+                                    <div className="flex items-center gap-3">
+                                      <div className="w-32 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                        <div className="h-full rounded-full" style={{
+                                          width: `${m.similarity}%`,
+                                          background: m.similarity >= 95 ? '#16a34a' : m.similarity >= 80 ? '#2563eb' : '#b45309'
+                                        }}></div>
+                                      </div>
+                                      <span className="font-mono font-bold text-lg" style={{
+                                        color: m.similarity >= 95 ? '#16a34a' : m.similarity >= 80 ? '#2563eb' : '#b45309'
+                                      }}>
+                                        {m.similarity.toFixed(1)}%
+                                      </span>
+                                    </div>
+                                  </div>
+                                  {/* Diff content */}
+                                  <div className="px-5 py-4">
+                                    <DiffView
+                                      source={m.sourcePhrase}
+                                      target={m.targetPhrase}
+                                      similarity={m.similarity}
+                                      fontSize={Math.max(12, fontSize)}
+                                    />
+                                    {/* Position info */}
+                                    <div className="flex gap-4 mt-3 text-[9px] text-gray-400 font-mono">
+                                      <span>Witness α pos: {m.sourcePosition}</span>
+                                      <span>Witness β pos: {m.targetPosition}</span>
+                                      {m.length && <span>Length: {m.length} tokens</span>}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                            {sortedMatches.length === 0 && (
+                              <div className="flex flex-col items-center justify-center text-gray-300 py-32 text-center">
+                                <svg className="w-16 h-16 mb-6 opacity-20" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                <p className="text-base uppercase font-bold tracking-widest">{t(lang, 'No Matches Detected')}</p>
+                                <p className="text-sm mt-2">{t(lang, 'Try lowering the threshold or increasing window size.')}</p>
+                              </div>
+                            )}
                           </div>
+                        ) : (
+                          /* === NORMAL (COMPACT) VIEW === */
+                          <>
+                            {sortedMatches.map((m, idx) => (
+                              <div
+                                key={idx}
+                                data-match-index={idx}
+                                onClick={() => setSelectedMatch(m)}
+                                className={`group p-3 rounded border cursor-pointer transition-all duration-200 hover:shadow-md ${selectedMatch === m ? 'border-academic-red bg-academic-red/5 ring-1 ring-academic-red' : 'border-gray-200 bg-white hover:border-academic-gold'}`}
+                              >
+                                <div className="flex justify-between items-center mb-2">
+                                  <span className="text-[9px] font-mono font-bold text-gray-400">Rank #{idx+1}</span>
+                                  <div className="flex items-center gap-2">
+                                    <div className="h-1 w-12 bg-gray-100 rounded-full overflow-hidden">
+                                      <div className="h-full bg-academic-gold" style={{ width: `${m.similarity}%` }}></div>
+                                    </div>
+                                    <span className={`text-[11px] font-bold ${m.similarity >= 95 ? 'text-green-600' : (m.similarity >= 80 ? 'text-blue-600' : 'text-academic-gold')}`}>{m.similarity.toFixed(1)}%</span>
+                                  </div>
+                                </div>
+                                <DiffView
+                                  source={m.sourcePhrase}
+                                  target={m.targetPhrase}
+                                  similarity={m.similarity}
+                                  fontSize={Math.max(10, fontSize - 2)}
+                                />
+                              </div>
+                            ))}
+                            {sortedMatches.length === 0 && (
+                              <div className="h-full flex flex-col items-center justify-center text-gray-300 py-20 px-10 text-center">
+                                <svg className="w-12 h-12 mb-4 opacity-20" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                <p className="text-xs uppercase font-bold tracking-widest">{t(lang, 'No Matches Detected')}</p>
+                                <p className="text-[10px] mt-1">{t(lang, 'Try lowering the threshold or increasing window size.')}</p>
+                              </div>
+                            )}
+                          </>
                         )}
                       </div>
                    </div>

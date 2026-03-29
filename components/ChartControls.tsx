@@ -235,20 +235,20 @@ export const FullscreenButton: React.FC<FullscreenButtonProps> = ({ containerRef
         {isFullscreen ? <CollapseIcon /> : <ExpandIcon />}
         {isFullscreen ? 'Exit' : 'Full'}
       </button>
-      {/* Prominent floating exit bar when in fullscreen */}
+      {/* Prominent floating exit bar at bottom when in fullscreen */}
       {isFullscreen && (
         <div
           style={{
             position: 'fixed',
-            top: 0,
+            bottom: 0,
             left: 0,
             right: 0,
             zIndex: 2147483647,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            padding: '6px 0',
-            background: 'linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.0) 100%)',
+            padding: '10px 0',
+            background: 'linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.0) 100%)',
             pointerEvents: 'none',
           }}
         >
@@ -259,17 +259,17 @@ export const FullscreenButton: React.FC<FullscreenButtonProps> = ({ containerRef
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              padding: '8px 24px',
+              padding: '10px 32px',
               background: '#c9302c',
               color: '#fff',
               border: 'none',
-              borderRadius: '6px',
-              fontSize: '13px',
+              borderRadius: '8px',
+              fontSize: '14px',
               fontWeight: 700,
               letterSpacing: '0.05em',
               textTransform: 'uppercase' as const,
               cursor: 'pointer',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+              boxShadow: '0 -2px 20px rgba(0,0,0,0.4)',
             }}
             title="Exit Fullscreen (Esc)"
           >
