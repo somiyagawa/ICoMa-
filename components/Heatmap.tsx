@@ -96,27 +96,30 @@ const Heatmap: React.FC<HeatmapProps> = ({ matches, sourceLength, targetLength, 
   }, [selectedMatch]);
 
   return (
-    <div ref={wrapperRef} className="bg-white border border-gray-200 rounded-sm shadow-sm flex flex-col overflow-hidden max-h-[420px]">
-      {/* Header row 1: title */}
-      <div className="bg-academic-paper px-4 pt-3 pb-1 border-b border-gray-200 shrink-0">
-        <div className="flex items-center justify-between mb-1.5">
+    <div ref={wrapperRef} className="bg-white border border-gray-200 rounded-sm shadow-sm flex flex-col overflow-hidden max-h-[460px]">
+      <div className="bg-academic-paper px-4 pt-3 pb-2 border-b border-gray-200 shrink-0 space-y-1.5">
+        {/* Row 1: Title + Help */}
+        <div className="flex items-center">
           <span className="text-[11px] font-bold uppercase text-academic-blue tracking-widest flex items-center">
             {t(lang, 'Position Correspondence (Heatmap)')}
             {onHelpClick && <HelpButton topic="heatmapView" onClick={onHelpClick} />}
           </span>
         </div>
-        {/* Header row 2: axis labels + toolbar */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center">
-              <span className="text-[8px] font-bold uppercase text-gray-400 tracking-wider">{t(lang, 'Y-Axis: Witness β Position')}</span>
-              {onHelpClick && <HelpButton topic="heatmapAxisBeta" onClick={onHelpClick} />}
-            </div>
-            <div className="flex items-center">
-              <span className="text-[8px] font-bold uppercase text-gray-400 tracking-wider">{t(lang, 'X-Axis: Witness α Position')}</span>
-              {onHelpClick && <HelpButton topic="heatmapAxisAlpha" onClick={onHelpClick} />}
-            </div>
+        {/* Row 2: Axis legends */}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center">
+            <span className="inline-block w-2 h-2 rounded-sm mr-1" style={{ backgroundColor: '#34495e' }} />
+            <span className="text-[8px] font-bold uppercase text-gray-400 tracking-wider">{t(lang, 'X-Axis: Witness α Position')}</span>
+            {onHelpClick && <HelpButton topic="heatmapAxisAlpha" onClick={onHelpClick} />}
           </div>
+          <div className="flex items-center">
+            <span className="inline-block w-2 h-2 rounded-sm mr-1" style={{ backgroundColor: '#8b7355' }} />
+            <span className="text-[8px] font-bold uppercase text-gray-400 tracking-wider">{t(lang, 'Y-Axis: Witness β Position')}</span>
+            {onHelpClick && <HelpButton topic="heatmapAxisBeta" onClick={onHelpClick} />}
+          </div>
+        </div>
+        {/* Row 3: Toolbar (zoom / download / fullscreen) */}
+        <div className="flex items-center justify-end">
           <ChartToolbar containerRef={wrapperRef} filename="icoma-heatmap" />
         </div>
       </div>
