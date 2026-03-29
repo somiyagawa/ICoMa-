@@ -34,72 +34,173 @@ export interface ReportData {
 // ── Chart capture ────────────────────────────────────────────────────
 
 /**
- * Captures an SVG inside a container DOM element as a PNG data URL.
- * Works by serializing the SVG, rendering it onto a Canvas, and exporting.
+ * Recursively inline computed styles from a live SVG onto a cloned SVG.
+ * This is necessary because cloneNode does not preserve computed styles,
+ * and when we serialize the SVG for off-screen rendering, CSS won't apply.
+ */
+function inlineAllStyles(source: Element, target: Element): void {
+  // Only inline styles that were explicitly set (via D3 .style() or CSS classes).
+  // We compare computed style against a blank SVG element to detect non-default values.
+  // This avoids overwriting correct SVG attribute-based styling with bogus defaults.
+  const SVG_STYLE_PROPS = [
+    'fill', 'fill-opacity', 'fill-rule',
+    'stroke', 'stroke-width', 'stroke-opacity', 'stroke-dasharray',
+    'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit',
+    'opacity', 'visibility', 'display',
+    'font-family', 'font-size', 'font-weight', 'font-style',
+    'text-anchor', 'dominant-baseline', 'text-decoration',
+    'color', 'letter-spacing', 'word-spacing',
+  ];
+  try {
+    const computed = window.getComputedStyle(source);
+    const sourceEl = source as SVGElement | HTMLElement;
+    for (const prop of SVG_STYLE_PROPS) {
+      // Only inline if the source has this property set inline or via stylesheet
+      // Check inline style first (highest priority)
+      const inlineVal = sourceEl.style?.getPropertyValue(prop);
+      if (inlineVal) {
+        (target as SVGElement).style.setProperty(prop, inlineVal);
+        continue;
+      }
+      // Check if there's an SVG attribute for this property (e.g., fill="red")
+      const attrVal = source.getAttribute(prop);
+      if (attrVal) {
+        // SVG attribute already cloned by cloneNode, no need to inline as CSS
+        continue;
+      }
+      // For text elements, always inline font and fill from computed (CSS class-based)
+      const tagName = source.tagName.toLowerCase();
+      if (tagName === 'text' || tagName === 'tspan') {
+        const val = computed.getPropertyValue(prop);
+        if (val && val !== 'auto' && val !== 'normal' && val !== 'inherit') {
+          (target as SVGElement).style.setProperty(prop, val);
+        }
+      }
+    }
+  } catch { /* some elements may not support getComputedStyle */ }
+
+  const srcChildren = source.children;
+  const tgtChildren = target.children;
+  for (let i = 0; i < srcChildren.length && i < tgtChildren.length; i++) {
+    inlineAllStyles(srcChildren[i], tgtChildren[i]);
+  }
+}
+
+/**
+ * Captures an SVG inside a container as a PNG data URL.
+ *
+ * Strategy:
+ * 1. Find the first <svg> descendant of the container
+ * 2. Deep-clone it, inline all computed styles, set explicit pixel dimensions
+ * 3. Serialize with XMLSerializer → encode as a data: URI (using encodeURIComponent
+ *    for full Unicode safety — no btoa/atob needed)
+ * 4. Load into an off-screen Image, draw onto a 2× Canvas, export as PNG
  */
 export async function captureChartFromRef(
   container: HTMLElement,
   label: string,
   scaleFactor = 2,
 ): Promise<ChartImage | null> {
-  const svg = container.querySelector('svg');
-  if (!svg) return null;
-
-  // Clone SVG to avoid mutating the DOM
-  const clone = svg.cloneNode(true) as SVGSVGElement;
-
-  // Ensure the clone has explicit dimensions
-  const bbox = svg.getBoundingClientRect();
-  const w = bbox.width || parseInt(svg.getAttribute('width') || '800');
-  const h = bbox.height || parseInt(svg.getAttribute('height') || '400');
-  clone.setAttribute('width', String(w));
-  clone.setAttribute('height', String(h));
-  clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-
-  // Inline computed styles for all elements (so they render correctly off-DOM)
-  const inlineStyles = (source: Element, target: Element) => {
-    const computed = window.getComputedStyle(source);
-    const important = ['font-family', 'font-size', 'font-weight', 'fill', 'stroke',
-      'stroke-width', 'opacity', 'text-anchor', 'dominant-baseline'];
-    for (const prop of important) {
-      (target as HTMLElement).style.setProperty(prop, computed.getPropertyValue(prop));
+  try {
+    // 1. Locate SVG
+    const svg = container.querySelector('svg');
+    if (!svg) {
+      console.warn(`[ICoMa Report] No <svg> found for "${label}"`);
+      return null;
     }
-    const srcChildren = source.children;
-    const tgtChildren = target.children;
-    for (let i = 0; i < srcChildren.length; i++) {
-      if (tgtChildren[i]) inlineStyles(srcChildren[i], tgtChildren[i]);
+
+    // 2. Measure actual rendered size (works even if element is off-viewport)
+    const rect = svg.getBoundingClientRect();
+    let w = Math.round(rect.width);
+    let h = Math.round(rect.height);
+
+    // Fallback to explicit attributes if getBoundingClientRect returns 0
+    if (w <= 0) w = parseInt(svg.getAttribute('width') || '0') || 800;
+    if (h <= 0) h = parseInt(svg.getAttribute('height') || '0') || 400;
+
+    // Also check viewBox as a dimension source
+    if ((w <= 0 || h <= 0) && svg.getAttribute('viewBox')) {
+      const vb = svg.getAttribute('viewBox')!.split(/[\s,]+/).map(Number);
+      if (vb.length === 4) { w = w || Math.round(vb[2]); h = h || Math.round(vb[3]); }
     }
-  };
-  inlineStyles(svg, clone);
 
-  // Add white background
-  const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  bg.setAttribute('width', '100%');
-  bg.setAttribute('height', '100%');
-  bg.setAttribute('fill', 'white');
-  clone.insertBefore(bg, clone.firstChild);
+    console.log(`[ICoMa Report] "${label}": SVG found, measured ${w}×${h}px`);
 
-  const serializer = new XMLSerializer();
-  const svgString = serializer.serializeToString(clone);
-  const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-  const url = URL.createObjectURL(svgBlob);
+    // 3. Clone and prepare
+    const clone = svg.cloneNode(true) as SVGSVGElement;
 
-  return new Promise<ChartImage | null>((resolve) => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = w * scaleFactor;
-      canvas.height = h * scaleFactor;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) { URL.revokeObjectURL(url); resolve(null); return; }
-      ctx.scale(scaleFactor, scaleFactor);
-      ctx.drawImage(img, 0, 0, w, h);
-      URL.revokeObjectURL(url);
-      resolve({ label, dataUrl: canvas.toDataURL('image/png'), width: w, height: h });
-    };
-    img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
-    img.src = url;
-  });
+    // Force absolute pixel dimensions (replaces "100%", percentage, etc.)
+    clone.setAttribute('width', String(w));
+    clone.setAttribute('height', String(h));
+    // Ensure viewBox is present for proper scaling
+    if (!clone.getAttribute('viewBox')) {
+      clone.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    }
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+
+    // Inline computed styles for off-DOM rendering
+    inlineAllStyles(svg, clone);
+
+    // Insert white background
+    const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    bg.setAttribute('width', String(w));
+    bg.setAttribute('height', String(h));
+    bg.setAttribute('fill', 'white');
+    clone.insertBefore(bg, clone.firstChild);
+
+    // 4. Serialize → data URI (encodeURIComponent is Unicode-safe, no btoa needed)
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(clone);
+    const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+
+    // 5. Render to Canvas
+    return new Promise<ChartImage | null>((resolve) => {
+      const img = new Image();
+      // Timeout guard: some browsers silently fail without firing onload/onerror
+      const timer = setTimeout(() => {
+        console.warn(`[ICoMa Report] Image load timeout for "${label}" (5s)`);
+        resolve(null);
+      }, 5000);
+      img.onload = () => {
+        clearTimeout(timer);
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = w * scaleFactor;
+          canvas.height = h * scaleFactor;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) { console.error(`[ICoMa Report] No 2D context for "${label}"`); resolve(null); return; }
+
+          // White background on canvas (in case SVG bg fails)
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.scale(scaleFactor, scaleFactor);
+          ctx.drawImage(img, 0, 0, w, h);
+
+          const pngDataUrl = canvas.toDataURL('image/png');
+          if (!pngDataUrl || pngDataUrl === 'data:,') {
+            console.error(`[ICoMa Report] Canvas toDataURL returned empty for "${label}"`);
+            resolve(null);
+            return;
+          }
+          console.log(`[ICoMa Report] ✓ Captured "${label}": ${w}×${h}px → PNG (${Math.round(pngDataUrl.length / 1024)}KB)`);
+          resolve({ label, dataUrl: pngDataUrl, width: w, height: h });
+        } catch (err) {
+          console.error(`[ICoMa Report] Canvas export error for "${label}":`, err);
+          resolve(null);
+        }
+      };
+      img.onerror = (ev) => {
+        clearTimeout(timer);
+        console.error(`[ICoMa Report] Image load error for "${label}". DataURL length: ${dataUrl.length}`, ev);
+        resolve(null);
+      };
+      img.src = dataUrl;
+    });
+  } catch (err) {
+    console.error(`[ICoMa Report] captureChartFromRef exception for "${label}":`, err);
+    return null;
+  }
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────
@@ -235,10 +336,16 @@ export async function generatePDF(data: ReportData): Promise<Blob> {
       curY += 4;
 
       try {
+        // Validate data URL before adding
+        if (!chart.dataUrl || !chart.dataUrl.startsWith('data:image/png')) {
+          throw new Error('Invalid PNG data URL');
+        }
         doc.addImage(chart.dataUrl, 'PNG', 14, curY, imgW, imgH);
+        console.log(`[ICoMa PDF] Embedded "${chart.label}" at y=${curY}, size=${imgW.toFixed(0)}x${imgH.toFixed(0)}mm`);
       } catch (e) {
+        console.error(`[ICoMa PDF] Failed to embed "${chart.label}":`, e);
         doc.setFontSize(8);
-        doc.text('[Chart image could not be embedded]', 14, curY + 5);
+        doc.text(`[${pdfSafe(chart.label)}: image could not be embedded]`, 14, curY + 5);
       }
       curY += imgH + 10;
     }
@@ -351,24 +458,30 @@ export async function generateDocx(data: ReportData): Promise<Blob> {
           ...data.chartImages.flatMap(chart => {
             try {
               const base64 = chart.dataUrl.split(',')[1];
+              if (!base64) return [new Paragraph({ text: `[${chart.label}: no image data]` })];
               const buf = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-              // Scale to ~6 inches wide (EMU: 1 inch = 914400)
-              const maxEmuW = 5_500_000;
+              // Scale to fit ~6 inches wide (576 pixels at 96 DPI)
+              const maxPxW = 576;
               const aspectRatio = chart.height / chart.width;
-              const emuW = maxEmuW;
-              const emuH = Math.round(emuW * aspectRatio);
+              const pxW = Math.min(maxPxW, chart.width);
+              const pxH = Math.round(pxW * aspectRatio);
               return [
                 new Paragraph({
                   children: [new TextRun({ text: chart.label, bold: true, size: 20, color: '2563EB' })],
                 }),
                 new Paragraph({
                   children: [
-                    new ImageRun({ data: buf, transformation: { width: emuW / 9144, height: emuH / 9144 }, type: 'png' }),
+                    new ImageRun({
+                      type: 'png',
+                      data: buf,
+                      transformation: { width: pxW, height: pxH },
+                    }),
                   ],
                 }),
                 new Paragraph({ text: '' }),
               ];
-            } catch {
+            } catch (e) {
+              console.error(`[ICoMa Report] DOCX image embed failed for "${chart.label}":`, e);
               return [new Paragraph({ text: `[${chart.label}: image could not be embedded]` })];
             }
           }),

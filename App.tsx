@@ -365,12 +365,22 @@ const App: React.FC = () => {
       { ref: dispersionRef, label: 'Witness Dispersion' },
     ];
     if (format === 'pdf' || format === 'docx') {
+      console.log('[ICoMa Report] Starting chart capture...');
       for (const { ref, label } of chartRefs) {
         if (ref.current) {
+          console.log(`[ICoMa Report] Capturing "${label}"... (ref exists: true, SVG found: ${!!ref.current.querySelector('svg')})`);
           const img = await captureChartFromRef(ref.current, label);
-          if (img) chartImages.push(img);
+          if (img) {
+            chartImages.push(img);
+            console.log(`[ICoMa Report] ✓ "${label}" captured (${img.width}x${img.height})`);
+          } else {
+            console.warn(`[ICoMa Report] ✗ "${label}" capture returned null`);
+          }
+        } else {
+          console.warn(`[ICoMa Report] ✗ "${label}" ref is null (chart not rendered?)`);
         }
       }
+      console.log(`[ICoMa Report] Captured ${chartImages.length}/${chartRefs.length} charts`);
     }
 
     const reportData: ReportData = {
