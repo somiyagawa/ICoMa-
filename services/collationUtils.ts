@@ -88,16 +88,30 @@ export const tokenize = (text: string, mode: ScriptMode = 'auto'): Token[] => {
 };
 
 const levenshteinDistance = (str1: string, str2: string): number => {
-  const track = Array(str2.length + 1).fill(null).map(() => Array(str1.length + 1).fill(null));
-  for (let i = 0; i <= str1.length; i += 1) track[0][i] = i;
-  for (let j = 0; j <= str2.length; j += 1) track[j][0] = j;
-  for (let j = 1; j <= str2.length; j += 1) {
-    for (let i = 1; i <= str1.length; i += 1) {
-      const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
-      track[j][i] = Math.min(track[j][i - 1] + 1, track[j - 1][i] + 1, track[j - 1][i - 1] + indicator);
-    }
+  if (str1 === str2) return 0;
+  if (str1.length === 0) return str2.length;
+  if (str2.length === 0) return str1.length;
+
+  // Use two rows instead of a full matrix for O(min(N,M)) space and better cache locality
+  let v0 = new Int32Array(str2.length + 1);
+  let v1 = new Int32Array(str2.length + 1);
+
+  for (let i = 0; i <= str2.length; i++) {
+    v0[i] = i;
   }
-  return track[str2.length][str1.length];
+
+  for (let i = 0; i < str1.length; i++) {
+    v1[0] = i + 1;
+    for (let j = 0; j < str2.length; j++) {
+      const cost = str1[i] === str2[j] ? 0 : 1;
+      v1[j + 1] = Math.min(v1[j] + 1, v0[j + 1] + 1, v0[j] + cost);
+    }
+    // Swap v0 and v1
+    let temp = v0;
+    v0 = v1;
+    v1 = temp;
+  }
+  return v0[str2.length];
 };
 
 const calculateCopticSimilarity = (s1: string, s2: string): number => {
@@ -273,9 +287,21 @@ export const runAnalysis = (
   }
 
   const alignments: Alignment[] = [];
+  
+  // Optimization: Only compute Levenshtein for words with similar lengths (length diff <= 2)
+  // and use a fast path for exact matches
   tokensA.forEach((tA, i) => {
     tokensB.forEach((tB, j) => {
-       const sim = calculateCopticSimilarity(tA.normalized, tB.normalized);
+       const lenDiff = Math.abs(tA.normalized.length - tB.normalized.length);
+       if (lenDiff > 3) return; // Skip obviously different words
+       
+       let sim = 0;
+       if (tA.normalized === tB.normalized) {
+         sim = 100;
+       } else {
+         sim = calculateCopticSimilarity(tA.normalized, tB.normalized);
+       }
+       
        if (sim >= 40) alignments.push({ sourceIndex: i, targetIndex: j, similarity: sim, sourceText: tA.text, targetText: tB.text });
     });
   });
