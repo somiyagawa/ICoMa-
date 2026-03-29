@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.9.0] - 2026-03-30
+### Added
+- **Inline Diff View** in Match Gallery: for matches below 100%, word-level LCS diff shows common text, deletions (red strikethrough, Witness α only), and insertions (green, Witness β only). Supports all Unicode scripts.
+- **Match Gallery fullscreen mode** with ranking view: medal badges (gold/silver/bronze) for top 3, large similarity bars, detailed position info, and DiffView at full size.
+- **Custom Witness names**: editable input fields for Witness α and Witness β labels (click to rename).
+- **SimilarityHistogram synchronization**: now receives `selectedMatch`/`onSelectMatch` — clicking a histogram bar selects the best match in that bin; selected match shown with red indicator line.
+- **NetworkGraph auto zoom-in**: selecting a match in any panel zooms and pans the network graph to the relevant cluster with smooth animation.
+- **AlignmentFlow labels**: clear "Witness α" / "Witness β" labels with "← Beginning ... End →" directional indicators.
+- **Fullscreen exit button** redesigned: large red button fixed at bottom of screen with gradient overlay and Esc key support.
+
+### Fixed
+- **Heatmap layout**: reorganised header into 3 rows (title / axis legends with colour icons / toolbar) to prevent cramming.
+- **Forced uppercase on Greek letters**: removed CSS `uppercase` from all Witness α/β labels so ギリシア文字小文字 are preserved correctly.
+- **NetworkGraph circle/label overlap**: labels now positioned below circles with white background rects for readability.
+- **NetworkGraph zoom-in sync**: simulation stopped before zoom, small delay for position stability, phrase-based matching instead of reference equality.
+- **Zoom overflow**: ChartToolbar zoom now constrains parent container with `maxHeight` + `overflow: auto` so zoomed content doesn't cover sibling panels below.
+- Version number in footer updated from v2.8.0 to v2.9.0.
+
+### Changed
+- Japanese translation: テキスト間性 → 間テクスト性 throughout i18n.ts.
+- Consistent "Witness α" / "Witness β" naming across all components (ParallelViewer, MatchDetailModal, DispersionPlot, DiffView, AlignmentFlow, NetworkGraph).
+- NetworkGraph link highlighting uses phrase comparison instead of reference equality for cross-panel compatibility.
+
 ## [2.8.1] - 2026-03-30
 ### Added
 - Bug Report / Feature Request button in header menu (links to GitHub Issues), localized in all 6 languages.

@@ -105,23 +105,44 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ matches, onSelectMatch, sel
 
     nodeSelectionRef.current = node;
 
+    // Label backgrounds (white rect behind text for readability)
+    const labelBg = g.append("g")
+      .selectAll("rect")
+      .data(nodes)
+      .join("rect")
+      .attr("fill", "white")
+      .attr("opacity", 0.85)
+      .attr("rx", 2);
+
     const label = g.append("g")
       .selectAll("text")
       .data(nodes)
       .join("text")
-      .text((d: any) => d.label.length > 12 ? d.label.substring(0, 10) + '...' : d.label)
-      .attr("font-size", "9px")
-      .attr("dx", 10)
-      .attr("dy", 3)
-      .attr("fill", "#666");
-    
+      .text((d: any) => d.label.length > 15 ? d.label.substring(0, 13) + '…' : d.label)
+      .attr("font-size", "8px")
+      .attr("fill", "#555")
+      .attr("pointer-events", "none");
+
     labelSelectionRef.current = label;
+
+    // After first render, measure text and size backgrounds
+    label.each(function(this: SVGTextElement) {
+      const bbox = this.getBBox();
+      const parentData = d3.select(this).datum();
+      labelBg.filter((d: any) => d === parentData)
+        .attr("width", bbox.width + 4)
+        .attr("height", bbox.height + 2);
+    });
 
     simulation.on("tick", () => {
       link.attr("x1", (d: any) => d.source.x).attr("y1", (d: any) => d.source.y)
           .attr("x2", (d: any) => d.target.x).attr("y2", (d: any) => d.target.y);
       node.attr("cx", (d: any) => d.x).attr("cy", (d: any) => d.y);
-      label.attr("x", (d: any) => d.x).attr("y", (d: any) => d.y);
+      // Position labels clearly below the circle (not overlapping)
+      label.attr("x", (d: any) => d.x).attr("y", (d: any) => d.y + 18)
+           .attr("text-anchor", "middle");
+      labelBg.attr("x", (d: any) => d.x - (labelBg.filter((bg: any) => bg === d).attr("width") || 0) / 2)
+             .attr("y", (d: any) => d.y + 9);
     });
 
     return () => simulation.stop();
@@ -180,9 +201,9 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ matches, onSelectMatch, sel
     // --- Highlight labels ---
     labelSelectionRef.current
       .transition().duration(400)
-      .attr("fill", (d: any) => isSelected(d) ? "#c9302c" : "#666")
+      .attr("fill", (d: any) => isSelected(d) ? "#c9302c" : "#555")
       .attr("font-weight", (d: any) => isSelected(d) ? "bold" : "normal")
-      .attr("font-size", (d: any) => isSelected(d) ? "11px" : "9px")
+      .attr("font-size", (d: any) => isSelected(d) ? "10px" : "8px")
       .attr("opacity", (d: any) => {
         if (!selectedMatch) return 1;
         return isSelected(d) ? 1 : 0.15;
@@ -190,45 +211,50 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ matches, onSelectMatch, sel
 
     // --- Auto zoom-in to selected cluster ---
     if (selectedMatch && svgRef.current && zoomBehaviorRef.current && nodesDataRef.current.length > 0) {
-      const alphaNode = nodesDataRef.current.find((n: any) => n.id === alphaId);
-      const betaNode = nodesDataRef.current.find((n: any) => n.id === betaId);
+      // Stop simulation to stabilize node positions before zooming
+      if (simulationRef.current) simulationRef.current.stop();
 
-      // Find at least one node to zoom to (the match might not be in the top 60,
-      // but one of its phrases might appear in another match that is)
-      const foundNodes = [alphaNode, betaNode].filter(
-        (n: any) => n && typeof n.x === 'number' && !isNaN(n.x) && typeof n.y === 'number' && !isNaN(n.y)
-      );
+      const doZoom = () => {
+        if (!svgRef.current || !zoomBehaviorRef.current) return;
+        const alphaNodeZ = nodesDataRef.current.find((n: any) => n.id === alphaId);
+        const betaNodeZ = nodesDataRef.current.find((n: any) => n.id === betaId);
 
-      if (foundNodes.length > 0) {
-        const svg = d3.select(svgRef.current);
-        const width = svgRef.current.clientWidth || 800;
-        const height = 350;
+        const foundNodes = [alphaNodeZ, betaNodeZ].filter(
+          (n: any) => n && typeof n.x === 'number' && !isNaN(n.x) && typeof n.y === 'number' && !isNaN(n.y)
+        );
 
-        let cx: number, cy: number, targetScale: number;
+        if (foundNodes.length > 0) {
+          const svg = d3.select(svgRef.current);
+          const width = svgRef.current.clientWidth || 800;
+          const height = 350;
 
-        if (foundNodes.length === 2) {
-          // Both nodes found — center between them
-          cx = (foundNodes[0].x + foundNodes[1].x) / 2;
-          cy = (foundNodes[0].y + foundNodes[1].y) / 2;
-          const dist = Math.sqrt((foundNodes[0].x - foundNodes[1].x) ** 2 + (foundNodes[0].y - foundNodes[1].y) ** 2);
-          targetScale = Math.min(3, Math.max(1.5, 200 / Math.max(dist, 1)));
-        } else {
-          // Only one node found — center on it
-          cx = foundNodes[0].x;
-          cy = foundNodes[0].y;
-          targetScale = 2.5;
+          let cx: number, cy: number, targetScale: number;
+
+          if (foundNodes.length === 2) {
+            cx = (foundNodes[0].x + foundNodes[1].x) / 2;
+            cy = (foundNodes[0].y + foundNodes[1].y) / 2;
+            const dist = Math.sqrt((foundNodes[0].x - foundNodes[1].x) ** 2 + (foundNodes[0].y - foundNodes[1].y) ** 2);
+            targetScale = Math.min(2.5, Math.max(1.2, 180 / Math.max(dist, 1)));
+          } else {
+            cx = foundNodes[0].x;
+            cy = foundNodes[0].y;
+            targetScale = 2.0;
+          }
+
+          const transform = d3.zoomIdentity
+            .translate(width / 2, height / 2)
+            .scale(targetScale)
+            .translate(-cx, -cy);
+
+          svg.transition()
+            .duration(750)
+            .ease(d3.easeCubicInOut)
+            .call(zoomBehaviorRef.current.transform as any, transform);
         }
+      };
 
-        const transform = d3.zoomIdentity
-          .translate(width / 2, height / 2)
-          .scale(targetScale)
-          .translate(-cx, -cy);
-
-        svg.transition()
-          .duration(750)
-          .ease(d3.easeCubicInOut)
-          .call(zoomBehaviorRef.current.transform as any, transform);
-      }
+      // Small delay to ensure simulation has updated positions
+      setTimeout(doZoom, 100);
     }
 
     // Reset zoom when deselected

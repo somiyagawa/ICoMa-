@@ -218,6 +218,8 @@ const App: React.FC = () => {
   const [fontFamily, setFontFamily] = useState<string>('serif');
   const [galleryZoom, setGalleryZoom] = useState<number>(1.0);
   const [activeHelpModal, setActiveHelpModal] = useState<string | null>(null);
+  const [witnessAlphaName, setWitnessAlphaName] = useState<string>('Witness α');
+  const [witnessBetaName, setWitnessBetaName] = useState<string>('Witness β');
 
   // Refs for chart containers (fullscreen + download)
   const alignmentFlowRef = useRef<HTMLDivElement>(null);
@@ -387,8 +389,16 @@ const App: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col">
                 <div className="flex justify-between items-center mb-2 px-1">
-                   <div className="flex items-center">
-                     <span className="text-[11px] font-bold text-academic-blue uppercase tracking-wider">{t(lang, 'Witness α (Primary)')}</span>
+                   <div className="flex items-center gap-1">
+                     <span className="text-[9px] text-gray-400 font-bold shrink-0">α</span>
+                     <input
+                       type="text"
+                       value={witnessAlphaName}
+                       onChange={(e) => setWitnessAlphaName(e.target.value)}
+                       className="text-[11px] font-bold text-academic-blue tracking-wider bg-transparent border-b border-transparent hover:border-gray-300 focus:border-academic-blue focus:outline-none transition-colors px-1 py-0.5 min-w-0"
+                       style={{ maxWidth: '200px' }}
+                       title="Click to rename Witness α"
+                     />
                      <HelpButton topic="witnessAlpha" onClick={setActiveHelpModal} />
                    </div>
                    <span className="text-[9px] text-gray-400 font-mono">{sourceText.length} chars</span>
@@ -397,8 +407,16 @@ const App: React.FC = () => {
               </div>
               <div className="flex flex-col">
                 <div className="flex justify-between items-center mb-2 px-1">
-                   <div className="flex items-center">
-                     <span className="text-[11px] font-bold text-academic-blue uppercase tracking-wider">{t(lang, 'Witness β (Comparandum)')}</span>
+                   <div className="flex items-center gap-1">
+                     <span className="text-[9px] text-gray-400 font-bold shrink-0">β</span>
+                     <input
+                       type="text"
+                       value={witnessBetaName}
+                       onChange={(e) => setWitnessBetaName(e.target.value)}
+                       className="text-[11px] font-bold text-academic-blue tracking-wider bg-transparent border-b border-transparent hover:border-gray-300 focus:border-academic-blue focus:outline-none transition-colors px-1 py-0.5 min-w-0"
+                       style={{ maxWidth: '200px' }}
+                       title="Click to rename Witness β"
+                     />
                      <HelpButton topic="witnessBeta" onClick={setActiveHelpModal} />
                    </div>
                    <span className="text-[9px] text-gray-400 font-mono">{targetText.length} chars</span>
@@ -732,7 +750,7 @@ const App: React.FC = () => {
       
       {/* Visual Footer */}
       <footer className="mt-auto py-6 border-t border-gray-200 bg-white text-center flex flex-col items-center gap-3">
-         <p className="text-[10px] text-gray-400 uppercase tracking-[0.3em]">{t(lang, 'Advanced Digital Humanities Collation Tool')} • v2.8.1 Enterprise</p>
+         <p className="text-[10px] text-gray-400 uppercase tracking-[0.3em]">{t(lang, 'Advanced Digital Humanities Collation Tool')} • v2.9.0 Enterprise</p>
          <div className="flex items-center gap-4 text-[10px] text-gray-500 uppercase tracking-widest">
             <div className="flex items-center gap-1">
               <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="hover:text-academic-blue transition-colors flex items-center gap-1">
@@ -770,7 +788,7 @@ const App: React.FC = () => {
             </div>
             <div className="p-6 overflow-y-auto font-sans text-sm text-gray-700 space-y-6">
               <div>
-                <h3 className="font-bold text-academic-blue text-base border-b border-gray-100 pb-2 mb-2">v2.8.1 Enterprise (March 2026)</h3>
+                <h3 className="font-bold text-academic-blue text-base border-b border-gray-100 pb-2 mb-2">v2.9.0 Enterprise (March 2026)</h3>
                 <ul className="list-disc pl-5 space-y-1">
                   <li>Added <strong>Internationalization (i18n)</strong>: UI now available in English, 日本語, 中文, 한국어, Deutsch, and Latina.</li>
                   <li>Added <strong>Old Japanese (万葉集 &amp; 注釈)</strong> example to Quick Load.</li>

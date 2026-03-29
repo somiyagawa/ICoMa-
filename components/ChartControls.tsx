@@ -288,20 +288,40 @@ const ChartToolbar: React.FC<ChartToolbarProps> = ({ containerRef, filename, cla
   const applyZoom = useCallback((newZoom: number) => {
     setZoom(newZoom);
     if (!containerRef.current) return;
+    const container = containerRef.current;
+
+    // Save the original natural height of the container on first zoom
+    if (!container.dataset.originalHeight && newZoom !== 1) {
+      container.dataset.originalHeight = String(container.getBoundingClientRect().height);
+    }
+
     // Apply zoom to all children except the first (header/h3)
-    const children = containerRef.current.children;
+    const children = container.children;
     for (let i = 1; i < children.length; i++) {
       const el = children[i] as HTMLElement;
-      el.style.transform = `scale(${newZoom})`;
-      el.style.transformOrigin = 'top left';
-      // Adjust the wrapper to account for scaled size
       if (newZoom !== 1) {
+        el.style.transform = `scale(${newZoom})`;
+        el.style.transformOrigin = 'top left';
         el.style.width = `${100 / newZoom}%`;
-        el.style.overflow = 'auto';
       } else {
+        el.style.transform = '';
+        el.style.transformOrigin = '';
         el.style.width = '';
-        el.style.overflow = '';
       }
+    }
+
+    // Constrain the parent container so zoom doesn't cover siblings below.
+    // Set a fixed height + overflow:auto so content scrolls within the panel.
+    if (newZoom !== 1) {
+      const origH = parseFloat(container.dataset.originalHeight || '0');
+      if (origH > 0) {
+        container.style.maxHeight = `${origH}px`;
+        container.style.overflow = 'auto';
+      }
+    } else {
+      container.style.maxHeight = '';
+      container.style.overflow = '';
+      delete container.dataset.originalHeight;
     }
   }, [containerRef]);
 

@@ -158,7 +158,7 @@ const ParallelViewer: React.FC<ParallelViewerProps> = ({
           {renderMinimap('A', tokensA)}
           <div className="flex-1 flex flex-col overflow-hidden">
             <div className="bg-academic-paper px-4 py-3 border-b border-gray-200 shrink-0 flex justify-between items-center">
-              <span className="font-bold text-academic-blue uppercase text-[10px] tracking-widest flex items-center gap-2">
+              <span className="font-bold text-academic-blue text-[10px] tracking-widest flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-academic-lightBlue"></span>
                 Witness α
               </span>
@@ -175,7 +175,7 @@ const ParallelViewer: React.FC<ParallelViewerProps> = ({
           {renderMinimap('B', tokensB)}
           <div className="flex-1 flex flex-col overflow-hidden">
             <div className="bg-academic-paper px-4 py-3 border-b border-gray-200 shrink-0 flex justify-between items-center">
-              <span className="font-bold text-academic-gold uppercase text-[10px] tracking-widest flex items-center gap-2">
+              <span className="font-bold text-academic-gold text-[10px] tracking-widest flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-academic-gold"></span>
                 Witness β
               </span>

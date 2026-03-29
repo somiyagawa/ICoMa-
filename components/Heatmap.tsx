@@ -109,12 +109,12 @@ const Heatmap: React.FC<HeatmapProps> = ({ matches, sourceLength, targetLength, 
         <div className="flex items-center gap-4">
           <div className="flex items-center">
             <span className="inline-block w-2 h-2 rounded-sm mr-1" style={{ backgroundColor: '#34495e' }} />
-            <span className="text-[8px] font-bold uppercase text-gray-400 tracking-wider">{t(lang, 'X-Axis: Witness α Position')}</span>
+            <span className="text-[8px] font-bold text-gray-400 tracking-wider">{t(lang, 'X-Axis: Witness α Position')}</span>
             {onHelpClick && <HelpButton topic="heatmapAxisAlpha" onClick={onHelpClick} />}
           </div>
           <div className="flex items-center">
             <span className="inline-block w-2 h-2 rounded-sm mr-1" style={{ backgroundColor: '#8b7355' }} />
-            <span className="text-[8px] font-bold uppercase text-gray-400 tracking-wider">{t(lang, 'Y-Axis: Witness β Position')}</span>
+            <span className="text-[8px] font-bold text-gray-400 tracking-wider">{t(lang, 'Y-Axis: Witness β Position')}</span>
             {onHelpClick && <HelpButton topic="heatmapAxisBeta" onClick={onHelpClick} />}
           </div>
         </div>
