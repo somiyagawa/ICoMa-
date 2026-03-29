@@ -1,20 +1,56 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# ICoMa (Intertextuality Collation Machine)
 
-# Run and deploy your AI Studio app
+ICoMa is a web-based computational linguistics tool developed for analyzing text reuse, plagiarism, and intertextuality across multiple languages and scripts. It is designed to handle complex multilingual corpora, including English, Latin, Coptic, Sanskrit, Chinese, Syriac, Arabic, and Ancient Greek.
 
-This contains everything you need to run your app locally.
+Developed by the **So Miyagawa Computational Linguistics Lab**.
 
-View your app in AI Studio: https://ai.studio/apps/29d4a12e-fbbd-4ef3-a81b-de38f3be50fd
+## Features
 
-## Run Locally
+*   **Multilingual Support:** Built-in tokenization and normalization for various scripts (Latin, Greek, Coptic, CJK, Arabic, Hebrew, Syriac, Devanagari, etc.).
+*   **Multiple Algorithms:**
+    *   Jaccard (Set Similarity) - *Default*
+    *   Smith-Waterman (Local Alignment)
+    *   Levenshtein (Edit Distance)
+    *   N-gram (Character & Word level)
+*   **Advanced Visualizations:**
+    *   **Alignment Flow:** Visualizes connections between source and target texts as ribbons.
+    *   **Parallel Viewer:** Side-by-side text comparison with highlighted matches.
+    *   **Network Graph:** Visualizes clusters of related text segments.
+    *   **Dispersion Plot:** Shows the distribution of matches across the texts.
+    *   **Similarity Histogram:** Displays the distribution of similarity scores.
+    *   **Heatmap:** Matrix view of text similarities.
 
-**Prerequisites:**  Node.js
+## Tech Stack
 
+*   React 19
+*   Vite
+*   Tailwind CSS
+*   D3.js (for data visualization)
+*   TypeScript
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Getting Started
+
+### Prerequisites
+
+*   Node.js (v18 or higher recommended)
+*   npm
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+## Deployment
+
+This project is configured for easy deployment on Vercel. A `vercel.json` file is included to handle client-side routing.
+
+## License
+
+This project is licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) - see the [LICENSE](LICENSE) file for details.

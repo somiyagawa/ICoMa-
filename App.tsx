@@ -302,8 +302,20 @@ const App: React.FC = () => {
       </main>
       
       {/* Visual Footer */}
-      <footer className="mt-auto py-6 border-t border-gray-200 bg-white text-center">
+      <footer className="mt-auto py-6 border-t border-gray-200 bg-white text-center flex flex-col items-center gap-3">
          <p className="text-[10px] text-gray-400 uppercase tracking-[0.3em]">Advanced Digital Humanities Collation Tool • v2.5 Enterprise</p>
+         <div className="flex items-center gap-4 text-[10px] text-gray-500 uppercase tracking-widest">
+            <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="hover:text-academic-blue transition-colors flex items-center gap-1">
+              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-14h2v8h-2zm0 10h2v2h-2z"/></svg>
+              CC BY 4.0 License
+            </a>
+            <span className="text-gray-300">|</span>
+            <a href="/CHANGELOG.md" target="_blank" rel="noopener noreferrer" className="hover:text-academic-blue transition-colors flex items-center gap-1">
+              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              Changelog
+            </a>
+         </div>
+         <p className="text-[9px] text-gray-400 mt-1">© 2026 So Miyagawa Computational Linguistics Lab</p>
       </footer>
     </div>
   );
