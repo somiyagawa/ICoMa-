@@ -100,7 +100,7 @@ const App: React.FC = () => {
       <header className="bg-gradient-to-r from-academic-lightBlue to-academic-blue text-white border-b-4 border-academic-red px-6 py-5 shadow-lg shrink-0">
         <div className="w-full flex justify-between items-center">
           <div>
-            <div className="text-[10px] uppercase tracking-[0.2em] text-gray-300 mb-1 font-sans font-semibold">So Miyagawa Computational Linguistics Lab</div>
+            <div className="text-[10px] uppercase tracking-[0.2em] text-gray-300 mb-1 font-sans font-semibold">So Miyagawa Computational Linguistics Lab, University of Tsukuba</div>
             <h1 className="text-3xl font-bold font-serif tracking-tight">ICoMa <span className="text-academic-gold font-light ml-3 text-xl opacity-80 italic">Intertextuality Collation Machine</span></h1>
           </div>
           <div className="hidden lg:flex items-center gap-6">
@@ -315,7 +315,7 @@ const App: React.FC = () => {
               Changelog
             </a>
          </div>
-         <p className="text-[9px] text-gray-400 mt-1">© 2026 So Miyagawa Computational Linguistics Lab</p>
+         <p className="text-[9px] text-gray-400 mt-1">© 2026 So Miyagawa Computational Linguistics Lab, University of Tsukuba</p>
       </footer>
     </div>
   );

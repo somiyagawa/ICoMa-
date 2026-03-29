@@ -2,7 +2,7 @@
 
 ICoMa is a web-based computational linguistics tool developed for analyzing text reuse, plagiarism, and intertextuality across multiple languages and scripts. It is designed to handle complex multilingual corpora, including English, Latin, Coptic, Sanskrit, Chinese, Syriac, Arabic, and Ancient Greek.
 
-Developed by the **So Miyagawa Computational Linguistics Lab**.
+Developed by the **So Miyagawa Computational Linguistics Lab, University of Tsukuba**.
 
 ## Features
 
