@@ -24,7 +24,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ matches, onSelectMatch, sel
     if (!containerRef.current) return;
     
     // For "Huge" texts, limit to Top 60 most significant to avoid performance crash
-    const relevantMatches = matches
+    const relevantMatches = [...matches]
       .sort((a, b) => b.similarity - a.similarity)
       .slice(0, 60);
 
@@ -146,27 +146,34 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ matches, onSelectMatch, sel
       });
 
     // --- Highlight links ---
+    const isMatchedLink = (d: any) => {
+      if (!selectedMatch) return false;
+      // Use phrase comparison instead of reference equality for cross-panel compatibility
+      const md = d.matchData;
+      return md && md.sourcePhrase === selectedMatch.sourcePhrase && md.targetPhrase === selectedMatch.targetPhrase;
+    };
+    const isConnectedLink = (d: any) => {
+      const srcId = typeof d.source === 'object' ? d.source.id : d.source;
+      const tgtId = typeof d.target === 'object' ? d.target.id : d.target;
+      return srcId === alphaId || tgtId === betaId || srcId === betaId || tgtId === alphaId;
+    };
+
     linkSelectionRef.current
       .transition().duration(400)
       .attr("stroke", (d: any) => {
         if (!selectedMatch) return d.value >= 99 ? "#27ae60" : "#bdc3c7";
-        if (d.matchData === selectedMatch) return "#c9302c";
-        // Also highlight links connected to the selected nodes
-        const srcId = typeof d.source === 'object' ? d.source.id : d.source;
-        const tgtId = typeof d.target === 'object' ? d.target.id : d.target;
-        if (srcId === alphaId || tgtId === betaId || srcId === betaId || tgtId === alphaId) return "#e88";
+        if (isMatchedLink(d)) return "#c9302c";
+        if (isConnectedLink(d)) return "#e88";
         return "#bdc3c7";
       })
       .attr("stroke-opacity", (d: any) => {
         if (!selectedMatch) return 0.4;
-        if (d.matchData === selectedMatch) return 1;
-        const srcId = typeof d.source === 'object' ? d.source.id : d.source;
-        const tgtId = typeof d.target === 'object' ? d.target.id : d.target;
-        if (srcId === alphaId || tgtId === betaId || srcId === betaId || tgtId === alphaId) return 0.6;
+        if (isMatchedLink(d)) return 1;
+        if (isConnectedLink(d)) return 0.6;
         return 0.05;
       })
       .attr("stroke-width", (d: any) => {
-        if (selectedMatch && d.matchData === selectedMatch) return 4;
+        if (selectedMatch && isMatchedLink(d)) return 4;
         return Math.max(1, (d.value - 40) / 10);
       });
 
@@ -186,18 +193,31 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ matches, onSelectMatch, sel
       const alphaNode = nodesDataRef.current.find((n: any) => n.id === alphaId);
       const betaNode = nodesDataRef.current.find((n: any) => n.id === betaId);
 
-      if (alphaNode && betaNode) {
+      // Find at least one node to zoom to (the match might not be in the top 60,
+      // but one of its phrases might appear in another match that is)
+      const foundNodes = [alphaNode, betaNode].filter(
+        (n: any) => n && typeof n.x === 'number' && !isNaN(n.x) && typeof n.y === 'number' && !isNaN(n.y)
+      );
+
+      if (foundNodes.length > 0) {
         const svg = d3.select(svgRef.current);
         const width = svgRef.current.clientWidth || 800;
         const height = 350;
 
-        // Center point between the two nodes
-        const cx = (alphaNode.x + betaNode.x) / 2;
-        const cy = (alphaNode.y + betaNode.y) / 2;
+        let cx: number, cy: number, targetScale: number;
 
-        // Zoom scale: closer zoom for tighter clusters
-        const dist = Math.sqrt((alphaNode.x - betaNode.x) ** 2 + (alphaNode.y - betaNode.y) ** 2);
-        const targetScale = Math.min(3, Math.max(1.5, 200 / Math.max(dist, 1)));
+        if (foundNodes.length === 2) {
+          // Both nodes found — center between them
+          cx = (foundNodes[0].x + foundNodes[1].x) / 2;
+          cy = (foundNodes[0].y + foundNodes[1].y) / 2;
+          const dist = Math.sqrt((foundNodes[0].x - foundNodes[1].x) ** 2 + (foundNodes[0].y - foundNodes[1].y) ** 2);
+          targetScale = Math.min(3, Math.max(1.5, 200 / Math.max(dist, 1)));
+        } else {
+          // Only one node found — center on it
+          cx = foundNodes[0].x;
+          cy = foundNodes[0].y;
+          targetScale = 2.5;
+        }
 
         const transform = d3.zoomIdentity
           .translate(width / 2, height / 2)

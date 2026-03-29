@@ -304,7 +304,7 @@ const App: React.FC = () => {
           <div className="hidden lg:flex items-center gap-6">
              {/* Language Selector */}
              <div>
-                <div className="text-[10px] text-gray-400 uppercase font-sans mb-1">Language</div>
+                <div className="text-[10px] text-gray-400 uppercase font-sans mb-1">UI Language</div>
                 <select
                   value={lang}
                   onChange={e => setLang(e.target.value as Language)}
