@@ -4,9 +4,11 @@ import { Match } from '../types';
 
 interface SimilarityHistogramProps {
   matches: Match[];
+  selectedMatch?: Match | null;
+  onSelectMatch?: (match: Match) => void;
 }
 
-const SimilarityHistogram: React.FC<SimilarityHistogramProps> = ({ matches }) => {
+const SimilarityHistogram: React.FC<SimilarityHistogramProps> = ({ matches, selectedMatch, onSelectMatch }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,10 +49,15 @@ const SimilarityHistogram: React.FC<SimilarityHistogramProps> = ({ matches }) =>
 
     const bins = histogram(matches as any);
 
+    // Track which bin the selected match belongs to
+    const selectedBinIndex = selectedMatch
+      ? bins.findIndex(bin => (bin as any[]).some((m: any) => m === selectedMatch))
+      : -1;
+
     // Y axis
     const y = d3.scaleLinear()
       .range([height, 0]);
-      
+
     y.domain([0, d3.max(bins, d => d.length) || 0]);
 
     svg.append("g")
@@ -64,10 +71,68 @@ const SimilarityHistogram: React.FC<SimilarityHistogramProps> = ({ matches }) =>
       .attr("transform", d => `translate(${x(d.x0 || 0)}, ${y(d.length)})`)
       .attr("width", d => Math.max(0, x(d.x1 || 0) - x(d.x0 || 0) - 1))
       .attr("height", d => height - y(d.length))
-      .attr("fill", "#8b7355")
-      .attr("opacity", 0.8)
-      .on("mouseover", function() { d3.select(this).attr("opacity", 1); })
-      .on("mouseout", function() { d3.select(this).attr("opacity", 0.8); });
+      .attr("fill", (d, i) => {
+        if (selectedBinIndex >= 0 && i === selectedBinIndex) return "#c9302c";
+        if (selectedBinIndex >= 0) return "#d5cfc0";
+        return "#8b7355";
+      })
+      .attr("opacity", (d, i) => {
+        if (selectedBinIndex >= 0 && i === selectedBinIndex) return 1;
+        if (selectedBinIndex >= 0) return 0.4;
+        return 0.8;
+      })
+      .attr("cursor", onSelectMatch ? "pointer" : "default")
+      .attr("stroke", (d, i) => i === selectedBinIndex ? "#991b1b" : "none")
+      .attr("stroke-width", (d, i) => i === selectedBinIndex ? 2 : 0)
+      .on("mouseover", function(event, d) {
+        if (selectedBinIndex < 0 || bins.indexOf(d) !== selectedBinIndex) {
+          d3.select(this).attr("opacity", 1).attr("fill", "#6b5335");
+        }
+      })
+      .on("mouseout", function(event, d) {
+        const i = bins.indexOf(d);
+        if (selectedBinIndex >= 0 && i === selectedBinIndex) {
+          d3.select(this).attr("opacity", 1).attr("fill", "#c9302c");
+        } else if (selectedBinIndex >= 0) {
+          d3.select(this).attr("opacity", 0.4).attr("fill", "#d5cfc0");
+        } else {
+          d3.select(this).attr("opacity", 0.8).attr("fill", "#8b7355");
+        }
+      })
+      .on("click", function(event, d) {
+        if (!onSelectMatch) return;
+        event.stopPropagation();
+        // Select the highest-similarity match in the clicked bin
+        const binMatches = d as unknown as Match[];
+        if (binMatches.length > 0) {
+          const best = binMatches.reduce((a: Match, b: Match) => a.similarity > b.similarity ? a : b);
+          onSelectMatch(best);
+        }
+      })
+      .append("title")
+      .text(d => `${d.length} matches (${(d.x0 || 0).toFixed(0)}–${(d.x1 || 0).toFixed(0)}% similarity)\nClick to select`);
+
+    // Selected match indicator line
+    if (selectedMatch) {
+      svg.append("line")
+        .attr("x1", x(selectedMatch.similarity))
+        .attr("x2", x(selectedMatch.similarity))
+        .attr("y1", 0)
+        .attr("y2", height)
+        .attr("stroke", "#c9302c")
+        .attr("stroke-width", 2)
+        .attr("stroke-dasharray", "4,2")
+        .attr("opacity", 0.8);
+
+      svg.append("text")
+        .attr("x", x(selectedMatch.similarity))
+        .attr("y", -2)
+        .attr("text-anchor", "middle")
+        .attr("font-size", "8px")
+        .attr("fill", "#c9302c")
+        .attr("font-weight", "bold")
+        .text(`${selectedMatch.similarity.toFixed(1)}%`);
+    }
 
     // Annotation
     svg.append("text")
@@ -78,7 +143,7 @@ const SimilarityHistogram: React.FC<SimilarityHistogramProps> = ({ matches }) =>
       .attr("fill", "#7f8c8d")
       .text(`n=${matches.length}`);
 
-  }, [matches]);
+  }, [matches, selectedMatch]);
 
   return (
     <div className="w-full">

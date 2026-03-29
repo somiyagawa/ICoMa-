@@ -18,9 +18,9 @@ const AlignmentFlow: React.FC<AlignmentFlowProps> = ({ matches, sourceLength, ta
 
     d3.select(containerRef.current).selectAll("*").remove();
 
-    const margin = { top: 30, right: 20, bottom: 30, left: 20 };
+    const margin = { top: 44, right: 20, bottom: 44, left: 20 };
     const width = containerRef.current.clientWidth - margin.left - margin.right;
-    const height = 250 - margin.top - margin.bottom;
+    const height = 280 - margin.top - margin.bottom;
 
     const svg = d3.select(containerRef.current)
       .append("svg")
@@ -32,9 +32,67 @@ const AlignmentFlow: React.FC<AlignmentFlowProps> = ({ matches, sourceLength, ta
     const xScaleA = d3.scaleLinear().domain([0, sourceLength]).range([0, width]);
     const xScaleB = d3.scaleLinear().domain([0, targetLength]).range([0, width]);
 
-    // Bars
+    // === Witness α (top) ===
+    // Label
+    svg.append("text")
+      .attr("x", width / 2)
+      .attr("y", -26)
+      .attr("text-anchor", "middle")
+      .attr("font-size", "11px")
+      .attr("font-weight", "bold")
+      .attr("fill", "#34495e")
+      .text("Witness α");
+
+    // Direction arrow: ← Beginning ... End →
+    svg.append("text")
+      .attr("x", 0)
+      .attr("y", -12)
+      .attr("text-anchor", "start")
+      .attr("font-size", "9px")
+      .attr("fill", "#7f8c8d")
+      .text("← Beginning");
+
+    svg.append("text")
+      .attr("x", width)
+      .attr("y", -12)
+      .attr("text-anchor", "end")
+      .attr("font-size", "9px")
+      .attr("fill", "#7f8c8d")
+      .text("End →");
+
+    // Top bar (Witness α)
     svg.append("rect").attr("width", width).attr("height", 10).attr("fill", "#34495e").attr("rx", 2);
+
+    // === Witness β (bottom) ===
+    // Bottom bar (Witness β)
     svg.append("rect").attr("y", height - 10).attr("width", width).attr("height", 10).attr("fill", "#8b7355").attr("rx", 2);
+
+    // Direction arrow for β
+    svg.append("text")
+      .attr("x", 0)
+      .attr("y", height + 14)
+      .attr("text-anchor", "start")
+      .attr("font-size", "9px")
+      .attr("fill", "#7f8c8d")
+      .text("← Beginning");
+
+    svg.append("text")
+      .attr("x", width)
+      .attr("y", height + 14)
+      .attr("text-anchor", "end")
+      .attr("font-size", "9px")
+      .attr("fill", "#7f8c8d")
+      .text("End →");
+
+    // Label
+    svg.append("text")
+      .attr("x", width / 2)
+      .attr("y", height + 28)
+      .attr("text-anchor", "middle")
+      .attr("font-size", "11px")
+      .attr("font-weight", "bold")
+      .attr("fill", "#8b7355")
+      .text("Witness β");
 
     const displayMatches = matches.length > 300 ? matches.filter(m => m.similarity > 70) : matches;
 
@@ -70,7 +128,7 @@ const AlignmentFlow: React.FC<AlignmentFlowProps> = ({ matches, sourceLength, ta
 
   return (
     <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm p-2">
-      <div ref={containerRef} className="w-full h-[250px]" />
+      <div ref={containerRef} className="w-full h-[280px]" />
       <div className="text-[10px] text-gray-500 text-center mt-1">Click ribbons to view specific reuse pair</div>
     </div>
   );
