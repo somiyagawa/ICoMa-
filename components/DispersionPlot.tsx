@@ -60,7 +60,7 @@ const DispersionPlot: React.FC<DispersionPlotProps> = ({
         const w2 = Math.max(2, (match.targetPhrase.length / targetLength) * width);
 
         const isSelected = selectedMatch === match;
-        const color = isSelected ? "#c9302c" : (match.similarity >= 80 ? "#2980b9" : "#95a5a6");
+        const color = isSelected ? "#c9302c" : (match.similarity >= 80 ? "#2563eb" : "#94a3b8");
         const opacity = isSelected ? 1 : (selectedMatch ? 0.3 : 0.6);
 
         // Bar α

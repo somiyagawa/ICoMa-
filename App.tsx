@@ -20,46 +20,64 @@ import { downloadReport, ReportData, captureChartFromRef, ChartImage } from './s
 const EXAMPLES = {
   english_long: {
     label: 'English (Text Reuse/Plagiarism)',
+    alphaName: 'Rosetta Stone (Wikipedia)',
+    betaName: 'History of Egyptology (Essay)',
     a: "The Rosetta Stone is a stele composed of granodiorite inscribed with three versions of a decree issued in Memphis, Egypt in 196 BC during the Ptolemaic dynasty on behalf of King Ptolemy V Epiphanes. The top and middle texts are in Ancient Egyptian using hieroglyphic and Demotic scripts respectively, while the bottom is in Ancient Greek. The decree has only minor differences between the three versions, making the Rosetta Stone key to deciphering the Egyptian scripts. The stone was carved during the Hellenistic period and is believed to have originally been displayed within a temple, possibly at Sais. It was likely moved in late antiquity or during the Mamluk period, and was eventually used as building material in the construction of Fort Julien near the town of Rashid (Rosetta) in the Nile Delta. It was discovered there in July 1799 by French officer Pierre-François Bouchard during the Napoleonic campaign in Egypt. It was the first Ancient Egyptian bilingual text recovered in modern times, and it aroused widespread public interest with its potential to decipher this previously untranslated hieroglyphic script. Lithographic copies and plaster casts soon began circulating among European museums and scholars. When the British defeated the French they took the stone to London under the Capitulation of Alexandria in 1801.",
     b: "Topic: The History of Egyptology. In this essay, I will discuss the importance of the Rosetta Stone. The Rosetta Stone is a stele composed of granodiorite inscribed with three versions of a decree issued in Memphis in 196 BC. It was created on behalf of King Ptolemy V Epiphanes. Interestingly, the top and middle texts are in Ancient Egyptian using hieroglyphic and Demotic scripts, while the bottom is in Ancient Greek. Because the decree has only minor differences between the versions, the Rosetta Stone was key to deciphering Egyptian scripts. It was carved during the Hellenistic period and originally displayed in a temple. Later, it was used as building material in Fort Julien near Rashid (Rosetta). It was discovered there in July 1799 by Pierre-François Bouchard during the Napoleonic campaign. As the first Ancient Egyptian bilingual text found in modern times, it sparked massive public interest regarding the translation of hieroglyphics. Copies and casts were quickly distributed to European scholars. Following the French defeat, the British transported the stone to London in 1801."
   },
   latin: {
     label: 'Latin (Quote & Commentary)',
+    alphaName: 'Cicero, In Catilinam I',
+    betaName: 'Historia Conjurationis',
     a: "Quo usque tandem abutere, Catilina, patientia nostra? quam diu etiam furor iste tuus nos eludet? quem ad finem sese effrenata jactabit audacia? Nihilne te nocturnum praesidium Palati, nihil urbis vigiliae, nihil timor populi, nihil concursus bonorum omnium, nihil hic munitissimus habendi senatus locus, nihil horum ora voltusque moverunt? Patere tua consilia non sentis, constrictam jam horum omnium scientia teneri conjurationem tuam non vides? Quid proxima, quid superiore nocte egeris, ubi fueris, quos convocaveris, quid consilii ceperis, quem nostrum ignorare arbitraris? O tempora, o mores! Senatus haec intellegit. Consul videt; hic tamen vivit. Vivit? immo vero etiam in senatum venit, fit publici consilii particeps, notat et designat oculis ad caedem unum quemque nostrum.",
     b: "Historia de conjuratione Catilinae. Anno urbis conditae DCXCI, Cicero consul in senatum venit. Ille, cum iram suam vix continere posset, orationem habuit ardentem contra inimicum suum. Dixit enim voce magna: \"Quo usque tandem abutere, Catilina, patientia nostra?\" Et senatores audiebant et mirabantur. Sed Catilina non timebat. Cicero continuavit impetum suum dicens: \"Quam diu etiam furor iste tuus nos eludet?\" Haec verba in aeternum manent exemplum eloquentiae. Deinde Cicero interrogavit num Catilina non sentiret consilia sua patere, et num ignoraret quid proxima nocte egisset. \"O tempora, o mores!\" exclamavit orator, dolens quod senatus haec intellegeret et consul videret, sed proditor tamen viveret et in senatum veniret, notans unum quemque ad caedem."
   },
   coptic: {
     label: 'Coptic (Psalm & Sermon)',
+    alphaName: 'Ps 26 (Sahidic)',
+    betaName: 'Shenoute, Homily',
     a: "ⲡϫⲟⲉⲓⲥ ⲡⲉ ⲡⲁⲟⲩⲟⲉⲓⲛ ⲁⲩⲱ ⲡⲁⲟⲩϫⲁⲓ ⲛϯⲛⲁⲣϩⲟⲧⲉ ⲁⲛ ⲛⲗⲁⲁⲩ. ⲡⲉⲧⲣⲟⲉⲓⲥ ⲉⲣⲟⲓ ⲛϥⲛⲁϯ ⲁⲛ ⲛⲗⲁⲁⲩ ⲛϩⲱⲃ ⲉⲧⲁϣⲉ ⲉⲣⲟⲓ. ⲉⲩⲉϩⲱⲛ ⲉϩⲟⲩⲛ ⲉⲣⲟⲓ ⲛϭⲓ ⲛⲉⲧⲟⲩⲱϣ ⲉⲟⲩⲱⲙ ⲛⲛⲁⲥⲁⲣⲝ. ⲛⲁϫⲁϫⲉ ⲙⲛ ⲛⲉⲧⲑⲗⲓⲃⲉ ⲙⲙⲟⲓ ⲛⲧⲟⲟⲩ ⲁⲩϭⲃⲃⲉ ⲁⲩϩⲉ. ⲉϣⲱⲡⲉ ⲉⲣϣⲁⲛ ⲟⲩⲡⲁⲣⲉⲙⲃⲟⲗⲏ ⲧⲱⲟⲩⲛ ⲉϩⲣⲁⲓ ⲉϫⲱⲓ ⲛⲧⲉ ⲡⲁϩⲏⲧ ⲧⲙⲣϩⲟⲧⲉ. ⲉϣⲱⲡⲉ ⲉⲣϣⲁⲛ ⲟⲩⲡⲟⲗⲉⲙⲟⲥ ⲧⲱⲟⲩⲛ ⲉϩⲣⲁⲓ ⲉϫⲱⲓ ϯⲛⲁⲕⲱ ⲛϩⲧⲏⲓ ⲉⲣⲟϥ ϩⲙ ⲡⲁⲓ.",
     b: "ⲁⲡⲁ ϣⲉⲛⲟⲩⲧⲉ ⲁϥⲥϩⲁⲓ ⲛⲛⲉϥⲥⲛⲏⲩ ϩⲛ ⲧⲉⲕⲕⲗⲏⲥⲓⲁ ϫⲉ ϣⲗⲏⲗ ⲙⲡⲣϫⲛⲁ. ⲙⲁⲣⲟⲛ ϫⲟⲟⲥ ⲙⲡⲣⲏⲧⲉ ⲙⲡⲉⲯⲁⲗⲙⲱⲇⲟⲥ ⲉⲧϫⲱ ⲙⲙⲟⲥ ϫⲉ: «ⲡϫⲟⲉⲓⲥ ⲡⲉ ⲡⲁⲟⲩⲟⲉⲓⲛ ⲁⲩⲱ ⲡⲁⲟⲩϫⲁⲓ». ⲉϣⲱⲡⲉ ⲡϫⲟⲉⲓⲥ ϣⲟⲟⲡ ⲛⲙⲙⲁⲛ, ⲧⲉⲧⲛⲛⲁϫⲟⲟⲥ ϫⲉ «ⲛϯⲛⲁⲣϩⲟⲧⲉ ⲁⲛ ⲛⲗⲁⲁⲩ». ⲁⲩⲱ ⲟⲛ ⲁϥϫⲟⲟⲥ ϫⲉ «ⲡⲉⲧⲣⲟⲉⲓⲥ ⲉⲣⲟⲓ ⲛϥⲛⲁϯ ⲁⲛ ⲛⲗⲁⲁⲩ ⲛϩⲱⲃ ⲉⲧⲁϣⲉ ⲉⲣⲟⲓ». ⲉⲧⲃⲉ ⲡⲁⲓ ⲙⲁⲣⲉⲛⲕⲱ ⲛⲥⲱⲛ ⲛⲧⲡⲟⲛⲏⲣⲓⲁ. ⲕⲁⲧⲁ ⲧϩⲉ ⲉⲛⲧⲁϥϫⲟⲟⲥ ϫⲉ ⲛⲁϫⲁϫⲉ ⲙⲛ ⲛⲉⲧⲑⲗⲓⲃⲉ ⲙⲙⲟⲓ ⲛⲧⲟⲟⲩ ⲁⲩϭⲃⲃⲉ ⲁⲩϩⲉ, ⲧⲁⲓ ⲧⲉ ⲧϩⲉ ⲉⲧⲉ ⲡⲛⲟⲩⲧⲉ ⲛⲁⲧⲁⲕⲟ ⲛⲛⲉⲛϫⲁϫⲉ ⲧⲏⲣⲟⲩ ⲛⲁϩⲣⲁⲛ. ⲁⲩⲱ ⲉⲣϣⲁⲛ ⲟⲩⲡⲁⲣⲉⲙⲃⲟⲗⲏ ⲧⲱⲟⲩⲛ ⲉϩⲣⲁⲓ ⲉϫⲱⲛ, ⲛⲛⲉ ⲡⲉⲛϩⲏⲧ ⲣϩⲟⲧⲉ."
   },
   sanskrit: {
     label: 'Sanskrit (Sutra & Commentary)',
+    alphaName: 'Yoga Sūtra (Patañjali)',
+    betaName: 'Bhāṣya (Commentary)',
     a: "अथ योगानुशासनम् ॥१॥ योगश्चित्तवृत्तिनिरोधः ॥२॥ तदा द्रष्टुः स्वरूपेऽवस्थानम् ॥३॥ वृत्तिसारूप्यमितरत्र ॥४॥ वृत्तयः पञ्चतय्यः क्लिष्टाऽक्लिष्टाः ॥५॥ प्रमाणविपर्ययविकल्पनिद्रास्मृतयः ॥६॥ प्रत्यक्षानुमानागमाः प्रमाणानि ॥७॥ विपर्ययो मिथ्याज्ञानमतद्रूपप्रतिष्ठम् ॥८॥ शब्दज्ञानानुपाती वस्तुशून्यो विकल्पः ॥९॥ अभावप्रत्ययालम्बना वृत्तिर्निद्रा ॥१०॥ अनुभूतविषयासम्प्रमोषः स्मृतिः ॥११॥ अभ्यासवैराग्याभ्यां तन्निरोधः ॥१२॥ तत्र स्थितौ यत्नोऽभ्यासः ॥१३॥ स तु दीर्घकालनैरन्तर्यसत्कारासेवितो दृढभूमिः ॥१४॥",
     b: "पतञ्जलिमुनिना प्रणीते योगसूत्रे उक्तम् - योगश्चित्तवृत्तिनिरोधः इति। अस्य अर्थः चित्तस्य वृत्तीनां निरोधः एव योगः। तदा द्रष्टुः स्वरूपेऽवस्थानम् भवति। अन्यदा तु वृत्तिसारूप्यमितरत्र। एताः वृत्तयः पञ्चतय्यः क्लिष्टाऽक्लिष्टाः च भवन्ति। ताश्च प्रमाणविपर्ययविकल्पनिद्रास्मृतयः इति पञ्चधा विभक्ताः। तत्र प्रत्यक्षानुमानागमाः प्रमाणानि इति सूत्रकारेण स्पष्टीकृतम्। विपर्ययो नाम मिथ्याज्ञानमतद्रूपप्रतिष्ठम्। शब्दज्ञानानुपाती वस्तुशून्यो विकल्पः इति चोक्तम्। अभावप्रत्ययालम्बना वृत्तिर्निद्रा तथा अनुभूतविषयासम्प्रमोषः स्मृतिः इति ज्ञेयम्। एतासां सर्वासां वृत्तीनां निरोधः कथं भवति? अभ्यासवैराग्याभ्यां तन्निरोधः इति महर्षिणा उपदिष्टम्। तत्र स्थितौ यत्नोऽभ्यासः, स तु दीर्घकालनैरन्तर्यसत्कारासेवितो दृढभूमिः भवति।"
   },
   chinese: {
     label: 'Chinese (Classic & Analysis)',
+    alphaName: '道德經 (老子)',
+    betaName: '道德經 解説',
     a: "道可道，非常道。名可名，非常名。無名天地之始；有名萬物之母。故常無欲，以觀其妙；常有欲，以觀其徼。此兩者，同出而異名，同謂之玄。玄之又玄，眾妙之門。天下皆知美之為美，斯惡已。皆知善之為善，斯不善已。有無相生，難易相成，長短相形，高下相盈，音聲相和，前後相隨。恆也。是以聖人處無為之事，行不言之教；萬物作而弗始，生而弗有，為而弗恃，功成而不居。夫唯弗居，是以不去。",
     b: "老子《道德經》開篇即言：「道可道，非常道。名可名，非常名。」這說明真正的「道」是無法用言語完全表達的。接著提到「無名天地之始；有名萬物之母」，指出了天地萬物的起源。我們應該「常無欲，以觀其妙；常有欲，以觀其徼」。這兩者同出而異名，都是極其玄妙的，是「眾妙之門」。在第二章中，老子進一步闡述了相對論的觀點：「天下皆知美之為美，斯惡已。皆知善之為善，斯不善已。」美與醜、善與惡都是相對存在的。因此，「有無相生，難易相成，長短相形，高下相盈，音聲相和，前後相隨。」這是一種永恆的規律。基於這種認識，「是以聖人處無為之事，行不言之教」。聖人任憑萬物自然生長而不加干涉，「生而弗有，為而弗恃，功成而不居」。正因為他不居功，所以他的功績永遠不會消失。"
   },
   syriac: {
     label: 'Syriac (Peshitta & Commentary)',
+    alphaName: 'ܦܫܝܛܬܐ Gen 1 (Peshitta)',
+    betaName: 'ܦܘܫܩܐ (Commentary)',
     a: "ܒܪܫܝܬ ܒܪܐ ܐܠܗܐ ܝܬ ܫܡܝܐ ܘܝܬ ܐܪܥܐ܂ ܘܐܪܥܐ ܗܘܬ ܬܘܗ ܘܒܘܗ ܘܚܫܘܟܐ ܥܠ ܐܦܝ ܬܗܘܡܐ ܘܪܘܚܗ ܕܐܠܗܐ ܡܪܚܦܐ ܥܠ ܐܦܝ ܡܝܐ܂ ܘܐܡܪ ܐܠܗܐ ܢܗܘܐ ܢܘܗܪܐ ܘܗܘܐ ܢܘܗܪܐ܂ ܘܚܙܐ ܐܠܗܐ ܠܢܘܗܪܐ ܕܫܦܝܪ ܘܦܪܫ ܐܠܗܐ ܒܝܬ ܢܘܗܪܐ ܠܚܫܘܟܐ܂ ܘܩܪܐ ܐܠܗܐ ܠܢܘܗܪܐ ܐܝܡܡܐ ܘܠܚܫܘܟܐ ܩܪܐ ܠܠܝܐ ܘܗܘܐ ܪܡܫܐ ܘܗܘܐ ܨܦܪܐ ܝܘܡܐ ܚܕ܂ ܘܐܡܪ ܐܠܗܐ ܢܗܘܐ ܪܩܝܥܐ ܒܡܨܥܬ ܡܝܐ ܘܢܗܘܐ ܦܪܫ ܒܝܬ ܡܝܐ ܠܡܝܐ܂",
     b: "ܘܟܕ ܩܪܝܢܢ ܒܣܦܪܐ ܕܒܪܝܬܐ ܡܫܟܚܝܢܢ ܕܟܬܝܒ: ܒܪܫܝܬ ܒܪܐ ܐܠܗܐ ܝܬ ܫܡܝܐ ܘܝܬ ܐܪܥܐ. ܗܢܐ ܡܚܘܐ ܠܢ ܕܐܠܗܐ ܗܘ ܒܪܘܝܐ ܕܟܠ. ܘܐܦ ܟܬܝܒ ܕܐܪܥܐ ܗܘܬ ܬܘܗ ܘܒܘܗ ܘܚܫܘܟܐ ܥܠ ܐܦܝ ܬܗܘܡܐ. ܘܒܗܢܐ ܚܫܘܟܐ ܪܘܚܗ ܕܐܠܗܐ ܡܪܚܦܐ ܥܠ ܐܦܝ ܡܝܐ. ܡܢ ܒܬܪܟܢ ܦܩܕ ܡܪܝܐ ܘܐܡܪ ܐܠܗܐ ܢܗܘܐ ܢܘܗܪܐ ܘܡܚܕܐ ܗܘܐ ܢܘܗܪܐ. ܘܚܙܐ ܐܠܗܐ ܠܢܘܗܪܐ ܕܫܦܝܪ ܘܦܪܫ ܐܠܗܐ ܒܝܬ ܢܘܗܪܐ ܠܚܫܘܟܐ. ܗܟܢܐ ܩܪܐ ܐܠܗܐ ܠܢܘܗܪܐ ܐܝܡܡܐ ܘܠܚܫܘܟܐ ܩܪܐ ܠܠܝܐ. ܘܗܘܐ ܪܡܫܐ ܘܗܘܐ ܨܦܪܐ ܝܘܡܐ ܚܕ. ܒܝܘܡܐ ܕܬܪܝܢ ܐܡܪ ܐܠܗܐ ܢܗܘܐ ܪܩܝܥܐ ܒܡܨܥܬ ܡܝܐ ܘܢܗܘܐ ܦܪܫ ܒܝܬ ܡܝܐ ܠܡܝܐ ܠܡܒܕܩ ܚܝܠܗ ܪܒܐ."
   },
   arabic: {
     label: 'Arabic (Ibn Khaldun & Summary)',
+    alphaName: 'المقدمة (ابن خلدون)',
+    betaName: 'ملخص المقدمة',
     a: "اعلم أن فن التاريخ فن عزيز المذهب جم الفوائد شريف الغاية إذ هو يوقفنا على أحوال الماضين من الأمم في أخلاقهم والأنبياء في سيرهم والملوك في دولهم وسياستهم حتى تتم فائدة الاقتداء في ذلك لمن يرومه في أحوال الدين والدنيا. فهو محتاج إلى مآخذ متعددة ومعارف متنوعة وحسن نظر وتثبت يفضيان بصاحبهما إلى الحق وينكبان به عن المزلات والمغالط.",
     b: "يقول ابن خلدون في مقدمته المشهورة إن فن التاريخ هو فن عزيز المذهب وجم الفوائد وشريف الغاية. والسبب في ذلك أنه يوقفنا على أحوال الماضين من الأمم في أخلاقهم، وكذلك الأنبياء في سيرهم، والملوك في دولهم وسياستهم. وبذلك تتم فائدة الاقتداء لمن يريده في أمور الدين والدنيا. ولذلك فإن المؤرخ محتاج إلى مآخذ متعددة ومعارف متنوعة، بالإضافة إلى حسن نظر وتثبت للوصول إلى الحق وتجنب المغالط."
   },
   ancient_greek: {
     label: 'Ancient Greek (Plato & Summary)',
+    alphaName: 'Ἀπολογία Σωκράτους (Plato)',
+    betaName: 'Summary (Paraphrase)',
     a: "Ὅτι μὲν ὑμεῖς, ὦ ἄνδρες Ἀθηναῖοι, πεπόνθατε ὑπὸ τῶν ἐμῶν κατηγόρων, οὐκ οἶδα· ἐγὼ δ' οὖν καὶ αὐτὸς ὑπ' αὐτῶν ὀλίγου ἐμαυτοῦ ἐπελαθόμην, οὕτω πιθανῶς ἔλεγον. Καίτοι ἀληθές γε ὡς ἔπος εἰπεῖν οὐδὲν εἰρήκασιν. Μάλιστα δὲ αὐτῶν ἓν ἐθαύμασα τῶν πολλῶν ὧν ἐψεύσαντο, τοῦτο ἐν ᾧ ἔλεγον ὡς χρῆν ὑμᾶς εὐλαβεῖσθαι μὴ ὑπ' ἐμοῦ ἐξαπατηθῆτε ὡς δεινοῦ ὄντος λέγειν.",
     b: "Πλάτωνος Ἀπολογία Σωκράτους. Ἄρχεται ὁ Σωκράτης λέγων: Ὅτι μὲν ὑμεῖς, ὦ ἄνδρες Ἀθηναῖοι, πεπόνθατε ὑπὸ τῶν ἐμῶν κατηγόρων, οὐκ οἶδα. Ἐγὼ δὲ καὶ αὐτὸς ὑπ' αὐτῶν ὀλίγου ἐμαυτοῦ ἐπελαθόμην, ἐπειδὴ οὕτω πιθανῶς ἔλεγον. Ἀλλὰ ἀληθές γε ὡς ἔπος εἰπεῖν οὐδὲν εἰρήκασιν. Ἐθαύμασα δὲ μάλιστα ἓν τῶν πολλῶν ὧν ἐψεύσαντο, ὅτε ἔλεγον ὡς χρῆν ὑμᾶς εὐλαβεῖσθαι μὴ ὑπ' ἐμοῦ ἐξαπατηθῆτε ὡς δεινοῦ ὄντος λέγειν."
   },
   old_japanese: {
     label: 'Old Japanese (万葉集 & 注釈)',
+    alphaName: '万葉集 (原文)',
+    betaName: '万葉集 注釈',
     a: "春過而　夏来良之　白妙之　衣乾有　天之香来山　（巻1・28　持統天皇）。田子之浦ゆ　うち出でてみれば　真白にそ　富士之高嶺に　雪者降りける　（巻3・318　山部赤人）。銀も金も玉も何せむに　優れる宝　子にしかめやも　（巻5・803　山上憶良）。今日　いく程經ぬか　君が逢はむ時のあたりまで　あぢきなく　そむきてあるを　我が盛りかも　（巻4・545　譲位皇后）。紅之　うすくもあらず　もゝの花　咲きたる君を　誰か忘れむ　（巻8・1420　大伴旅人）。妻問ふと　この月夜に　笹の葉の　ゆらぐを見てぞ　我が恋しぐき　（巻10・1895　未詳）。",
     b: "万葉集注釈。春過而　夏来良之　白妙之　衣乾有　天之香来山　とは、春が過ぎて夏が来て、白妙なる衣を干す天のかぐはしき香来山のことなり。此は持統天皇の御製なり。又、田子之浦ゆ　うち出でてみれば　真白にそ　富士之高嶺に　雪者降りける　は山部赤人の作にして、富士の雄大なる眺望を詠みたるなり。銀も金も玉も何せむに　優れる宝　子にしかめやも　は山上憶良が子を慈しむ心を表現せる名歌なり。今日　いく程經ぬか　君が逢はむ時のあたりまで　とは愛する者との再会を待つ心切なる思いを詠みたり。妻問ふと　この月夜に　笹の葉の　ゆらぐを見てぞ　とは恋する者の心の動揺を自然現象になぞらへて詠めるなり。是等の歌は皆古代日本の情操の深さを示すものなり。"
   }
@@ -544,7 +562,7 @@ const App: React.FC = () => {
             <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-100 pb-4">
               <span className="text-[10px] font-bold text-gray-400 uppercase flex items-center mr-2">{t(lang, 'Quick Load')}:</span>
               {Object.entries(EXAMPLES).map(([key, val]) => (
-                <button key={key} onClick={() => { setSourceText(val.a); setTargetText(val.b); }} className="text-[10px] px-3 py-1.5 bg-gray-50 border border-gray-200 hover:bg-academic-blue hover:text-white hover:border-academic-blue transition-all uppercase font-mono rounded-sm shadow-sm">{val.label}</button>
+                <button key={key} onClick={() => { setSourceText(val.a); setTargetText(val.b); if (val.alphaName) setWitnessAlphaName(val.alphaName); if (val.betaName) setWitnessBetaName(val.betaName); }} className="text-[10px] px-3 py-1.5 bg-gray-50 border border-gray-200 hover:bg-academic-blue hover:text-white hover:border-academic-blue transition-all uppercase font-mono rounded-sm shadow-sm">{val.label}</button>
               ))}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -747,9 +765,9 @@ const App: React.FC = () => {
                           <div className="flex items-center gap-4 mt-2 text-[10px] text-gray-500">
                             <span className="font-mono">{sortedMatches.length} {t(lang, 'matches ranked by similarity')}</span>
                             <div className="flex items-center gap-3">
-                              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full" style={{background:'#16a34a'}}></span> 95%+</span>
+                              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full" style={{background:'#1e3a8a'}}></span> 95%+</span>
                               <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full" style={{background:'#2563eb'}}></span> 80-94%</span>
-                              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full" style={{background:'#b45309'}}></span> &lt;80%</span>
+                              <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded-full" style={{background:'#d97706'}}></span> &lt;80%</span>
                             </div>
                           </div>
                         )}
@@ -794,11 +812,11 @@ const App: React.FC = () => {
                                       <div className="w-32 h-2 bg-gray-100 rounded-full overflow-hidden">
                                         <div className="h-full rounded-full" style={{
                                           width: `${m.similarity}%`,
-                                          background: m.similarity >= 95 ? '#16a34a' : m.similarity >= 80 ? '#2563eb' : '#b45309'
+                                          background: m.similarity >= 95 ? '#1e3a8a' : m.similarity >= 80 ? '#2563eb' : '#d97706'
                                         }}></div>
                                       </div>
                                       <span className="font-mono font-bold text-lg" style={{
-                                        color: m.similarity >= 95 ? '#16a34a' : m.similarity >= 80 ? '#2563eb' : '#b45309'
+                                        color: m.similarity >= 95 ? '#1e3a8a' : m.similarity >= 80 ? '#2563eb' : '#d97706'
                                       }}>
                                         {m.similarity.toFixed(1)}%
                                       </span>
@@ -848,7 +866,7 @@ const App: React.FC = () => {
                                     <div className="h-1 w-12 bg-gray-100 rounded-full overflow-hidden">
                                       <div className="h-full bg-academic-gold" style={{ width: `${m.similarity}%` }}></div>
                                     </div>
-                                    <span className={`text-[11px] font-bold ${m.similarity >= 95 ? 'text-green-600' : (m.similarity >= 80 ? 'text-blue-600' : 'text-academic-gold')}`}>{m.similarity.toFixed(1)}%</span>
+                                    <span className="text-[11px] font-bold" style={{color: m.similarity >= 95 ? '#1e3a8a' : m.similarity >= 80 ? '#2563eb' : '#d97706'}}>{m.similarity.toFixed(1)}%</span>
                                   </div>
                                 </div>
                                 <DiffView

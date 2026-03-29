@@ -101,15 +101,19 @@ const DiffView: React.FC<DiffViewProps> = ({
   const shortAlpha = witnessAlphaName.length > 12 ? witnessAlphaName.slice(0, 11) + '…' : witnessAlphaName;
   const shortBeta = witnessBetaName.length > 12 ? witnessBetaName.slice(0, 11) + '…' : witnessBetaName;
 
-  // For 100% matches, just show the text directly
+  // For 100% matches, show both texts clearly with exact match label
   if (similarity >= 99.9) {
     return (
       <div style={{ fontSize: `${fontSize}px` }} className="leading-relaxed font-coptic">
         <div className="mb-1">
-          <span className="text-[8px] font-bold tracking-wider text-gray-400 mr-1" title={witnessAlphaName}>{shortAlpha}</span>
+          <span className="text-[8px] font-bold tracking-wider mr-1" style={{ color: '#2563eb' }} title={witnessAlphaName}>{shortAlpha}</span>
           <span className="text-academic-blue italic">"{source}"</span>
         </div>
-        <div className="text-[8px] text-green-600 font-bold uppercase tracking-wider">= Exact Match</div>
+        <div className="mb-1">
+          <span className="text-[8px] font-bold tracking-wider mr-1" style={{ color: '#d97706' }} title={witnessBetaName}>{shortBeta}</span>
+          <span className="font-coptic italic" style={{ color: '#92400e' }}>"{target}"</span>
+        </div>
+        <div className="text-[8px] font-bold uppercase tracking-wider" style={{ color: '#1e3a8a' }}>= Exact Match</div>
       </div>
     );
   }

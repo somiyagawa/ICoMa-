@@ -101,7 +101,7 @@ const ParallelViewer: React.FC<ParallelViewerProps> = ({
 
     const baseClass = "cursor-pointer transition-all duration-200 border-b-[2px] rounded-t-sm px-0.5 ";
     const connectionClass = isConnected ? "bg-academic-gold/40 scale-110 font-bold z-20 " : "";
-    let scoreClass = bestAlignment.similarity >= 98 ? "border-green-600/60 bg-green-50/50" : (bestAlignment.similarity >= 80 ? "border-blue-500/60 bg-blue-50/50" : "border-gray-400/40 border-dotted");
+    let scoreClass = bestAlignment.similarity >= 98 ? "border-indigo-900/60 bg-indigo-50/50" : (bestAlignment.similarity >= 80 ? "border-blue-500/60 bg-blue-50/50" : "border-gray-400/40 border-dotted");
     return baseClass + connectionClass + scoreClass;
   };
 

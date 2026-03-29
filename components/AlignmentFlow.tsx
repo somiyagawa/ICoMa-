@@ -122,7 +122,7 @@ const AlignmentFlow: React.FC<AlignmentFlowProps> = ({
       .attr("fill", "none")
       .attr("stroke", d => {
         if (selectedMatch === d) return "#c9302c";
-        return d.similarity > 90 ? "rgba(39, 174, 96, 0.4)" : (d.similarity > 70 ? "rgba(52, 152, 219, 0.3)" : "rgba(149, 165, 166, 0.2)");
+        return d.similarity > 90 ? "rgba(30, 58, 138, 0.5)" : (d.similarity > 70 ? "rgba(37, 99, 235, 0.35)" : "rgba(149, 165, 166, 0.2)");
       })
       .attr("stroke-width", d => selectedMatch === d ? 3 : Math.max(1, (d.similarity - 40) / 15))
       .attr("opacity", d => selectedMatch && selectedMatch !== d ? 0.2 : 1)

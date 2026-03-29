@@ -85,7 +85,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ matches, onSelectMatch, sel
       .selectAll("line")
       .data(links)
       .join("line")
-      .attr("stroke", (d: any) => d.value >= 99 ? "#27ae60" : "#bdc3c7")
+      .attr("stroke", (d: any) => d.value >= 99 ? "#1e3a8a" : "#bdc3c7")
       .attr("stroke-opacity", 0.4)
       .attr("stroke-width", (d: any) => Math.max(1, (d.value - 40) / 10))
       .on("click", (event, d: any) => { event.stopPropagation(); onSelectMatch(d.matchData); });
@@ -191,7 +191,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ matches, onSelectMatch, sel
     linkSelectionRef.current
       .transition().duration(400)
       .attr("stroke", (d: any) => {
-        if (!selectedMatch) return d.value >= 99 ? "#27ae60" : "#bdc3c7";
+        if (!selectedMatch) return d.value >= 99 ? "#1e3a8a" : "#bdc3c7";
         if (isMatchedLink(d)) return "#c9302c";
         if (isConnectedLink(d)) return "#e88";
         return "#bdc3c7";
