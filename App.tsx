@@ -78,6 +78,7 @@ const App: React.FC = () => {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
+  const [isAlgorithmHelpOpen, setIsAlgorithmHelpOpen] = useState(false);
 
   const performAnalysis = useCallback(() => {
     if (!sourceText || !targetText) return;
@@ -146,7 +147,12 @@ const App: React.FC = () => {
           {/* Configuration Section */}
           <div className="xl:col-span-4 flex flex-col gap-6">
             <div className="bg-white p-6 border border-gray-200 shadow-md rounded-sm flex-1">
-              <h2 className="text-xs font-bold uppercase text-gray-400 border-b border-gray-100 pb-2 mb-6 tracking-widest">Collation Parameters</h2>
+              <h2 className="text-xs font-bold uppercase text-gray-400 border-b border-gray-100 pb-2 mb-6 tracking-widest flex items-center justify-between">
+                <span>Collation Parameters</span>
+                <button onClick={() => setIsAlgorithmHelpOpen(true)} className="text-gray-400 hover:text-academic-blue transition-colors" title="Algorithm Help">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </button>
+              </h2>
               <div className="grid grid-cols-1 gap-6 mb-8">
                 <div>
                   <label className="block text-[11px] font-bold text-academic-blue mb-2 uppercase">Analysis Algorithm</label>
@@ -320,6 +326,11 @@ const App: React.FC = () => {
               <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
               Changelog
             </button>
+            <span className="text-gray-300">|</span>
+            <a href="https://github.com/somiyagawa/ICoMa-" target="_blank" rel="noopener noreferrer" className="hover:text-academic-blue transition-colors flex items-center gap-1">
+              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+              GitHub
+            </a>
          </div>
          <p className="text-[9px] text-gray-400 mt-1">© 2026 <a href="https://somiyagawa.com/" target="_blank" rel="noopener noreferrer" className="hover:text-academic-blue underline transition-colors">So Miyagawa</a> Computational Linguistics Lab, University of Tsukuba</p>
       </footer>
@@ -341,8 +352,9 @@ const App: React.FC = () => {
               <div>
                 <h3 className="font-bold text-academic-blue text-base border-b border-gray-100 pb-2 mb-2">v2.5.1 Enterprise (March 2026)</h3>
                 <ul className="list-disc pl-5 space-y-1">
+                  <li>Added Algorithm Help modal with detailed pros and cons for each algorithm.</li>
                   <li>Changed the default comparison algorithm to <strong>Levenshtein (Edit Distance)</strong>.</li>
-                  <li>Added author website links to the footer.</li>
+                  <li>Added author website and GitHub repository links to the footer.</li>
                 </ul>
               </div>
               <div>
@@ -370,6 +382,108 @@ const App: React.FC = () => {
                   <li>Added interactive visualization dashboard for text reuse analysis.</li>
                 </ul>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Algorithm Help Modal */}
+      {isAlgorithmHelpOpen && (
+        <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setIsAlgorithmHelpOpen(false)}>
+          <div className="bg-white rounded-sm shadow-2xl max-w-3xl w-full max-h-[80vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h2 className="text-lg font-bold text-academic-blue font-serif tracking-tight flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                Analysis Algorithms
+              </h2>
+              <button onClick={() => setIsAlgorithmHelpOpen(false)} className="text-gray-400 hover:text-academic-red transition-colors">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto font-sans text-sm text-gray-700 space-y-6">
+              
+              <div className="space-y-4">
+                <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
+                  <h3 className="font-bold text-academic-blue text-base mb-1">Levenshtein (Edit Distance)</h3>
+                  <p className="mb-2 text-gray-600">Calculates the minimum number of single-character edits (insertions, deletions, or substitutions) required to change one word into the other.</p>
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div><span className="font-bold text-green-600">Pros:</span> Highly accurate for exact character-level variations (typos, minor spelling changes).</div>
+                    <div><span className="font-bold text-red-500">Cons:</span> Computationally expensive for very long sequences; strict on word order.</div>
+                  </div>
+                  <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Detecting minor scribal errors, short texts, and close variants.</div>
+                </div>
+
+                <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
+                  <h3 className="font-bold text-academic-blue text-base mb-1">Jaccard (Set Similarity)</h3>
+                  <p className="mb-2 text-gray-600">Measures similarity between finite sample sets, defined as the size of the intersection divided by the size of the union of the sample sets.</p>
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div><span className="font-bold text-green-600">Pros:</span> Fast and completely ignores word order.</div>
+                    <div><span className="font-bold text-red-500">Cons:</span> Loses syntax and context; treats text as a "bag of words".</div>
+                  </div>
+                  <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Thematic similarity, overlapping vocabulary, and heavily rearranged texts.</div>
+                </div>
+
+                <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
+                  <h3 className="font-bold text-academic-blue text-base mb-1">Word-Level N-Gram</h3>
+                  <p className="mb-2 text-gray-600">Compares contiguous sequences of <em>n</em> words from the texts.</p>
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div><span className="font-bold text-green-600">Pros:</span> Captures local word order and exact phrasal matches.</div>
+                    <div><span className="font-bold text-red-500">Cons:</span> Fails if a single word in the phrase is changed, inserted, or misspelled.</div>
+                  </div>
+                  <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Plagiarism detection, identifying verbatim quotes, and formulaic language.</div>
+                </div>
+
+                <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
+                  <h3 className="font-bold text-academic-blue text-base mb-1">Character-Level N-Gram</h3>
+                  <p className="mb-2 text-gray-600">Compares contiguous sequences of <em>n</em> characters from the texts.</p>
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div><span className="font-bold text-green-600">Pros:</span> Robust to minor spelling variations, OCR errors, and morphological changes.</div>
+                    <div><span className="font-bold text-red-500">Cons:</span> Can produce false positives with similar-looking but semantically different words.</div>
+                  </div>
+                  <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Noisy texts, OCR output, and texts with inconsistent spelling.</div>
+                </div>
+
+                <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
+                  <h3 className="font-bold text-academic-blue text-base mb-1">Smith-Waterman (Local Alignment)</h3>
+                  <p className="mb-2 text-gray-600">Performs local sequence alignment to determine similar regions between two strings.</p>
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div><span className="font-bold text-green-600">Pros:</span> Excellent at finding highly similar substrings embedded within larger, divergent texts.</div>
+                    <div><span className="font-bold text-red-500">Cons:</span> Computationally heavy.</div>
+                  </div>
+                  <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Finding embedded quotes or reused passages in otherwise different documents.</div>
+                </div>
+
+                <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
+                  <h3 className="font-bold text-academic-blue text-base mb-1">Coptic-Aware (Vowel & Mark Norm)</h3>
+                  <p className="mb-2 text-gray-600">A specialized algorithm that normalizes supralinear strokes and vowels specific to the Coptic language before comparison.</p>
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div><span className="font-bold text-green-600">Pros:</span> Highly tailored for Coptic manuscript realities (scribal abbreviations, vowel variations).</div>
+                    <div><span className="font-bold text-red-500">Cons:</span> Only useful for Coptic texts.</div>
+                  </div>
+                  <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Coptic manuscript collation.</div>
+                </div>
+
+                <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
+                  <h3 className="font-bold text-academic-blue text-base mb-1">FastText-like (Subword N-Grams)</h3>
+                  <p className="mb-2 text-gray-600">Approximates FastText by breaking words into subword character n-grams to create a frequency vector, then computes cosine similarity.</p>
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div><span className="font-bold text-green-600">Pros:</span> Handles morphological variations and out-of-vocabulary words very well.</div>
+                    <div><span className="font-bold text-red-500">Cons:</span> It is a statistical approximation, not a pre-trained neural network.</div>
+                  </div>
+                  <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Highly inflected languages and texts with many morphological variants.</div>
+                </div>
+
+                <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
+                  <h3 className="font-bold text-academic-blue text-base mb-1">Word2Vec-like (Local Co-occurrence)</h3>
+                  <p className="mb-2 text-gray-600">Approximates Word2Vec by building an on-the-fly local co-occurrence matrix (context window) to capture distributional semantics.</p>
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div><span className="font-bold text-green-600">Pros:</span> Captures semantic similarity based on local context, even if exact words differ.</div>
+                    <div><span className="font-bold text-red-500">Cons:</span> Requires sufficient context within the provided texts to build meaningful vectors.</div>
+                  </div>
+                  <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Semantic matching, finding paraphrases, or thematic overlaps where vocabulary differs.</div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
