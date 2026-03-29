@@ -128,21 +128,97 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ matches, onSelectMatch, sel
   }, [matches]);
 
   useEffect(() => {
-    if (!nodeSelectionRef.current) return;
+    if (!nodeSelectionRef.current || !linkSelectionRef.current || !labelSelectionRef.current) return;
+
+    const alphaId = selectedMatch ? `A::${selectedMatch.sourcePhrase}` : null;
+    const betaId = selectedMatch ? `B::${selectedMatch.targetPhrase}` : null;
+    const isSelected = (d: any) => alphaId && (d.id === alphaId || d.id === betaId);
+
+    // --- Highlight nodes ---
     nodeSelectionRef.current
       .transition().duration(400)
+      .attr("stroke", (d: any) => isSelected(d) ? "#c9302c" : "#fff")
+      .attr("stroke-width", (d: any) => isSelected(d) ? 4 : 1.5)
+      .attr("r", (d: any) => isSelected(d) ? 12 : 7)
+      .attr("opacity", (d: any) => {
+        if (!selectedMatch) return 1;
+        return isSelected(d) ? 1 : 0.15;
+      });
+
+    // --- Highlight links ---
+    linkSelectionRef.current
+      .transition().duration(400)
       .attr("stroke", (d: any) => {
-        if (selectedMatch && (d.id === `A::${selectedMatch.sourcePhrase}` || d.id === `B::${selectedMatch.targetPhrase}`)) return "#c9302c";
-        return "#fff";
+        if (!selectedMatch) return d.value >= 99 ? "#27ae60" : "#bdc3c7";
+        if (d.matchData === selectedMatch) return "#c9302c";
+        // Also highlight links connected to the selected nodes
+        const srcId = typeof d.source === 'object' ? d.source.id : d.source;
+        const tgtId = typeof d.target === 'object' ? d.target.id : d.target;
+        if (srcId === alphaId || tgtId === betaId || srcId === betaId || tgtId === alphaId) return "#e88";
+        return "#bdc3c7";
+      })
+      .attr("stroke-opacity", (d: any) => {
+        if (!selectedMatch) return 0.4;
+        if (d.matchData === selectedMatch) return 1;
+        const srcId = typeof d.source === 'object' ? d.source.id : d.source;
+        const tgtId = typeof d.target === 'object' ? d.target.id : d.target;
+        if (srcId === alphaId || tgtId === betaId || srcId === betaId || tgtId === alphaId) return 0.6;
+        return 0.05;
       })
       .attr("stroke-width", (d: any) => {
-        if (selectedMatch && (d.id === `A::${selectedMatch.sourcePhrase}` || d.id === `B::${selectedMatch.targetPhrase}`)) return 4;
-        return 1.5;
-      })
-      .attr("r", (d: any) => {
-        if (selectedMatch && (d.id === `A::${selectedMatch.sourcePhrase}` || d.id === `B::${selectedMatch.targetPhrase}`)) return 12;
-        return 7;
+        if (selectedMatch && d.matchData === selectedMatch) return 4;
+        return Math.max(1, (d.value - 40) / 10);
       });
+
+    // --- Highlight labels ---
+    labelSelectionRef.current
+      .transition().duration(400)
+      .attr("fill", (d: any) => isSelected(d) ? "#c9302c" : "#666")
+      .attr("font-weight", (d: any) => isSelected(d) ? "bold" : "normal")
+      .attr("font-size", (d: any) => isSelected(d) ? "11px" : "9px")
+      .attr("opacity", (d: any) => {
+        if (!selectedMatch) return 1;
+        return isSelected(d) ? 1 : 0.15;
+      });
+
+    // --- Auto zoom-in to selected cluster ---
+    if (selectedMatch && svgRef.current && zoomBehaviorRef.current && nodesDataRef.current.length > 0) {
+      const alphaNode = nodesDataRef.current.find((n: any) => n.id === alphaId);
+      const betaNode = nodesDataRef.current.find((n: any) => n.id === betaId);
+
+      if (alphaNode && betaNode) {
+        const svg = d3.select(svgRef.current);
+        const width = svgRef.current.clientWidth || 800;
+        const height = 350;
+
+        // Center point between the two nodes
+        const cx = (alphaNode.x + betaNode.x) / 2;
+        const cy = (alphaNode.y + betaNode.y) / 2;
+
+        // Zoom scale: closer zoom for tighter clusters
+        const dist = Math.sqrt((alphaNode.x - betaNode.x) ** 2 + (alphaNode.y - betaNode.y) ** 2);
+        const targetScale = Math.min(3, Math.max(1.5, 200 / Math.max(dist, 1)));
+
+        const transform = d3.zoomIdentity
+          .translate(width / 2, height / 2)
+          .scale(targetScale)
+          .translate(-cx, -cy);
+
+        svg.transition()
+          .duration(750)
+          .ease(d3.easeCubicInOut)
+          .call(zoomBehaviorRef.current.transform as any, transform);
+      }
+    }
+
+    // Reset zoom when deselected
+    if (!selectedMatch && svgRef.current && zoomBehaviorRef.current) {
+      const svg = d3.select(svgRef.current);
+      svg.transition()
+        .duration(500)
+        .ease(d3.easeCubicInOut)
+        .call(zoomBehaviorRef.current.transform as any, d3.zoomIdentity);
+    }
   }, [selectedMatch]);
 
   return (
