@@ -120,12 +120,12 @@ const Heatmap: React.FC<HeatmapProps> = ({
         {/* Row 2: Axis legends */}
         <div className="flex items-center gap-4">
           <div className="flex items-center">
-            <span className="inline-block w-2 h-2 rounded-sm mr-1" style={{ backgroundColor: '#34495e' }} />
+            <span className="inline-block w-2 h-2 rounded-sm mr-1" style={{ backgroundColor: '#2563eb' }} />
             <span className="text-[8px] font-bold text-gray-400 tracking-wider">{`X-Axis: ${witnessAlphaName} Position`}</span>
             {onHelpClick && <HelpButton topic="heatmapAxisAlpha" onClick={onHelpClick} />}
           </div>
           <div className="flex items-center">
-            <span className="inline-block w-2 h-2 rounded-sm mr-1" style={{ backgroundColor: '#8b7355' }} />
+            <span className="inline-block w-2 h-2 rounded-sm mr-1" style={{ backgroundColor: '#d97706' }} />
             <span className="text-[8px] font-bold text-gray-400 tracking-wider">{`Y-Axis: ${witnessBetaName} Position`}</span>
             {onHelpClick && <HelpButton topic="heatmapAxisBeta" onClick={onHelpClick} />}
           </div>

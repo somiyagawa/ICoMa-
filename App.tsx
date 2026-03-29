@@ -530,7 +530,7 @@ const App: React.FC = () => {
               <div className="flex flex-col">
                 <div className="flex justify-between items-center mb-2 px-1">
                    <div className="flex items-center gap-1.5">
-                     <span className="text-[10px] font-bold shrink-0 w-4 h-4 rounded-full flex items-center justify-center" style={{background:'#1e3a5f', color:'#d4a84b'}}>α</span>
+                     <span className="text-[10px] font-bold shrink-0 w-4 h-4 rounded-full flex items-center justify-center" style={{background:'#2563eb', color:'#fff'}}>α</span>
                      <div className="relative group">
                        <input
                          type="text"
@@ -551,7 +551,7 @@ const App: React.FC = () => {
               <div className="flex flex-col">
                 <div className="flex justify-between items-center mb-2 px-1">
                    <div className="flex items-center gap-1.5">
-                     <span className="text-[10px] font-bold shrink-0 w-4 h-4 rounded-full flex items-center justify-center" style={{background:'#8b7355', color:'#fff'}}>β</span>
+                     <span className="text-[10px] font-bold shrink-0 w-4 h-4 rounded-full flex items-center justify-center" style={{background:'#d97706', color:'#fff'}}>β</span>
                      <div className="relative group">
                        <input
                          type="text"
@@ -680,8 +680,8 @@ const App: React.FC = () => {
                     <HelpButton topic="totalTokenCount" onClick={setActiveHelpModal} />
                   </div>
                   <div className="flex gap-4">
-                    <div className="px-3 py-1 bg-academic-lightBlue text-white rounded-full text-[10px] font-mono">α: {result.tokensA.length}</div>
-                    <div className="px-3 py-1 bg-academic-gold text-white rounded-full text-[10px] font-mono">β: {result.tokensB.length}</div>
+                    <div className="px-3 py-1 text-white rounded-full text-[10px] font-mono" style={{background:'#2563eb'}}>α: {result.tokensA.length}</div>
+                    <div className="px-3 py-1 text-white rounded-full text-[10px] font-mono" style={{background:'#d97706'}}>β: {result.tokensB.length}</div>
                   </div>
                </div>
             </div>
@@ -876,7 +876,7 @@ const App: React.FC = () => {
                        </span>
                        <ChartToolbar containerRef={networkRef} filename="icoma-network-graph" />
                      </h3>
-                     <NetworkGraph matches={result.matches} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} />
+                     <NetworkGraph matches={result.matches} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} witnessAlphaName={witnessAlphaName} witnessBetaName={witnessBetaName} />
                    </div>
                    {/* Dispersion Plot (Distribution) */}
                    <div ref={dispersionRef} className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm">

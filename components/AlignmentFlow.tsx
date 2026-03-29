@@ -50,7 +50,7 @@ const AlignmentFlow: React.FC<AlignmentFlowProps> = ({
       .attr("text-anchor", "middle")
       .attr("font-size", "11px")
       .attr("font-weight", "bold")
-      .attr("fill", "#34495e")
+      .attr("fill", "#2563eb")
       .text(witnessAlphaName);
 
     // Direction arrow: ← Beginning ... End →
@@ -71,11 +71,11 @@ const AlignmentFlow: React.FC<AlignmentFlowProps> = ({
       .text("End →");
 
     // Top bar (Witness α)
-    svg.append("rect").attr("width", width).attr("height", 10).attr("fill", "#34495e").attr("rx", 2);
+    svg.append("rect").attr("width", width).attr("height", 10).attr("fill", "#2563eb").attr("rx", 2);
 
     // === Witness β (bottom) ===
     // Bottom bar (Witness β)
-    svg.append("rect").attr("y", height - 10).attr("width", width).attr("height", 10).attr("fill", "#8b7355").attr("rx", 2);
+    svg.append("rect").attr("y", height - 10).attr("width", width).attr("height", 10).attr("fill", "#d97706").attr("rx", 2);
 
     // Direction arrow for β
     svg.append("text")
@@ -101,7 +101,7 @@ const AlignmentFlow: React.FC<AlignmentFlowProps> = ({
       .attr("text-anchor", "middle")
       .attr("font-size", "11px")
       .attr("font-weight", "bold")
-      .attr("fill", "#8b7355")
+      .attr("fill", "#d97706")
       .text(witnessBetaName);
 
     const displayMatches = matches.length > 300 ? matches.filter(m => m.similarity > 70) : matches;

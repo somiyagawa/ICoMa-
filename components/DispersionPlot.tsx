@@ -44,8 +44,8 @@ const DispersionPlot: React.FC<DispersionPlotProps> = ({
     svg.append("rect").attr("x", 0).attr("y", row1Y).attr("width", width).attr("height", barHeight).attr("fill", "#f8f9fa").attr("stroke", "#bdc3c7");
     svg.append("rect").attr("x", 0).attr("y", row2Y).attr("width", width).attr("height", barHeight).attr("fill", "#f8f9fa").attr("stroke", "#bdc3c7");
 
-    svg.append("text").attr("x", 0).attr("y", row1Y - 5).text(`${witnessAlphaName} Dispersion`).attr("font-size", "10px").attr("fill", "#2c3e50");
-    svg.append("text").attr("x", 0).attr("y", row2Y - 5).text(`${witnessBetaName} Dispersion`).attr("font-size", "10px").attr("fill", "#2c3e50");
+    svg.append("text").attr("x", 0).attr("y", row1Y - 5).text(`${witnessAlphaName} Dispersion`).attr("font-size", "10px").attr("fill", "#2563eb").attr("font-weight", "bold");
+    svg.append("text").attr("x", 0).attr("y", row2Y - 5).text(`${witnessBetaName} Dispersion`).attr("font-size", "10px").attr("fill", "#d97706").attr("font-weight", "bold");
 
     // Render matches
     // Note: Rendering two rects per match (one for A, one for B)

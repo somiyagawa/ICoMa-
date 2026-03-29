@@ -74,7 +74,7 @@ const SimilarityHistogram: React.FC<SimilarityHistogramProps> = ({ matches, sele
       .attr("fill", (d, i) => {
         if (selectedBinIndex >= 0 && i === selectedBinIndex) return "#c9302c";
         if (selectedBinIndex >= 0) return "#d5cfc0";
-        return "#8b7355";
+        return "#2563eb";
       })
       .attr("opacity", (d, i) => {
         if (selectedBinIndex >= 0 && i === selectedBinIndex) return 1;
@@ -86,7 +86,7 @@ const SimilarityHistogram: React.FC<SimilarityHistogramProps> = ({ matches, sele
       .attr("stroke-width", (d, i) => i === selectedBinIndex ? 2 : 0)
       .on("mouseover", function(event, d) {
         if (selectedBinIndex < 0 || bins.indexOf(d) !== selectedBinIndex) {
-          d3.select(this).attr("opacity", 1).attr("fill", "#6b5335");
+          d3.select(this).attr("opacity", 1).attr("fill", "#1e40af");
         }
       })
       .on("mouseout", function(event, d) {
@@ -96,7 +96,7 @@ const SimilarityHistogram: React.FC<SimilarityHistogramProps> = ({ matches, sele
         } else if (selectedBinIndex >= 0) {
           d3.select(this).attr("opacity", 0.4).attr("fill", "#d5cfc0");
         } else {
-          d3.select(this).attr("opacity", 0.8).attr("fill", "#8b7355");
+          d3.select(this).attr("opacity", 0.8).attr("fill", "#2563eb");
         }
       })
       .on("click", function(event, d) {

@@ -118,13 +118,13 @@ const DiffView: React.FC<DiffViewProps> = ({
     <div style={{ fontSize: `${fontSize}px` }} className="leading-relaxed">
       {/* Source line */}
       <div className="mb-1.5">
-        <span className="text-[8px] font-bold tracking-wider mr-1" style={{ color: '#34495e' }} title={witnessAlphaName}>{shortAlpha}</span>
+        <span className="text-[8px] font-bold tracking-wider mr-1" style={{ color: '#2563eb' }} title={witnessAlphaName}>{shortAlpha}</span>
         <span className="font-coptic italic text-academic-blue">"{source}"</span>
       </div>
       {/* Target line */}
       <div className="mb-1.5">
-        <span className="text-[8px] font-bold tracking-wider mr-1" style={{ color: '#8b7355' }} title={witnessBetaName}>{shortBeta}</span>
-        <span className="font-coptic italic" style={{ color: '#5a4a3a' }}>"{target}"</span>
+        <span className="text-[8px] font-bold tracking-wider mr-1" style={{ color: '#d97706' }} title={witnessBetaName}>{shortBeta}</span>
+        <span className="font-coptic italic" style={{ color: '#92400e' }}>"{target}"</span>
       </div>
       {/* Inline diff */}
       <div className="mt-1 pt-1 border-t border-gray-100">
@@ -139,8 +139,8 @@ const DiffView: React.FC<DiffViewProps> = ({
                 <span
                   key={i}
                   style={{
-                    backgroundColor: '#fecaca',
-                    color: '#991b1b',
+                    backgroundColor: '#dbeafe',
+                    color: '#1e40af',
                     textDecoration: 'line-through',
                     borderRadius: '2px',
                     padding: '0 1px',
@@ -154,8 +154,9 @@ const DiffView: React.FC<DiffViewProps> = ({
               <span
                 key={i}
                 style={{
-                  backgroundColor: '#bbf7d0',
-                  color: '#15803d',
+                  backgroundColor: '#fef3c7',
+                  color: '#92400e',
+                  textDecoration: 'underline',
                   borderRadius: '2px',
                   padding: '0 1px',
                 }}

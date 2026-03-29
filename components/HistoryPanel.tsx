@@ -110,7 +110,7 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ onLoadSession, isOpen, onCl
         {/* Header */}
         <div className="px-5 py-4 border-b border-gray-200 flex justify-between items-center" style={{ background: '#fff' }}>
           <div>
-            <h2 className="text-base font-bold" style={{ color: '#1e3a5f' }}>Session History</h2>
+            <h2 className="text-base font-bold" style={{ color: '#2563eb' }}>Session History</h2>
             <p className="text-[10px] text-gray-400 uppercase tracking-wider mt-0.5">Past Analyses</p>
           </div>
           <button
@@ -128,7 +128,7 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ onLoadSession, isOpen, onCl
           {loading ? (
             <div className="flex items-center justify-center py-20">
               <div className="text-center">
-                <div className="inline-block w-7 h-7 border-2 border-t-transparent rounded-full animate-spin mb-2" style={{ borderColor: '#1e3a5f', borderTopColor: 'transparent' }} />
+                <div className="inline-block w-7 h-7 border-2 border-t-transparent rounded-full animate-spin mb-2" style={{ borderColor: '#2563eb', borderTopColor: 'transparent' }} />
                 <p className="text-xs text-gray-400">Loading...</p>
               </div>
             </div>
@@ -164,13 +164,13 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ onLoadSession, isOpen, onCl
                             if (e.key === 'Escape') { setEditingId(null); setEditValue(''); }
                           }}
                           className="w-full px-2 py-1 border rounded text-sm font-medium focus:outline-none focus:ring-2"
-                          style={{ borderColor: '#1e3a5f', color: '#1e3a5f' }}
+                          style={{ borderColor: '#2563eb', color: '#2563eb' }}
                         />
                       ) : (
                         <button
                           onClick={() => handleRenameStart(session)}
                           className="block w-full text-left text-sm font-medium truncate hover:underline"
-                          style={{ color: '#1e3a5f' }}
+                          style={{ color: '#2563eb' }}
                           title={session.label}
                         >
                           {session.label}
@@ -184,13 +184,13 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ onLoadSession, isOpen, onCl
 
                   {/* Metadata */}
                   <div className="flex items-center gap-3 text-[11px] mb-3">
-                    <span className="px-2 py-0.5 rounded text-white font-mono text-[10px]" style={{ background: '#1e3a5f' }}>
+                    <span className="px-2 py-0.5 rounded text-white font-mono text-[10px]" style={{ background: '#2563eb' }}>
                       {session.config.algorithm}
                     </span>
                     <span className="text-gray-500">
                       {session.result.matches.length} matches
                     </span>
-                    <span className="font-mono font-semibold" style={{ color: '#8b7355' }}>
+                    <span className="font-mono font-semibold" style={{ color: '#d97706' }}>
                       {session.result.stats.meanSimilarity.toFixed(1)}%
                     </span>
                   </div>
@@ -198,11 +198,11 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ onLoadSession, isOpen, onCl
                   {/* Witness names preview */}
                   <div className="flex gap-2 mb-3 text-[10px] text-gray-400">
                     <span className="truncate" title={session.witnessAlphaName}>
-                      <strong style={{ color: '#1e3a5f' }}>α</strong> {session.witnessAlphaName}
+                      <strong style={{ color: '#2563eb' }}>α</strong> {session.witnessAlphaName}
                     </span>
                     <span className="text-gray-300">|</span>
                     <span className="truncate" title={session.witnessBetaName}>
-                      <strong style={{ color: '#8b7355' }}>β</strong> {session.witnessBetaName}
+                      <strong style={{ color: '#d97706' }}>β</strong> {session.witnessBetaName}
                     </span>
                   </div>
 
@@ -211,7 +211,7 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ onLoadSession, isOpen, onCl
                     <button
                       onClick={() => handleLoadSession(session)}
                       className="flex-1 px-3 py-1.5 text-white text-[11px] font-medium rounded transition-colors"
-                      style={{ background: '#1e3a5f' }}
+                      style={{ background: '#2563eb' }}
                     >
                       Load
                     </button>

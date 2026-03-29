@@ -162,8 +162,8 @@ const ParallelViewer: React.FC<ParallelViewerProps> = ({
           {renderMinimap('A', tokensA)}
           <div className="flex-1 flex flex-col overflow-hidden">
             <div className="bg-academic-paper px-4 py-3 border-b border-gray-200 shrink-0 flex justify-between items-center">
-              <span className="font-bold text-academic-blue text-[10px] tracking-widest flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-academic-lightBlue"></span>
+              <span className="font-bold text-[10px] tracking-widest flex items-center gap-2" style={{color:'#2563eb'}}>
+                <span className="w-1.5 h-1.5 rounded-full" style={{background:'#2563eb'}}></span>
                 {witnessAlphaName}
               </span>
               <span className="text-gray-400 font-mono text-[9px] bg-white px-2 py-0.5 border border-gray-100 rounded-full">{tokensA.length} Tokens</span>
@@ -179,8 +179,8 @@ const ParallelViewer: React.FC<ParallelViewerProps> = ({
           {renderMinimap('B', tokensB)}
           <div className="flex-1 flex flex-col overflow-hidden">
             <div className="bg-academic-paper px-4 py-3 border-b border-gray-200 shrink-0 flex justify-between items-center">
-              <span className="font-bold text-academic-gold text-[10px] tracking-widest flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-academic-gold"></span>
+              <span className="font-bold text-[10px] tracking-widest flex items-center gap-2" style={{color:'#d97706'}}>
+                <span className="w-1.5 h-1.5 rounded-full" style={{background:'#d97706'}}></span>
                 {witnessBetaName}
               </span>
               <span className="text-gray-400 font-mono text-[9px] bg-white px-2 py-0.5 border border-gray-100 rounded-full">{tokensB.length} Tokens</span>

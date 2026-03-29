@@ -6,9 +6,11 @@ interface NetworkGraphProps {
   matches: Match[];
   onSelectMatch: (match: Match) => void;
   selectedMatch: Match | null;
+  witnessAlphaName?: string;
+  witnessBetaName?: string;
 }
 
-const NetworkGraph: React.FC<NetworkGraphProps> = ({ matches, onSelectMatch, selectedMatch }) => {
+const NetworkGraph: React.FC<NetworkGraphProps> = ({ matches, onSelectMatch, selectedMatch, witnessAlphaName = 'Witness α', witnessBetaName = 'Witness β' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
   const simulationRef = useRef<d3.Simulation<any, undefined> | null>(null);
@@ -95,7 +97,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ matches, onSelectMatch, sel
       .data(nodes)
       .join("circle")
       .attr("r", 7)
-      .attr("fill", (d: any) => d.group === 'alpha' ? "#34495e" : "#8b7355")
+      .attr("fill", (d: any) => d.group === 'alpha' ? "#2563eb" : "#d97706")
       .attr("stroke", "#fff")
       .attr("stroke-width", 1.5)
       .call(d3.drag<any, any>()
@@ -145,8 +147,15 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ matches, onSelectMatch, sel
              .attr("y", (d: any) => d.y + 9);
     });
 
+    // Legend
+    const legend = svg.append("g").attr("transform", `translate(${width - 140}, 10)`);
+    legend.append("circle").attr("cx", 0).attr("cy", 0).attr("r", 6).attr("fill", "#2563eb");
+    legend.append("text").attr("x", 12).attr("y", 4).text(witnessAlphaName.length > 15 ? witnessAlphaName.slice(0, 13) + '…' : witnessAlphaName).attr("font-size", "9px").attr("fill", "#2563eb").attr("font-weight", "bold");
+    legend.append("circle").attr("cx", 0).attr("cy", 18).attr("r", 6).attr("fill", "#d97706");
+    legend.append("text").attr("x", 12).attr("y", 22).text(witnessBetaName.length > 15 ? witnessBetaName.slice(0, 13) + '…' : witnessBetaName).attr("font-size", "9px").attr("fill", "#d97706").attr("font-weight", "bold");
+
     return () => simulation.stop();
-  }, [matches]);
+  }, [matches, witnessAlphaName, witnessBetaName]);
 
   useEffect(() => {
     if (!nodeSelectionRef.current || !linkSelectionRef.current || !labelSelectionRef.current) return;
