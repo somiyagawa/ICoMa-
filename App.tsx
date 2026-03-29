@@ -11,6 +11,7 @@ import SimilarityHistogram from './components/SimilarityHistogram';
 import AIAnalysisPanel from './components/AIAnalysisPanel';
 import ChartToolbar, { ZoomControls } from './components/ChartControls';
 import { getHelpContent, getAlgorithmHelp, getIntertextualityCategoryHelp } from './services/helpContent';
+import DiffView from './components/DiffView';
 
 const EXAMPLES = {
   english_long: {
@@ -555,9 +556,12 @@ const App: React.FC = () => {
                                 <span className={`text-[11px] font-bold ${m.similarity >= 95 ? 'text-green-600' : (m.similarity >= 80 ? 'text-blue-600' : 'text-academic-gold')}`}>{m.similarity.toFixed(1)}%</span>
                               </div>
                             </div>
-                            <div className="font-coptic text-academic-blue leading-tight line-clamp-2 group-hover:text-black italic" style={{ fontSize: `${Math.max(10, fontSize - 2)}px` }}>
-                              "{m.sourcePhrase}"
-                            </div>
+                            <DiffView
+                              source={m.sourcePhrase}
+                              target={m.targetPhrase}
+                              similarity={m.similarity}
+                              fontSize={Math.max(10, fontSize - 2)}
+                            />
                           </div>
                         ))}
                         {sortedMatches.length === 0 && (
