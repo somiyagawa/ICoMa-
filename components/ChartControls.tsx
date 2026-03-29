@@ -213,15 +213,72 @@ export const FullscreenButton: React.FC<FullscreenButtonProps> = ({ containerRef
     return () => document.removeEventListener('fullscreenchange', handler);
   }, []);
 
+  // Also handle Escape key in fullscreen
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && document.fullscreenElement) {
+        document.exitFullscreen();
+      }
+    };
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, [isFullscreen]);
+
   return (
-    <button
-      onClick={toggleFullscreen}
-      className="text-[8px] uppercase font-bold text-gray-400 hover:text-academic-blue transition-colors px-1.5 py-0.5 rounded-sm hover:bg-gray-100 flex items-center gap-1"
-      title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
-    >
-      {isFullscreen ? <CollapseIcon /> : <ExpandIcon />}
-      {isFullscreen ? 'Exit' : 'Full'}
-    </button>
+    <>
+      <button
+        onClick={toggleFullscreen}
+        className="text-[8px] uppercase font-bold text-gray-400 hover:text-academic-blue transition-colors px-1.5 py-0.5 rounded-sm hover:bg-gray-100 flex items-center gap-1"
+        title={isFullscreen ? 'Exit Fullscreen (Esc)' : 'Fullscreen'}
+      >
+        {isFullscreen ? <CollapseIcon /> : <ExpandIcon />}
+        {isFullscreen ? 'Exit' : 'Full'}
+      </button>
+      {/* Prominent floating exit bar when in fullscreen */}
+      {isFullscreen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 2147483647,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '6px 0',
+            background: 'linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.0) 100%)',
+            pointerEvents: 'none',
+          }}
+        >
+          <button
+            onClick={toggleFullscreen}
+            style={{
+              pointerEvents: 'auto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '8px 24px',
+              background: '#c9302c',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '6px',
+              fontSize: '13px',
+              fontWeight: 700,
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase' as const,
+              cursor: 'pointer',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+            }}
+            title="Exit Fullscreen (Esc)"
+          >
+            <CollapseIcon /> Exit Fullscreen
+            <span style={{ fontSize: '10px', opacity: 0.7, marginLeft: '4px', fontWeight: 400 }}>(Esc)</span>
+          </button>
+        </div>
+      )}
+    </>
   );
 };
 
