@@ -51,17 +51,277 @@ const EXAMPLES = {
   }
 };
 
-const StatItem = ({ label, value, description }: { label: string, value: string | number, description: string }) => (
+const HELP_CONTENT: Record<string, { title: string, content: React.ReactNode }> = {
+  algorithm: {
+    title: "Analysis Algorithms",
+    content: (
+      <div className="space-y-4">
+        <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
+          <h3 className="font-bold text-academic-blue text-base mb-1">Levenshtein (Edit Distance)</h3>
+          <p className="mb-2 text-gray-600">Calculates the minimum number of single-character edits (insertions, deletions, or substitutions) required to change one word into the other.</p>
+          <div className="grid grid-cols-2 gap-4 text-xs">
+            <div><span className="font-bold text-green-600">Pros:</span> Highly accurate for exact character-level variations (typos, minor spelling changes).</div>
+            <div><span className="font-bold text-red-500">Cons:</span> Computationally expensive for very long sequences; strict on word order.</div>
+          </div>
+          <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Detecting minor scribal errors, short texts, and close variants.</div>
+        </div>
+        <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
+          <h3 className="font-bold text-academic-blue text-base mb-1">Jaccard (Set Similarity)</h3>
+          <p className="mb-2 text-gray-600">Measures similarity between finite sample sets, defined as the size of the intersection divided by the size of the union of the sample sets.</p>
+          <div className="grid grid-cols-2 gap-4 text-xs">
+            <div><span className="font-bold text-green-600">Pros:</span> Fast and completely ignores word order.</div>
+            <div><span className="font-bold text-red-500">Cons:</span> Loses syntax and context; treats text as a "bag of words".</div>
+          </div>
+          <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Thematic similarity, overlapping vocabulary, and heavily rearranged texts.</div>
+        </div>
+        <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
+          <h3 className="font-bold text-academic-blue text-base mb-1">Word-Level N-Gram</h3>
+          <p className="mb-2 text-gray-600">Compares contiguous sequences of <em>n</em> words from the texts.</p>
+          <div className="grid grid-cols-2 gap-4 text-xs">
+            <div><span className="font-bold text-green-600">Pros:</span> Captures local word order and exact phrasal matches.</div>
+            <div><span className="font-bold text-red-500">Cons:</span> Fails if a single word in the phrase is changed, inserted, or misspelled.</div>
+          </div>
+          <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Plagiarism detection, identifying verbatim quotes, and formulaic language.</div>
+        </div>
+        <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
+          <h3 className="font-bold text-academic-blue text-base mb-1">Character-Level N-Gram</h3>
+          <p className="mb-2 text-gray-600">Compares contiguous sequences of <em>n</em> characters from the texts.</p>
+          <div className="grid grid-cols-2 gap-4 text-xs">
+            <div><span className="font-bold text-green-600">Pros:</span> Robust to minor spelling variations, OCR errors, and morphological changes.</div>
+            <div><span className="font-bold text-red-500">Cons:</span> Can produce false positives with similar-looking but semantically different words.</div>
+          </div>
+          <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Noisy texts, OCR output, and texts with inconsistent spelling.</div>
+        </div>
+        <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
+          <h3 className="font-bold text-academic-blue text-base mb-1">Smith-Waterman (Local Alignment)</h3>
+          <p className="mb-2 text-gray-600">Performs local sequence alignment to determine similar regions between two strings.</p>
+          <div className="grid grid-cols-2 gap-4 text-xs">
+            <div><span className="font-bold text-green-600">Pros:</span> Excellent at finding highly similar substrings embedded within larger, divergent texts.</div>
+            <div><span className="font-bold text-red-500">Cons:</span> Computationally heavy.</div>
+          </div>
+          <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Finding embedded quotes or reused passages in otherwise different documents.</div>
+        </div>
+        <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
+          <h3 className="font-bold text-academic-blue text-base mb-1">Coptic-Aware (Vowel & Mark Norm)</h3>
+          <p className="mb-2 text-gray-600">A specialized algorithm that normalizes supralinear strokes and vowels specific to the Coptic language before comparison.</p>
+          <div className="grid grid-cols-2 gap-4 text-xs">
+            <div><span className="font-bold text-green-600">Pros:</span> Highly tailored for Coptic manuscript realities (scribal abbreviations, vowel variations).</div>
+            <div><span className="font-bold text-red-500">Cons:</span> Only useful for Coptic texts.</div>
+          </div>
+          <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Coptic manuscript collation.</div>
+        </div>
+        <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
+          <h3 className="font-bold text-academic-blue text-base mb-1">FastText-like (Subword N-Grams)</h3>
+          <p className="mb-2 text-gray-600">Approximates FastText by breaking words into subword character n-grams to create a frequency vector, then computes cosine similarity.</p>
+          <div className="grid grid-cols-2 gap-4 text-xs">
+            <div><span className="font-bold text-green-600">Pros:</span> Handles morphological variations and out-of-vocabulary words very well.</div>
+            <div><span className="font-bold text-red-500">Cons:</span> It is a statistical approximation, not a pre-trained neural network.</div>
+          </div>
+          <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Highly inflected languages and texts with many morphological variants.</div>
+        </div>
+        <div className="border border-gray-100 rounded-sm p-4 bg-gray-50/50">
+          <h3 className="font-bold text-academic-blue text-base mb-1">Word2Vec-like (Local Co-occurrence)</h3>
+          <p className="mb-2 text-gray-600">Approximates Word2Vec by building an on-the-fly local co-occurrence matrix (context window) to capture distributional semantics.</p>
+          <div className="grid grid-cols-2 gap-4 text-xs">
+            <div><span className="font-bold text-green-600">Pros:</span> Captures semantic similarity based on local context, even if exact words differ.</div>
+            <div><span className="font-bold text-red-500">Cons:</span> Requires sufficient context within the provided texts to build meaningful vectors.</div>
+          </div>
+          <div className="mt-2 text-xs"><span className="font-bold text-academic-gold">Best for:</span> Semantic matching, finding paraphrases, or thematic overlaps where vocabulary differs.</div>
+        </div>
+      </div>
+    )
+  },
+  threshold: {
+    title: "Similarity Threshold",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">Determines the minimum similarity score (percentage) required for a match to be highlighted and reported.</p>
+        <div className="grid grid-cols-1 gap-4 text-xs">
+          <div className="border border-gray-100 rounded-sm p-3 bg-gray-50/50">
+            <span className="font-bold text-green-600 block mb-1">High Threshold (80% - 100%)</span>
+            Reduces false positives. Best for finding exact quotes, verbatim copying, or highly conserved passages. Might miss subtle text reuses or heavily edited sections.
+          </div>
+          <div className="border border-gray-100 rounded-sm p-3 bg-gray-50/50">
+            <span className="font-bold text-academic-gold block mb-1">Medium Threshold (50% - 79%)</span>
+            A balanced approach. Good for finding paraphrases, translations, or texts with moderate scribal variations.
+          </div>
+          <div className="border border-gray-100 rounded-sm p-3 bg-gray-50/50">
+            <span className="font-bold text-red-500 block mb-1">Low Threshold (20% - 49%)</span>
+            Catches highly fragmented, heavily corrupted, or loosely related texts. Will significantly increase noise and false positives.
+          </div>
+        </div>
+      </div>
+    )
+  },
+  nsize: {
+    title: "N-Size / Window Size",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">Defines the length of the sequence (number of words or characters) used as the base unit for comparison.</p>
+        <div className="grid grid-cols-1 gap-4 text-xs">
+          <div className="border border-gray-100 rounded-sm p-3 bg-gray-50/50">
+            <span className="font-bold text-green-600 block mb-1">Larger N-Size (e.g., 5-10+)</span>
+            Captures more context and drastically reduces random matches (noise). Best when looking for long, contiguous blocks of reused text. If set too high, it will fail to match texts with frequent small insertions or deletions.
+          </div>
+          <div className="border border-gray-100 rounded-sm p-3 bg-gray-50/50">
+            <span className="font-bold text-red-500 block mb-1">Smaller N-Size (e.g., 1-4)</span>
+            Highly flexible. Catches fragmented, heavily rearranged, or loosely paraphrased text. However, it will generate many false positives (e.g., matching common stop words or short, coincidental character sequences).
+          </div>
+        </div>
+        <div className="mt-4 text-xs bg-blue-50 text-blue-800 p-3 rounded-sm border border-blue-100">
+          <span className="font-bold">Pro Tip:</span> For word-level algorithms, 3-5 is usually optimal. For character-level algorithms, 5-10 is recommended to avoid matching random syllables.
+        </div>
+      </div>
+    )
+  },
+  witnessAlpha: {
+    title: "Witness α (Primary)",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">The primary text or base text used for the collation. This is typically the source text, the older manuscript, or the reference text against which the comparandum is evaluated.</p>
+        <div className="mt-2 text-xs bg-blue-50 text-blue-800 p-3 rounded-sm border border-blue-100">
+          <span className="font-bold">Note:</span> The distinction between α and β is mostly for visualization purposes. Most algorithms are symmetric, meaning the similarity score will be the same regardless of which text is α or β.
+        </div>
+      </div>
+    )
+  },
+  witnessBeta: {
+    title: "Witness β (Comparandum)",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">The secondary text, target text, or comparandum. This is typically the text suspected of reusing the primary text, a later manuscript, or a translation.</p>
+      </div>
+    )
+  },
+  meanSimilarity: {
+    title: "Mean Similarity",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">The average similarity score across all detected matches.</p>
+        <ul className="list-disc pl-5 text-xs text-gray-600 space-y-1">
+          <li><span className="font-bold text-green-600">High values (&gt;90%):</span> Indicate verbatim quotations or direct copying.</li>
+          <li><span className="font-bold text-academic-gold">Medium values (60-90%):</span> Suggest paraphrasing, translation, or textual evolution.</li>
+          <li><span className="font-bold text-red-500">Low values (&lt;60%):</span> Indicate loose thematic connections or highly fragmented reuse.</li>
+        </ul>
+      </div>
+    )
+  },
+  reuseCoverage: {
+    title: "Reuse Coverage",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">The percentage of the total text length occupied by detected reuses.</p>
+        <p className="text-xs text-gray-600">A high coverage implies that one witness is largely derived from or identical to the other. A low coverage implies that the texts only share brief quotes or specific terminology.</p>
+      </div>
+    )
+  },
+  alignments: {
+    title: "Alignments",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">The total number of distinct parallel passages identified by the algorithm.</p>
+        <p className="text-xs text-gray-600">This counts every single instance where a match was found. If a specific phrase is reused 10 times in the target text, it counts as 10 alignments.</p>
+      </div>
+    )
+  },
+  uniqueNgrams: {
+    title: "Unique N-Grams",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">The count of distinct matching sequences (unique text blocks).</p>
+        <p className="text-xs text-gray-600">Unlike "Alignments", this metric deduplicates the matches. If a specific phrase is reused 10 times, it counts as 10 alignments but only 1 unique N-gram. A large difference between Alignments and Unique N-Grams indicates highly repetitive formulaic language.</p>
+      </div>
+    )
+  },
+  totalTokenCount: {
+    title: "Total Token Count",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">The total number of tokens (words or characters, depending on the algorithm) in each witness.</p>
+        <p className="text-xs text-gray-600">This helps contextualize the "Reuse Coverage" metric. If Witness α is much larger than Witness β, a 100% coverage of β might only represent a 5% coverage of α.</p>
+      </div>
+    )
+  },
+  macroAlignment: {
+    title: "Macro-Level Alignment Flow",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">A high-level visual representation of how the two texts align with each other from beginning to end.</p>
+        <ul className="list-disc pl-5 text-xs text-gray-600 space-y-1">
+          <li><span className="font-bold">Straight parallel lines:</span> Indicate that the texts follow the same narrative order (e.g., a direct copy or translation).</li>
+          <li><span className="font-bold">Criss-crossing lines:</span> Indicate structural rearrangement, where sections of text have been moved around.</li>
+          <li><span className="font-bold">Color intensity:</span> Darker or more vibrant lines indicate higher similarity scores for that specific match.</li>
+        </ul>
+      </div>
+    )
+  },
+  matchGallery: {
+    title: "Match Gallery",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">A detailed list of all identified parallel passages, sorted by their similarity score.</p>
+        <p className="text-xs text-gray-600">Clicking on any card in the gallery will highlight the corresponding text in the Parallel Viewer and the Macro-Level Alignment Flow. This allows for close-reading and manual verification of the algorithmic results.</p>
+      </div>
+    )
+  },
+  similarityDistribution: {
+    title: "Similarity Distribution",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">A histogram showing the frequency of different similarity scores among the detected matches.</p>
+        <p className="text-xs text-gray-600">This helps identify the nature of the text reuse. A peak at 100% suggests verbatim copying, while a bell curve centered around 70% suggests paraphrasing or a different translation tradition.</p>
+      </div>
+    )
+  },
+  clusterView: {
+    title: "Cluster View (Network Graph)",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">A force-directed network graph visualizing the relationships between matching text segments.</p>
+        <p className="text-xs text-gray-600">Nodes represent text segments, and edges represent similarity links. Clusters (groups of highly connected nodes) can reveal thematic hubs, frequently repeated formulas, or highly conserved textual traditions.</p>
+      </div>
+    )
+  },
+  witnessDispersion: {
+    title: "Witness Dispersion",
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-600">A scatter plot showing where matches occur within the linear progression of each text.</p>
+        <p className="text-xs text-gray-600">The X-axis represents the position in Witness α, and the Y-axis represents the position in Witness β. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.</p>
+      </div>
+    )
+  }
+};
+
+const HelpButton = ({ topic, onClick }: { topic: string, onClick: (topic: string) => void }) => (
+  <button 
+    onClick={() => onClick(topic)} 
+    className="text-gray-400 hover:text-academic-blue transition-colors ml-1 focus:outline-none" 
+    title="Help"
+  >
+    <svg className="w-3.5 h-3.5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  </button>
+);
+
+const StatItem = ({ label, value, description, topic, onHelpClick }: { label: string, value: string | number, description: string, topic?: string, onHelpClick?: (topic: string) => void }) => (
   <div className="group relative flex flex-col border-r border-gray-100 last:border-0 px-6">
-    <div className="text-[10px] uppercase font-bold text-gray-400 flex items-center gap-1.5 cursor-help">
+    <div className="text-[10px] uppercase font-bold text-gray-400 flex items-center gap-1.5">
       {label}
-      <span className="text-academic-gold">ⓘ</span>
+      {topic && onHelpClick ? (
+        <HelpButton topic={topic} onClick={onHelpClick} />
+      ) : (
+        <span className="text-academic-gold cursor-help">ⓘ</span>
+      )}
     </div>
     <div className="text-3xl font-serif font-bold text-academic-blue leading-tight">{value}</div>
-    <div className="absolute top-full left-6 mt-2 hidden group-hover:block z-[100] bg-academic-blue text-white text-[11px] p-4 rounded shadow-2xl w-64 leading-relaxed border border-academic-lightBlue">
-      <div className="font-bold text-academic-gold mb-1">{label}</div>
-      {description}
-    </div>
+    {!topic && (
+      <div className="absolute top-full left-6 mt-2 hidden group-hover:block z-[100] bg-academic-blue text-white text-[11px] p-4 rounded shadow-2xl w-64 leading-relaxed border border-academic-lightBlue">
+        <div className="font-bold text-academic-gold mb-1">{label}</div>
+        {description}
+      </div>
+    )}
   </div>
 );
 
@@ -78,9 +338,7 @@ const App: React.FC = () => {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
-  const [isAlgorithmHelpOpen, setIsAlgorithmHelpOpen] = useState(false);
-  const [isThresholdHelpOpen, setIsThresholdHelpOpen] = useState(false);
-  const [isNSizeHelpOpen, setIsNSizeHelpOpen] = useState(false);
+  const [activeHelpModal, setActiveHelpModal] = useState<string | null>(null);
 
   const performAnalysis = useCallback(() => {
     if (!sourceText || !targetText) return;
@@ -131,14 +389,20 @@ const App: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col">
                 <div className="flex justify-between items-center mb-2 px-1">
-                   <span className="text-[11px] font-bold text-academic-blue uppercase tracking-wider">Witness α (Primary)</span>
+                   <div className="flex items-center">
+                     <span className="text-[11px] font-bold text-academic-blue uppercase tracking-wider">Witness α (Primary)</span>
+                     <HelpButton topic="witnessAlpha" onClick={setActiveHelpModal} />
+                   </div>
                    <span className="text-[9px] text-gray-400 font-mono">{sourceText.length} chars</span>
                 </div>
                 <textarea className="w-full h-40 p-4 text-sm font-coptic border border-gray-200 rounded-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-academic-gold/20 focus:border-academic-gold outline-none transition-all shadow-inner leading-relaxed" value={sourceText} onChange={(e) => setSourceText(e.target.value)} placeholder="Insert primary text (Source)..." dir="auto" />
               </div>
               <div className="flex flex-col">
                 <div className="flex justify-between items-center mb-2 px-1">
-                   <span className="text-[11px] font-bold text-academic-blue uppercase tracking-wider">Witness β (Comparandum)</span>
+                   <div className="flex items-center">
+                     <span className="text-[11px] font-bold text-academic-blue uppercase tracking-wider">Witness β (Comparandum)</span>
+                     <HelpButton topic="witnessBeta" onClick={setActiveHelpModal} />
+                   </div>
                    <span className="text-[9px] text-gray-400 font-mono">{targetText.length} chars</span>
                 </div>
                 <textarea className="w-full h-40 p-4 text-sm font-coptic border border-gray-200 rounded-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-academic-gold/20 focus:border-academic-gold outline-none transition-all shadow-inner leading-relaxed" value={targetText} onChange={(e) => setTargetText(e.target.value)} placeholder="Insert comparative text (Target)..." dir="auto" />
@@ -151,9 +415,7 @@ const App: React.FC = () => {
             <div className="bg-white p-6 border border-gray-200 shadow-md rounded-sm flex-1">
               <h2 className="text-xs font-bold uppercase text-gray-400 border-b border-gray-100 pb-2 mb-6 tracking-widest flex items-center justify-between">
                 <span>Collation Parameters</span>
-                <button onClick={() => setIsAlgorithmHelpOpen(true)} className="text-gray-400 hover:text-academic-blue transition-colors" title="Algorithm Help">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                </button>
+                <HelpButton topic="algorithm" onClick={setActiveHelpModal} />
               </h2>
               <div className="grid grid-cols-1 gap-6 mb-8">
                 <div>
@@ -173,18 +435,14 @@ const App: React.FC = () => {
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <label className="block text-[11px] font-bold text-academic-blue uppercase">Similarity Threshold: {config.threshold}%</label>
-                      <button onClick={() => setIsThresholdHelpOpen(true)} className="text-gray-400 hover:text-academic-blue transition-colors" title="Threshold Help">
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                      </button>
+                      <HelpButton topic="threshold" onClick={setActiveHelpModal} />
                     </div>
                     <input type="range" min="20" max="100" value={config.threshold} onChange={(e) => setConfig({ ...config, threshold: Number(e.target.value) })} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-academic-gold" />
                   </div>
                   <div className="w-20">
                     <div className="flex items-center justify-between mb-2">
                       <label className="block text-[11px] font-bold text-academic-blue uppercase">N-Size</label>
-                      <button onClick={() => setIsNSizeHelpOpen(true)} className="text-gray-400 hover:text-academic-blue transition-colors" title="N-Size Help">
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                      </button>
+                      <HelpButton topic="nsize" onClick={setActiveHelpModal} />
                     </div>
                     <input type="number" min="1" max="20" value={config.windowSize} onChange={(e) => setConfig({...config, windowSize: Number(e.target.value)})} className="w-full p-1.5 border border-gray-200 rounded-sm text-xs shadow-sm" />
                   </div>
@@ -223,25 +481,36 @@ const App: React.FC = () => {
                    label="Mean Similarity" 
                    value={`${result.stats.meanSimilarity.toFixed(1)}%`} 
                    description="The average similarity score across all detected matches. High values (>90%) indicate verbatim quotations, while lower values suggest paraphrasing or textual evolution." 
+                   topic="meanSimilarity"
+                   onHelpClick={setActiveHelpModal}
                  />
                  <StatItem 
                    label="Reuse Coverage" 
                    value={`${result.stats.coverage.toFixed(1)}%`} 
                    description="The percentage of the total text length occupied by detected reuses. A high coverage implies that one witness is largely derived from or identical to the other." 
+                   topic="reuseCoverage"
+                   onHelpClick={setActiveHelpModal}
                  />
                  <StatItem 
                    label="Alignments" 
                    value={result.stats.totalAlignments} 
                    description="Total number of distinct parallel passages identified by the algorithm." 
+                   topic="alignments"
+                   onHelpClick={setActiveHelpModal}
                  />
                  <StatItem 
                    label="Unique N-Grams" 
                    value={result.stats.uniqueNgrams} 
                    description="The count of distinct matching sequences. If a specific phrase is reused 10 times, it counts as 10 alignments but only 1 unique N-gram." 
+                   topic="uniqueNgrams"
+                   onHelpClick={setActiveHelpModal}
                  />
                </div>
                <div className="flex flex-col gap-2 pl-8 border-l border-gray-100">
-                  <div className="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">Total Token Count</div>
+                  <div className="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1 flex items-center">
+                    Total Token Count
+                    <HelpButton topic="totalTokenCount" onClick={setActiveHelpModal} />
+                  </div>
                   <div className="flex gap-4">
                     <div className="px-3 py-1 bg-academic-lightBlue text-white rounded-full text-[10px] font-mono">α: {result.tokensA.length}</div>
                     <div className="px-3 py-1 bg-academic-gold text-white rounded-full text-[10px] font-mono">β: {result.tokensB.length}</div>
@@ -251,7 +520,10 @@ const App: React.FC = () => {
 
             {/* Macro-level Alignment Flow */}
             <div className="bg-white p-6 rounded-sm border border-gray-200 shadow-lg">
-              <h3 className="text-xs font-bold uppercase text-academic-blue tracking-widest mb-4">Macro-Level Alignment Flow</h3>
+              <h3 className="text-xs font-bold uppercase text-academic-blue tracking-widest mb-4 flex items-center">
+                Macro-Level Alignment Flow
+                <HelpButton topic="macroAlignment" onClick={setActiveHelpModal} />
+              </h3>
               <AlignmentFlow matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} />
             </div>
 
@@ -268,7 +540,10 @@ const App: React.FC = () => {
                    {/* Match Gallery (Sidebar) */}
                    <div className="bg-white border border-gray-200 rounded-sm shadow-lg flex flex-col overflow-hidden">
                       <div className="bg-academic-paper px-4 py-3 border-b border-gray-200 flex justify-between items-center shrink-0">
-                        <span className="text-[11px] font-bold uppercase text-academic-blue tracking-widest">Match Gallery</span>
+                        <span className="text-[11px] font-bold uppercase text-academic-blue tracking-widest flex items-center">
+                          Match Gallery
+                          <HelpButton topic="matchGallery" onClick={setActiveHelpModal} />
+                        </span>
                         <div className="px-2 py-0.5 bg-academic-gold/20 text-academic-gold text-[9px] font-bold rounded">TOP REUSES</div>
                       </div>
                       <div className="flex-1 overflow-y-auto p-3 space-y-3 custom-scrollbar bg-gray-50/20">
@@ -308,13 +583,28 @@ const App: React.FC = () => {
                 <div className="flex flex-col gap-8">
                    {/* Similarity Histogram */}
                    <div className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm">
-                     <h3 className="text-[10px] font-bold uppercase text-academic-blue tracking-widest mb-2">Similarity Distribution</h3>
+                     <h3 className="text-[10px] font-bold uppercase text-academic-blue tracking-widest mb-2 flex items-center">
+                       Similarity Distribution
+                       <HelpButton topic="similarityDistribution" onClick={setActiveHelpModal} />
+                     </h3>
                      <SimilarityHistogram matches={result.matches} />
                    </div>
                    {/* Network Graph (Cluster Discovery) */}
-                   <NetworkGraph matches={result.matches} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} />
+                   <div className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm">
+                     <h3 className="text-[10px] font-bold uppercase text-academic-blue tracking-widest mb-2 flex items-center">
+                       Cluster View (Network Graph)
+                       <HelpButton topic="clusterView" onClick={setActiveHelpModal} />
+                     </h3>
+                     <NetworkGraph matches={result.matches} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} />
+                   </div>
                    {/* Dispersion Plot (Distribution) */}
-                   <DispersionPlot matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} />
+                   <div className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm">
+                     <h3 className="text-[10px] font-bold uppercase text-academic-blue tracking-widest mb-2 flex items-center">
+                       Witness Dispersion
+                       <HelpButton topic="witnessDispersion" onClick={setActiveHelpModal} />
+                     </h3>
+                     <DispersionPlot matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} />
+                   </div>
                 </div>
               </div>
             </div>

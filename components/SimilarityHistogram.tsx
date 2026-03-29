@@ -81,7 +81,7 @@ const SimilarityHistogram: React.FC<SimilarityHistogramProps> = ({ matches }) =>
   }, [matches]);
 
   return (
-    <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm p-2">
+    <div className="w-full">
       <div ref={containerRef} className="w-full h-[200px]" />
     </div>
   );

@@ -80,7 +80,7 @@ const DispersionPlot: React.FC<DispersionPlotProps> = ({ matches, sourceLength, 
 
   }, [matches, sourceLength, targetLength, selectedMatch]);
 
-  return <div ref={containerRef} className="w-full bg-white border border-gray-200 rounded-sm shadow-sm p-4" />;
+  return <div ref={containerRef} className="w-full h-[100px]" />;
 };
 
 export default DispersionPlot;

@@ -146,8 +146,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ matches, onSelectMatch, sel
   }, [selectedMatch]);
 
   return (
-    <div className="relative w-full bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden h-[350px]">
-      <div className="absolute top-2 left-2 px-2 py-0.5 bg-gray-50 border text-[9px] uppercase font-bold text-gray-500 rounded z-10">Cluster View (Top 60)</div>
+    <div className="relative w-full overflow-hidden h-[350px]">
       <div ref={containerRef} className="w-full h-full" />
       {isEmpty && <div className="absolute inset-0 flex items-center justify-center text-gray-400 bg-gray-50/50 text-[10px]">No significant reuse clusters detected.</div>}
     </div>
