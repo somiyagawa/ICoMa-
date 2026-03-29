@@ -61,7 +61,7 @@ const App: React.FC = () => {
   const [config, setConfig] = useState<AnalysisConfig>({
     windowSize: 4,
     threshold: 60,
-    algorithm: 'smith-waterman',
+    algorithm: 'jaccard',
     scriptMode: 'auto'
   });
   const [isProcessing, setIsProcessing] = useState(false);
