@@ -8,12 +8,14 @@ import {
   runAIAnalysis,
   runMultiProviderAnalysis
 } from '../services/aiAnalysisService';
+import { Language, t } from '../services/i18n';
 
 interface AIAnalysisPanelProps {
   sourceText: string;
   targetText: string;
   onHelpClick?: (topic: string) => void;
   collationTrigger?: number;
+  lang?: Language;
 }
 
 const PROVIDER_INFO: Record<AIProvider, { label: string; color: string; bgColor: string; borderColor: string; models: { value: string; label: string }[] }> = {
@@ -101,7 +103,7 @@ const HelpButton = ({ topic, onClick }: { topic: string; onClick: (topic: string
 );
 
 // ─── Highlighted parallel passage card ───
-const MatchCard: React.FC<{ match: AIIntertextualityMatch; index: number }> = ({ match, index }) => {
+const MatchCard: React.FC<{ match: AIIntertextualityMatch; index: number; lang?: Language }> = ({ match, index, lang = 'en' as Language }) => {
   const [expanded, setExpanded] = useState(false);
   const colors = CATEGORY_COLORS[match.category.type] || CATEGORY_COLORS.other;
   const bgHighlight = confidenceToColor(match.confidence, match.category.type);
@@ -127,7 +129,7 @@ const MatchCard: React.FC<{ match: AIIntertextualityMatch; index: number }> = ({
               {match.category.label}
             </span>
             {match.possibleSource && (
-              <span className="text-[9px] px-1.5 py-0.5 bg-yellow-50 text-yellow-700 border border-yellow-200 rounded-sm font-mono">ext. source</span>
+              <span className="text-[9px] px-1.5 py-0.5 bg-yellow-50 text-yellow-700 border border-yellow-200 rounded-sm font-mono">{t(lang, 'ext. source')}</span>
             )}
           </div>
           <div className="text-[11px] font-coptic text-academic-blue leading-snug line-clamp-2" dir="auto">
@@ -176,7 +178,7 @@ const MatchCard: React.FC<{ match: AIIntertextualityMatch; index: number }> = ({
 
           {/* Confidence visual meter */}
           <div className="flex items-center gap-3 py-1">
-            <span className="text-[9px] font-bold uppercase text-gray-400 shrink-0">Confidence</span>
+            <span className="text-[9px] font-bold uppercase text-gray-400 shrink-0">{t(lang, 'Confidence')}</span>
             <div className="flex-1 h-3 bg-white/60 rounded-full overflow-hidden border" style={{ borderColor: borderHighlight }}>
               <div
                 className="h-full rounded-full transition-all flex items-center justify-end pr-1"
@@ -189,14 +191,14 @@ const MatchCard: React.FC<{ match: AIIntertextualityMatch; index: number }> = ({
 
           {/* Explanation */}
           <div>
-            <div className="text-[9px] font-bold uppercase text-gray-500 mb-1">Analysis</div>
+            <div className="text-[9px] font-bold uppercase text-gray-500 mb-1">{t(lang, 'Scholarly Assessment')}</div>
             <div className="text-[11px] text-gray-700 leading-relaxed font-sans bg-white/50 p-3 rounded-sm border" style={{ borderColor: `${borderHighlight}` }}>
               {match.explanation}
             </div>
           </div>
           {match.possibleSource && (
             <div>
-              <div className="text-[9px] font-bold uppercase text-yellow-600 mb-1">Possible External Source</div>
+              <div className="text-[9px] font-bold uppercase text-yellow-600 mb-1">{t(lang, 'Possible External Source')}</div>
               <div className="text-[11px] text-yellow-800 bg-yellow-50 p-2 rounded-sm border border-yellow-100 font-sans italic">
                 {match.possibleSource}
               </div>
@@ -258,7 +260,7 @@ const CategorySummary: React.FC<{ matches: AIIntertextualityMatch[] }> = ({ matc
   );
 };
 
-const ResultView: React.FC<{ result: AIAnalysisResult }> = ({ result }) => {
+const ResultView: React.FC<{ result: AIAnalysisResult; lang?: Language }> = ({ result, lang = 'en' as Language }) => {
   const info = PROVIDER_INFO[result.provider];
   const [filterCategory, setFilterCategory] = useState<string>('all');
 
@@ -315,7 +317,7 @@ const ResultView: React.FC<{ result: AIAnalysisResult }> = ({ result }) => {
             onClick={() => setFilterCategory('all')}
             className={`text-[9px] px-2 py-1 rounded-sm border transition-all font-bold uppercase ${filterCategory === 'all' ? 'bg-academic-blue text-white border-academic-blue' : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'}`}
           >
-            All ({result.matches.length})
+            {t(lang, 'All Categories')} ({result.matches.length})
           </button>
           {Object.entries(categoryCounts).map(([cat, count]) => {
             const colors = CATEGORY_COLORS[cat] || CATEGORY_COLORS.other;
@@ -336,17 +338,17 @@ const ResultView: React.FC<{ result: AIAnalysisResult }> = ({ result }) => {
       {/* Matches */}
       <div className="space-y-2 max-h-[700px] overflow-y-auto pr-1 custom-scrollbar">
         {filteredMatches.map((m, idx) => (
-          <MatchCard key={m.id} match={m} index={idx} />
+          <MatchCard key={m.id} match={m} index={idx} lang={lang} />
         ))}
         {filteredMatches.length === 0 && result.matches.length > 0 && (
-          <div className="text-xs text-gray-400 text-center py-4">No matches in this category.</div>
+          <div className="text-xs text-gray-400 text-center py-4">{t(lang, 'No matches in this category.')}</div>
         )}
       </div>
 
       {/* Overall assessment */}
       {result.overallAssessment && (
         <div className="bg-gray-50 border border-gray-200 rounded-sm p-4">
-          <div className="text-[9px] font-bold uppercase text-gray-400 tracking-widest mb-2">Scholarly Assessment</div>
+          <div className="text-[9px] font-bold uppercase text-gray-400 tracking-widest mb-2">{t(lang, 'Scholarly Assessment')}</div>
           <div className="text-[12px] text-gray-700 leading-relaxed font-sans whitespace-pre-wrap">
             {result.overallAssessment}
           </div>
@@ -356,7 +358,7 @@ const ResultView: React.FC<{ result: AIAnalysisResult }> = ({ result }) => {
   );
 };
 
-const AIAnalysisPanel: React.FC<AIAnalysisPanelProps> = ({ sourceText, targetText, onHelpClick, collationTrigger }) => {
+const AIAnalysisPanel: React.FC<AIAnalysisPanelProps> = ({ sourceText, targetText, onHelpClick, collationTrigger, lang = 'en' as Language }) => {
   const [apiKeys, setApiKeys] = useState<Record<AIProvider, string>>({
     claude: '',
     gemini: '',
@@ -626,13 +628,13 @@ const AIAnalysisPanel: React.FC<AIAnalysisPanelProps> = ({ sourceText, targetTex
                 </table>
               </div>
               {results.map(r => (
-                <ResultView key={r.provider} result={r} />
+                <ResultView key={r.provider} result={r} lang={lang} />
               ))}
             </div>
           )}
 
           {activeTab !== 'all' && (
-            <ResultView result={results.find(r => r.provider === activeTab) || results[0]} />
+            <ResultView result={results.find(r => r.provider === activeTab) || results[0]} lang={lang} />
           )}
         </div>
       )}

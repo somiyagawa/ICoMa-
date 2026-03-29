@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { Match } from '../types';
+import { Language, t } from '../services/i18n';
 import ChartToolbar from './ChartControls';
 
 interface HeatmapProps {
@@ -10,6 +11,7 @@ interface HeatmapProps {
   onSelectMatch: (match: Match) => void;
   selectedMatch: Match | null;
   onHelpClick?: (topic: string) => void;
+  lang?: Language;
 }
 
 const HelpButton = ({ topic, onClick }: { topic: string, onClick: (topic: string) => void }) => (
@@ -24,7 +26,7 @@ const HelpButton = ({ topic, onClick }: { topic: string, onClick: (topic: string
   </button>
 );
 
-const Heatmap: React.FC<HeatmapProps> = ({ matches, sourceLength, targetLength, onSelectMatch, selectedMatch, onHelpClick }) => {
+const Heatmap: React.FC<HeatmapProps> = ({ matches, sourceLength, targetLength, onSelectMatch, selectedMatch, onHelpClick, lang = 'en' as Language }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -98,7 +100,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ matches, sourceLength, targetLength, 
       {/* Header with title */}
       <div className="bg-academic-paper px-4 py-3 border-b border-gray-200 flex justify-between items-center shrink-0">
         <span className="text-[11px] font-bold uppercase text-academic-blue tracking-widest flex items-center">
-          Position Correspondence (Heatmap)
+          {t(lang, 'Position Correspondence (Heatmap)')}
           {onHelpClick && <HelpButton topic="heatmapView" onClick={onHelpClick} />}
         </span>
         <ChartToolbar containerRef={wrapperRef} filename="icoma-heatmap" />
@@ -106,11 +108,11 @@ const Heatmap: React.FC<HeatmapProps> = ({ matches, sourceLength, targetLength, 
       {/* Axis labels */}
       <div className="px-4 pt-2 flex justify-between items-center">
         <div className="flex items-center">
-          <span className="text-[9px] font-bold uppercase text-gray-400 tracking-wider">Y-Axis: Witness β Position</span>
+          <span className="text-[9px] font-bold uppercase text-gray-400 tracking-wider">{t(lang, 'Y-Axis: Witness β Position')}</span>
           {onHelpClick && <HelpButton topic="heatmapAxisBeta" onClick={onHelpClick} />}
         </div>
         <div className="flex items-center">
-          <span className="text-[9px] font-bold uppercase text-gray-400 tracking-wider">X-Axis: Witness α Position</span>
+          <span className="text-[9px] font-bold uppercase text-gray-400 tracking-wider">{t(lang, 'X-Axis: Witness α Position')}</span>
           {onHelpClick && <HelpButton topic="heatmapAxisAlpha" onClick={onHelpClick} />}
         </div>
       </div>

@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.8.1] - 2026-03-30
+### Added
+- Bug Report / Feature Request button in header menu (links to GitHub Issues), localized in all 6 languages.
+- i18n keys for AIAnalysisPanel: Confidence, ext. source, Possible External Source, No matches in this category, All Categories, Show/Hide Key, Select Model.
+
+### Fixed
+- **CRITICAL**: Tailwind dynamic class bug — `border-${colorClass}-100` etc. in help modals were purged at build time and rendered unstyled. Replaced with inline styles via `COLOR_STYLES` mapping for all 10 colour variants.
+- Heatmap title ("Position Correspondence") and axis labels ("X-Axis: Witness α Position", "Y-Axis: Witness β Position") now use `t(lang, ...)` instead of hardcoded English.
+- AIAnalysisPanel sub-components (MatchCard, ResultView) now receive `lang` prop and render localized strings.
+- "Pro Tip" label in help modals now localized (ヒント / 提示 / 팁 / Tipp / Consilium).
+
+### Changed
+- `Heatmap.tsx` accepts optional `lang?: Language` prop.
+- `AIAnalysisPanel.tsx` accepts optional `lang?: Language` prop, forwarded to MatchCard and ResultView.
+- Help modal colour rendering uses `COLOR_STYLES` constant with hex values instead of dynamic Tailwind class names.
+
 ## [2.8.0] - 2026-03-30
 ### Added
 - Per-panel zoom controls (50%–200%) for all visualization panels (Match Gallery, Heatmap, Alignment Flow, Similarity Histogram, Network Graph, Dispersion Plot).

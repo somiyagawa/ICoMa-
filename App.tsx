@@ -60,12 +60,35 @@ const EXAMPLES = {
   }
 };
 
+// Color mapping for Tailwind-safe inline styles (dynamic class names are purged at build time)
+const COLOR_STYLES: Record<string, { border: string; bg: string; text: string }> = {
+  red:    { border: '#fecaca', bg: '#fef2f2', text: '#b91c1c' },
+  purple: { border: '#e9d5ff', bg: '#faf5ff', text: '#7e22ce' },
+  indigo: { border: '#c7d2fe', bg: '#eef2ff', text: '#4338ca' },
+  amber:  { border: '#fde68a', bg: '#fffbeb', text: '#b45309' },
+  teal:   { border: '#99f6e4', bg: '#f0fdfa', text: '#0f766e' },
+  cyan:   { border: '#a5f3fc', bg: '#ecfeff', text: '#0e7490' },
+  lime:   { border: '#bef264', bg: '#f7fee7', text: '#4d7c0f' },
+  gray:   { border: '#e5e7eb', bg: '#f9fafb', text: '#374151' },
+  green:  { border: '#bbf7d0', bg: '#f0fdf4', text: '#15803d' },
+  blue:   { border: '#bfdbfe', bg: '#eff6ff', text: '#1d4ed8' },
+};
+
+const colorStyle = (colorClass?: string) => {
+  const c = COLOR_STYLES[colorClass || 'gray'] || COLOR_STYLES.gray;
+  return {
+    wrapper: { borderColor: c.border, backgroundColor: c.bg } as React.CSSProperties,
+    label: { color: c.text } as React.CSSProperties,
+  };
+};
+
 // Helper to render localized help content
 const renderHelpContent = (topic: string, lang: Language): { title: string, content: React.ReactNode } | null => {
   const helpTopics = getHelpContent(lang);
   const prosLabel = { en: 'Pros', ja: '長所', zh: '优点', ko: '장점', de: 'Vorteile', la: 'Commoditates' }[lang];
   const consLabel = { en: 'Cons', ja: '短所', zh: '缺点', ko: '단점', de: 'Nachteile', la: 'Incommoda' }[lang];
   const bestForLabel = { en: 'Best for', ja: '最適な用途', zh: '最适合', ko: '최적 용도', de: 'Am besten für', la: 'Optimum est' }[lang];
+  const tipLabel = { en: 'Pro Tip', ja: 'ヒント', zh: '提示', ko: '팁', de: 'Tipp', la: 'Consilium' }[lang];
 
   if (topic === 'algorithm') {
     const algorithms = getAlgorithmHelp(lang);
@@ -98,37 +121,43 @@ const renderHelpContent = (topic: string, lang: Language): { title: string, cont
         <div className="space-y-4">
           {methodTopic && <p className="text-gray-600">{methodTopic.body}</p>}
           <div className="grid grid-cols-1 gap-2 text-xs">
-            {categories.map((cat, i) => (
-              <div key={i} className={`border border-${cat.colorClass}-100 rounded-sm p-2 bg-${cat.colorClass}-50/50`}>
-                <span className={`font-bold text-${cat.colorClass}-700`}>{cat.name}:</span> {cat.description}
-              </div>
-            ))}
+            {categories.map((cat, i) => {
+              const cs = colorStyle(cat.colorClass);
+              return (
+                <div key={i} className="border rounded-sm p-2" style={cs.wrapper}>
+                  <span className="font-bold" style={cs.label}>{cat.name}:</span> {cat.description}
+                </div>
+              );
+            })}
           </div>
         </div>
       )
     };
   }
 
-  const t = helpTopics[topic];
-  if (!t) return null;
+  const ht = helpTopics[topic];
+  if (!ht) return null;
   return {
-    title: t.title,
+    title: ht.title,
     content: (
       <div className="space-y-4">
-        <p className="text-gray-600">{t.body}</p>
-        {t.items && (
+        <p className="text-gray-600">{ht.body}</p>
+        {ht.items && (
           <div className="grid grid-cols-1 gap-4 text-xs">
-            {t.items.map((item, i) => (
-              <div key={i} className={`border border-${item.colorClass || 'gray'}-100 rounded-sm p-3 bg-${item.colorClass || 'gray'}-50/50`}>
-                <span className={`font-bold text-${item.colorClass || 'gray'}-600 block mb-1`}>{item.label}</span>
-                {item.text}
-              </div>
-            ))}
+            {ht.items.map((item, i) => {
+              const cs = colorStyle(item.colorClass);
+              return (
+                <div key={i} className="border rounded-sm p-3" style={cs.wrapper}>
+                  <span className="font-bold block mb-1" style={cs.label}>{item.label}</span>
+                  {item.text}
+                </div>
+              );
+            })}
           </div>
         )}
-        {t.tip && (
+        {ht.tip && (
           <div className="mt-4 text-xs bg-blue-50 text-blue-800 p-3 rounded-sm border border-blue-100">
-            <span className="font-bold">Pro Tip:</span> {t.tip}
+            <span className="font-bold">{tipLabel}:</span> {ht.tip}
           </div>
         )}
       </div>
@@ -304,6 +333,23 @@ const App: React.FC = () => {
                   <button onClick={() => setFontSize(s => Math.min(24, s + 1))} className="bg-white/10 border border-white/20 text-white text-[11px] w-6 h-6 rounded-sm hover:bg-white/20 transition-colors flex items-center justify-center" title="Increase font size">+</button>
                 </div>
              </div>
+
+             {/* Bug Report / Feature Request */}
+             <a
+               href="https://github.com/somiyagawa/ICoMa-/issues/new"
+               target="_blank"
+               rel="noopener noreferrer"
+               className="flex flex-col items-center gap-1 group"
+               title={t(lang, 'Bug Report / Feature Request')}
+             >
+               <div className="text-[10px] text-gray-400 uppercase font-sans">{t(lang, 'Bug Report / Feature Request')}</div>
+               <div className="flex items-center gap-1.5 text-[11px] text-yellow-300 group-hover:text-yellow-100 transition-colors">
+                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                 </svg>
+                 <span className="font-mono">GitHub Issues</span>
+               </div>
+             </a>
 
              {/* Engine Status */}
              <div className="text-right">
@@ -524,7 +570,7 @@ const App: React.FC = () => {
                       </div>
                    </div>
                    {/* Heatmap (Position Correspondence) */}
-                   <Heatmap matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} onHelpClick={setActiveHelpModal} />
+                   <Heatmap matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} onHelpClick={setActiveHelpModal} lang={lang} />
                 </div>
 
                 <div className="flex flex-col gap-8">
@@ -566,7 +612,7 @@ const App: React.FC = () => {
             </div>
 
             {/* AI Intertextuality Analysis */}
-            <AIAnalysisPanel sourceText={sourceText} targetText={targetText} onHelpClick={setActiveHelpModal} collationTrigger={collationTrigger} />
+            <AIAnalysisPanel sourceText={sourceText} targetText={targetText} onHelpClick={setActiveHelpModal} collationTrigger={collationTrigger} lang={lang} />
           </div>
         )}
 

@@ -107,6 +107,16 @@ export const translations: Record<Language, Record<string, string>> = {
     'Show Configuration': 'Show Configuration',
     'Analyzing Intertextuality': 'Analyzing Intertextuality',
     'Intertextuality Classification Taxonomy': 'Intertextuality Classification Taxonomy',
+    'Confidence': 'Confidence',
+    'ext. source': 'ext. source',
+    'Possible External Source': 'Possible External Source',
+    'No matches in this category.': 'No matches in this category.',
+    'All Categories': 'All Categories',
+    'matches': 'matches',
+    'Show Key': 'Show Key',
+    'Hide Key': 'Hide Key',
+    'Select Model': 'Select Model',
+    'Bug Report / Feature Request': 'Bug Report / Feature Request',
 
     // Threshold Help
     'High Threshold (80% - 100%)': 'High Threshold (80% - 100%)',
@@ -224,6 +234,16 @@ export const translations: Record<Language, Record<string, string>> = {
     'Show Configuration': '設定を表示',
     'Analyzing Intertextuality': 'テキスト間性を分析中',
     'Intertextuality Classification Taxonomy': 'テキスト間性分類タクソノミー',
+    'Confidence': '確信度',
+    'ext. source': '外部ソース',
+    'Possible External Source': '外部ソースの可能性',
+    'No matches in this category.': 'このカテゴリにマッチはありません。',
+    'All Categories': '全カテゴリ',
+    'matches': '件のマッチ',
+    'Show Key': '表示',
+    'Hide Key': '非表示',
+    'Select Model': 'モデル選択',
+    'Bug Report / Feature Request': 'バグ報告・機能要望',
 
     // 閾値ヘルプ
     'High Threshold (80% - 100%)': '高い閾値（80% - 100%）',
@@ -341,6 +361,16 @@ export const translations: Record<Language, Record<string, string>> = {
     'Show Configuration': '显示配置',
     'Analyzing Intertextuality': '正在分析互文性',
     'Intertextuality Classification Taxonomy': '互文性分类分类法',
+    'Confidence': '置信度',
+    'ext. source': '外部来源',
+    'Possible External Source': '可能的外部来源',
+    'No matches in this category.': '此类别中无匹配。',
+    'All Categories': '所有类别',
+    'matches': '个匹配',
+    'Show Key': '显示',
+    'Hide Key': '隐藏',
+    'Select Model': '选择模型',
+    'Bug Report / Feature Request': '错误报告・功能请求',
 
     // 阈值帮助
     'High Threshold (80% - 100%)': '高阈值（80% - 100%）',
@@ -459,6 +489,17 @@ export const translations: Record<Language, Record<string, string>> = {
     'Analyzing Intertextuality': '상호텍스트성 분석 중',
     'Intertextuality Classification Taxonomy': '상호텍스트성 분류 분류법',
 
+    'Confidence': '신뢰도',
+    'ext. source': '외부 소스',
+    'Possible External Source': '외부 소스 가능성',
+    'No matches in this category.': '이 카테고리에 일치 항목이 없습니다.',
+    'All Categories': '전체 카테고리',
+    'matches': '개 일치',
+    'Show Key': '표시',
+    'Hide Key': '숨기기',
+    'Select Model': '모델 선택',
+    'Bug Report / Feature Request': '버그 보고・기능 요청',
+
     // 임계값 도움말
     'High Threshold (80% - 100%)': '높은 임계값（80% - 100%）',
     'Medium Threshold (50% - 79%)': '중간 임계값（50% - 79%）',
@@ -575,6 +616,16 @@ export const translations: Record<Language, Record<string, string>> = {
     'Show Configuration': 'Konfiguration anzeigen',
     'Analyzing Intertextuality': 'Intertextualität wird analysiert',
     'Intertextuality Classification Taxonomy': 'Intertextualitäts-Klassifizierungstaxonomie',
+    'Confidence': 'Konfidenz',
+    'ext. source': 'ext. Quelle',
+    'Possible External Source': 'Mögliche externe Quelle',
+    'No matches in this category.': 'Keine Übereinstimmungen in dieser Kategorie.',
+    'All Categories': 'Alle Kategorien',
+    'matches': 'Treffer',
+    'Show Key': 'Anzeigen',
+    'Hide Key': 'Ausblenden',
+    'Select Model': 'Modell wählen',
+    'Bug Report / Feature Request': 'Fehlerbericht / Funktionswunsch',
 
     // Schwellen-Hilfe
     'High Threshold (80% - 100%)': 'Hohe Schwelle (80% - 100%)',
@@ -692,6 +743,17 @@ export const translations: Record<Language, Record<string, string>> = {
     'Show Configuration': 'Configurationem Ostendere',
     'Analyzing Intertextuality': 'Intertextualitatem Analizam',
     'Intertextuality Classification Taxonomy': 'Taxonomia Classificationis Intertextualitatis',
+
+    'Confidence': 'Fiducia',
+    'ext. source': 'fons ext.',
+    'Possible External Source': 'Fons Externus Possibilis',
+    'No matches in this category.': 'Nullae concordantiae in hac categoria.',
+    'All Categories': 'Omnes Categoriae',
+    'matches': 'concordantiae',
+    'Show Key': 'Monstrare',
+    'Hide Key': 'Celare',
+    'Select Model': 'Exemplar Eligere',
+    'Bug Report / Feature Request': 'Relatio Erroris / Petitio Functionis',
 
     // Auxilium Liminis
     'High Threshold (80% - 100%)': 'Limen Altum (80% - 100%)',
