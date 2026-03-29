@@ -1,0 +1,5 @@
+{
+  "name": "ICoMa - Intertextuality Collation Machine",
+  "description": "A high-performance computational collation system for multilingual manuscript analysis, specializing in Coptic, Greek, and Latin scripts with advanced visualization capabilities.",
+  "requestFramePermissions": []
+}
