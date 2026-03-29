@@ -83,9 +83,18 @@ interface DiffViewProps {
   target: string;
   similarity: number;
   fontSize?: number;
+  witnessAlphaName?: string;
+  witnessBetaName?: string;
 }
 
-const DiffView: React.FC<DiffViewProps> = ({ source, target, similarity, fontSize = 11 }) => {
+const DiffView: React.FC<DiffViewProps> = ({
+  source,
+  target,
+  similarity,
+  fontSize = 11,
+  witnessAlphaName = 'Witness α',
+  witnessBetaName = 'Witness β'
+}) => {
   const diff = useMemo(() => computeDiff(source, target), [source, target]);
 
   // For 100% matches, just show the text directly
@@ -132,7 +141,7 @@ const DiffView: React.FC<DiffViewProps> = ({ source, target, similarity, fontSiz
                     borderRadius: '2px',
                     padding: '0 1px',
                   }}
-                  title="Only in Witness α"
+                  title={`Only in ${witnessAlphaName}`}
                 >{seg.text}</span>
               );
             }
@@ -146,7 +155,7 @@ const DiffView: React.FC<DiffViewProps> = ({ source, target, similarity, fontSiz
                   borderRadius: '2px',
                   padding: '0 1px',
                 }}
-                title="Only in Witness β"
+                title={`Only in ${witnessBetaName}`}
               >{seg.text}</span>
             );
           })}

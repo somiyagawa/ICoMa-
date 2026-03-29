@@ -529,16 +529,19 @@ const App: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col">
                 <div className="flex justify-between items-center mb-2 px-1">
-                   <div className="flex items-center gap-1">
-                     <span className="text-[9px] text-gray-400 font-bold shrink-0">α</span>
-                     <input
-                       type="text"
-                       value={witnessAlphaName}
-                       onChange={(e) => setWitnessAlphaName(e.target.value)}
-                       className="text-[11px] font-bold text-academic-blue tracking-wider bg-transparent border-b border-transparent hover:border-gray-300 focus:border-academic-blue focus:outline-none transition-colors px-1 py-0.5 min-w-0"
-                       style={{ maxWidth: '200px' }}
-                       title={t(lang, 'Click to rename')}
-                     />
+                   <div className="flex items-center gap-1.5">
+                     <span className="text-[10px] font-bold shrink-0 w-4 h-4 rounded-full flex items-center justify-center" style={{background:'#1e3a5f', color:'#d4a84b'}}>α</span>
+                     <div className="relative group">
+                       <input
+                         type="text"
+                         value={witnessAlphaName}
+                         onChange={(e) => setWitnessAlphaName(e.target.value)}
+                         className="text-[11px] font-bold text-academic-blue tracking-wider bg-yellow-50 border border-dashed border-amber-300 hover:border-amber-500 focus:border-academic-blue focus:bg-white focus:outline-none focus:ring-2 focus:ring-academic-gold/30 transition-all px-2 py-1 rounded min-w-0"
+                         style={{ maxWidth: '200px' }}
+                         title={t(lang, 'Click to rename')}
+                       />
+                       <svg className="absolute right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 text-amber-400 group-hover:text-amber-600 pointer-events-none transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                     </div>
                      <HelpButton topic="witnessAlpha" onClick={setActiveHelpModal} />
                    </div>
                    <span className="text-[9px] text-gray-400 font-mono">{sourceText.length} {t(lang, 'chars')}</span>
@@ -547,16 +550,19 @@ const App: React.FC = () => {
               </div>
               <div className="flex flex-col">
                 <div className="flex justify-between items-center mb-2 px-1">
-                   <div className="flex items-center gap-1">
-                     <span className="text-[9px] text-gray-400 font-bold shrink-0">β</span>
-                     <input
-                       type="text"
-                       value={witnessBetaName}
-                       onChange={(e) => setWitnessBetaName(e.target.value)}
-                       className="text-[11px] font-bold text-academic-blue tracking-wider bg-transparent border-b border-transparent hover:border-gray-300 focus:border-academic-blue focus:outline-none transition-colors px-1 py-0.5 min-w-0"
-                       style={{ maxWidth: '200px' }}
-                       title={t(lang, 'Click to rename')}
-                     />
+                   <div className="flex items-center gap-1.5">
+                     <span className="text-[10px] font-bold shrink-0 w-4 h-4 rounded-full flex items-center justify-center" style={{background:'#8b7355', color:'#fff'}}>β</span>
+                     <div className="relative group">
+                       <input
+                         type="text"
+                         value={witnessBetaName}
+                         onChange={(e) => setWitnessBetaName(e.target.value)}
+                         className="text-[11px] font-bold text-academic-blue tracking-wider bg-yellow-50 border border-dashed border-amber-300 hover:border-amber-500 focus:border-academic-blue focus:bg-white focus:outline-none focus:ring-2 focus:ring-academic-gold/30 transition-all px-2 py-1 rounded min-w-0"
+                         style={{ maxWidth: '200px' }}
+                         title={t(lang, 'Click to rename')}
+                       />
+                       <svg className="absolute right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 text-amber-400 group-hover:text-amber-600 pointer-events-none transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                     </div>
                      <HelpButton topic="witnessBeta" onClick={setActiveHelpModal} />
                    </div>
                    <span className="text-[9px] text-gray-400 font-mono">{targetText.length} {t(lang, 'chars')}</span>
@@ -689,14 +695,14 @@ const App: React.FC = () => {
                 </span>
                 <ChartToolbar containerRef={alignmentFlowRef} filename="icoma-alignment-flow" />
               </h3>
-              <AlignmentFlow matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} />
+              <AlignmentFlow matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} witnessAlphaName={witnessAlphaName} witnessBetaName={witnessBetaName} />
             </div>
 
             {/* Main Visual/Analysis Grid */}
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 h-full min-h-[750px]">
               {/* Left Column: Parallel Viewer & Navigation Map */}
               <div className="xl:col-span-7 flex flex-col h-full bg-white shadow-xl rounded-sm overflow-hidden border border-gray-200">
-                <ParallelViewer tokensA={result.tokensA} tokensB={result.tokensB} alignments={result.alignments} matches={result.matches} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} />
+                <ParallelViewer tokensA={result.tokensA} tokensB={result.tokensB} alignments={result.alignments} matches={result.matches} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} witnessAlphaName={witnessAlphaName} witnessBetaName={witnessBetaName} />
               </div>
 
               {/* Right Column: High-Density Analytics & Navigation */}
@@ -784,6 +790,8 @@ const App: React.FC = () => {
                                       target={m.targetPhrase}
                                       similarity={m.similarity}
                                       fontSize={Math.max(12, fontSize)}
+                                      witnessAlphaName={witnessAlphaName}
+                                      witnessBetaName={witnessBetaName}
                                     />
                                     {/* Position info */}
                                     <div className="flex gap-4 mt-3 text-[9px] text-gray-400 font-mono">
@@ -827,6 +835,8 @@ const App: React.FC = () => {
                                   target={m.targetPhrase}
                                   similarity={m.similarity}
                                   fontSize={Math.max(10, fontSize - 2)}
+                                  witnessAlphaName={witnessAlphaName}
+                                  witnessBetaName={witnessBetaName}
                                 />
                               </div>
                             ))}
@@ -842,7 +852,7 @@ const App: React.FC = () => {
                       </div>
                    </div>
                    {/* Heatmap (Position Correspondence) */}
-                   <Heatmap matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} onHelpClick={setActiveHelpModal} lang={lang} />
+                   <Heatmap matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} onHelpClick={setActiveHelpModal} lang={lang} witnessAlphaName={witnessAlphaName} witnessBetaName={witnessBetaName} />
                 </div>
 
                 <div className="flex flex-col gap-8">
@@ -877,7 +887,7 @@ const App: React.FC = () => {
                        </span>
                        <ChartToolbar containerRef={dispersionRef} filename="icoma-dispersion-plot" />
                      </h3>
-                     <DispersionPlot matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} />
+                     <DispersionPlot matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} witnessAlphaName={witnessAlphaName} witnessBetaName={witnessBetaName} />
                    </div>
                 </div>
               </div>

@@ -8,15 +8,19 @@ interface ParallelViewerProps {
   matches: Match[];
   onSelectMatch: (match: Match) => void;
   selectedMatch: Match | null;
+  witnessAlphaName?: string;
+  witnessBetaName?: string;
 }
 
-const ParallelViewer: React.FC<ParallelViewerProps> = ({ 
-  tokensA, 
-  tokensB, 
-  alignments, 
-  matches, 
-  onSelectMatch, 
-  selectedMatch 
+const ParallelViewer: React.FC<ParallelViewerProps> = ({
+  tokensA,
+  tokensB,
+  alignments,
+  matches,
+  onSelectMatch,
+  selectedMatch,
+  witnessAlphaName = 'Witness α',
+  witnessBetaName = 'Witness β'
 }) => {
   const [hoveredIdx, setHoveredIdx] = useState<{ side: 'A' | 'B', index: number } | null>(null);
   const containerARef = useRef<HTMLDivElement>(null);
@@ -160,7 +164,7 @@ const ParallelViewer: React.FC<ParallelViewerProps> = ({
             <div className="bg-academic-paper px-4 py-3 border-b border-gray-200 shrink-0 flex justify-between items-center">
               <span className="font-bold text-academic-blue text-[10px] tracking-widest flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-academic-lightBlue"></span>
-                Witness α
+                {witnessAlphaName}
               </span>
               <span className="text-gray-400 font-mono text-[9px] bg-white px-2 py-0.5 border border-gray-100 rounded-full">{tokensA.length} Tokens</span>
             </div>
@@ -177,7 +181,7 @@ const ParallelViewer: React.FC<ParallelViewerProps> = ({
             <div className="bg-academic-paper px-4 py-3 border-b border-gray-200 shrink-0 flex justify-between items-center">
               <span className="font-bold text-academic-gold text-[10px] tracking-widest flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-academic-gold"></span>
-                Witness β
+                {witnessBetaName}
               </span>
               <span className="text-gray-400 font-mono text-[9px] bg-white px-2 py-0.5 border border-gray-100 rounded-full">{tokensB.length} Tokens</span>
             </div>
@@ -194,7 +198,7 @@ const ParallelViewer: React.FC<ParallelViewerProps> = ({
           <div className="flex items-center gap-6 text-xs w-full">
             <div className="flex items-center gap-2 shrink-0">
                <span className="px-2 py-1 bg-academic-red text-white font-bold rounded-sm shadow-md animate-pulse-slow tracking-wider">{selectedMatch.similarity.toFixed(1)}% MATCH</span>
-               <span className="text-[10px] font-mono text-gray-400 uppercase tracking-tighter">α:{selectedMatch.sourcePosition} → β:{selectedMatch.targetPosition}</span>
+               <span className="text-[10px] font-mono text-gray-400 uppercase tracking-tighter">{witnessAlphaName.charAt(0)}:{selectedMatch.sourcePosition} → {witnessBetaName.charAt(0)}:{selectedMatch.targetPosition}</span>
             </div>
             <div className="truncate font-coptic text-academic-blue flex-1 bg-white px-4 py-1.5 border border-gray-200 rounded-sm italic shadow-sm relative overflow-hidden group">
                <div className="absolute left-0 top-0 w-1 h-full bg-academic-gold"></div>

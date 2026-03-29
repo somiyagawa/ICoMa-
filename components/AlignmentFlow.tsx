@@ -8,9 +8,19 @@ interface AlignmentFlowProps {
   targetLength: number;
   onSelectMatch: (match: Match) => void;
   selectedMatch: Match | null;
+  witnessAlphaName?: string;
+  witnessBetaName?: string;
 }
 
-const AlignmentFlow: React.FC<AlignmentFlowProps> = ({ matches, sourceLength, targetLength, onSelectMatch, selectedMatch }) => {
+const AlignmentFlow: React.FC<AlignmentFlowProps> = ({
+  matches,
+  sourceLength,
+  targetLength,
+  onSelectMatch,
+  selectedMatch,
+  witnessAlphaName = 'Witness α',
+  witnessBetaName = 'Witness β'
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,7 +51,7 @@ const AlignmentFlow: React.FC<AlignmentFlowProps> = ({ matches, sourceLength, ta
       .attr("font-size", "11px")
       .attr("font-weight", "bold")
       .attr("fill", "#34495e")
-      .text("Witness α");
+      .text(witnessAlphaName);
 
     // Direction arrow: ← Beginning ... End →
     svg.append("text")
@@ -92,7 +102,7 @@ const AlignmentFlow: React.FC<AlignmentFlowProps> = ({ matches, sourceLength, ta
       .attr("font-size", "11px")
       .attr("font-weight", "bold")
       .attr("fill", "#8b7355")
-      .text("Witness β");
+      .text(witnessBetaName);
 
     const displayMatches = matches.length > 300 ? matches.filter(m => m.similarity > 70) : matches;
 
@@ -124,7 +134,7 @@ const AlignmentFlow: React.FC<AlignmentFlowProps> = ({ matches, sourceLength, ta
       .append("title")
       .text(d => `Click to view transposition:\nSim: ${d.similarity.toFixed(1)}%`);
 
-  }, [matches, sourceLength, targetLength, selectedMatch]);
+  }, [matches, sourceLength, targetLength, selectedMatch, witnessAlphaName, witnessBetaName]);
 
   return (
     <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm p-2">

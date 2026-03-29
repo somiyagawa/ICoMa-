@@ -55,12 +55,16 @@ export async function generatePDF(data: ReportData): Promise<Blob> {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const { config, result, witnessAlphaName: wA, witnessBetaName: wB } = data;
 
+  // jsPDF default fonts don't support Unicode Greek — use ASCII fallbacks
+  const pdfSafe = (s: string) => s.replace(/α/g, '(alpha)').replace(/β/g, '(beta)').replace(/↔/g, '<->').replace(/…/g, '...').replace(/[^\x00-\x7F]/g, '?');
+  const pA = pdfSafe(wA), pB = pdfSafe(wB);
+
   // Title
   doc.setFontSize(20);
   doc.text('ICoMa — Intertextuality Analysis Report', 105, 30, { align: 'center' });
   doc.setFontSize(11);
   doc.text(`Generated: ${data.date}`, 105, 40, { align: 'center' });
-  doc.text(`${wA}  ↔  ${wB}`, 105, 48, { align: 'center' });
+  doc.text(`${pA}  <->  ${pB}`, 105, 48, { align: 'center' });
 
   // Config
   doc.setFontSize(14);
@@ -91,8 +95,8 @@ export async function generatePDF(data: ReportData): Promise<Blob> {
       ['Reuse Coverage', `${result.stats.coverage.toFixed(1)}%`],
       ['Total Alignments', String(result.stats.totalAlignments)],
       ['Unique N-Grams', String(result.stats.uniqueNgrams)],
-      ['Tokens (α)', String(result.tokensA.length)],
-      ['Tokens (β)', String(result.tokensB.length)],
+      ['Tokens (' + pA + ')', String(result.tokensA.length)],
+      ['Tokens (' + pB + ')', String(result.tokensB.length)],
       ['Total Matches', String(result.matches.length)],
     ],
     theme: 'grid',
@@ -107,12 +111,12 @@ export async function generatePDF(data: ReportData): Promise<Blob> {
   const top = topMatches(result);
   autoTable(doc, {
     startY: matchesY + 5,
-    head: [['#', 'Sim%', `${wA} (α)`, `${wB} (β)`, 'α pos', 'β pos']],
+    head: [['#', 'Sim%', `${pA}`, `${pB}`, '<-> pos', '<-> pos']],
     body: top.map((m, i) => [
       String(i + 1),
       m.similarity.toFixed(1),
-      truncate(m.sourcePhrase, 40),
-      truncate(m.targetPhrase, 40),
+      pdfSafe(truncate(m.sourcePhrase, 40)),
+      pdfSafe(truncate(m.targetPhrase, 40)),
       String(m.sourcePosition),
       String(m.targetPosition),
     ]),
@@ -308,7 +312,7 @@ export function generateTEIXML(data: ReportData): string {
     </fileDesc>
     <encodingDesc>
       <appInfo>
-        <application ident="ICoMa" version="2.8.1">
+        <application ident="ICoMa" version="3.0.0">
           <desc>Intertextuality Collation Machine</desc>
         </application>
       </appInfo>

@@ -8,9 +8,19 @@ interface DispersionPlotProps {
   targetLength: number;
   onSelectMatch: (match: Match) => void;
   selectedMatch: Match | null;
+  witnessAlphaName?: string;
+  witnessBetaName?: string;
 }
 
-const DispersionPlot: React.FC<DispersionPlotProps> = ({ matches, sourceLength, targetLength, onSelectMatch, selectedMatch }) => {
+const DispersionPlot: React.FC<DispersionPlotProps> = ({
+  matches,
+  sourceLength,
+  targetLength,
+  onSelectMatch,
+  selectedMatch,
+  witnessAlphaName = 'Witness α',
+  witnessBetaName = 'Witness β'
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,8 +44,8 @@ const DispersionPlot: React.FC<DispersionPlotProps> = ({ matches, sourceLength, 
     svg.append("rect").attr("x", 0).attr("y", row1Y).attr("width", width).attr("height", barHeight).attr("fill", "#f8f9fa").attr("stroke", "#bdc3c7");
     svg.append("rect").attr("x", 0).attr("y", row2Y).attr("width", width).attr("height", barHeight).attr("fill", "#f8f9fa").attr("stroke", "#bdc3c7");
 
-    svg.append("text").attr("x", 0).attr("y", row1Y - 5).text("Witness α Dispersion").attr("font-size", "10px").attr("fill", "#2c3e50");
-    svg.append("text").attr("x", 0).attr("y", row2Y - 5).text("Witness β Dispersion").attr("font-size", "10px").attr("fill", "#2c3e50");
+    svg.append("text").attr("x", 0).attr("y", row1Y - 5).text(`${witnessAlphaName} Dispersion`).attr("font-size", "10px").attr("fill", "#2c3e50");
+    svg.append("text").attr("x", 0).attr("y", row2Y - 5).text(`${witnessBetaName} Dispersion`).attr("font-size", "10px").attr("fill", "#2c3e50");
 
     // Render matches
     // Note: Rendering two rects per match (one for A, one for B)
@@ -63,7 +73,7 @@ const DispersionPlot: React.FC<DispersionPlotProps> = ({ matches, sourceLength, 
          .attr("opacity", opacity)
          .attr("cursor", "pointer")
          .on("click", (e) => { e.stopPropagation(); onSelectMatch(match); })
-         .append("title").text(`Witness α pos: ${match.sourcePosition} (Click to view)`);
+         .append("title").text(`${witnessAlphaName} pos: ${match.sourcePosition} (Click to view)`);
 
         // Bar β
         g.append("rect")
@@ -75,10 +85,10 @@ const DispersionPlot: React.FC<DispersionPlotProps> = ({ matches, sourceLength, 
          .attr("opacity", opacity)
          .attr("cursor", "pointer")
          .on("click", (e) => { e.stopPropagation(); onSelectMatch(match); })
-         .append("title").text(`Witness β pos: ${match.targetPosition} (Click to view)`);
+         .append("title").text(`${witnessBetaName} pos: ${match.targetPosition} (Click to view)`);
     });
 
-  }, [matches, sourceLength, targetLength, selectedMatch]);
+  }, [matches, sourceLength, targetLength, selectedMatch, witnessAlphaName, witnessBetaName]);
 
   return <div ref={containerRef} className="w-full h-[100px]" />;
 };

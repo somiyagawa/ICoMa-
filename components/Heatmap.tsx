@@ -12,6 +12,8 @@ interface HeatmapProps {
   selectedMatch: Match | null;
   onHelpClick?: (topic: string) => void;
   lang?: Language;
+  witnessAlphaName?: string;
+  witnessBetaName?: string;
 }
 
 const HelpButton = ({ topic, onClick }: { topic: string, onClick: (topic: string) => void }) => (
@@ -26,7 +28,17 @@ const HelpButton = ({ topic, onClick }: { topic: string, onClick: (topic: string
   </button>
 );
 
-const Heatmap: React.FC<HeatmapProps> = ({ matches, sourceLength, targetLength, onSelectMatch, selectedMatch, onHelpClick, lang = 'en' as Language }) => {
+const Heatmap: React.FC<HeatmapProps> = ({
+  matches,
+  sourceLength,
+  targetLength,
+  onSelectMatch,
+  selectedMatch,
+  onHelpClick,
+  lang = 'en' as Language,
+  witnessAlphaName = 'Witness α',
+  witnessBetaName = 'Witness β'
+}) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -109,12 +121,12 @@ const Heatmap: React.FC<HeatmapProps> = ({ matches, sourceLength, targetLength, 
         <div className="flex items-center gap-4">
           <div className="flex items-center">
             <span className="inline-block w-2 h-2 rounded-sm mr-1" style={{ backgroundColor: '#34495e' }} />
-            <span className="text-[8px] font-bold text-gray-400 tracking-wider">{t(lang, 'X-Axis: Witness α Position')}</span>
+            <span className="text-[8px] font-bold text-gray-400 tracking-wider">{`X-Axis: ${witnessAlphaName} Position`}</span>
             {onHelpClick && <HelpButton topic="heatmapAxisAlpha" onClick={onHelpClick} />}
           </div>
           <div className="flex items-center">
             <span className="inline-block w-2 h-2 rounded-sm mr-1" style={{ backgroundColor: '#8b7355' }} />
-            <span className="text-[8px] font-bold text-gray-400 tracking-wider">{t(lang, 'Y-Axis: Witness β Position')}</span>
+            <span className="text-[8px] font-bold text-gray-400 tracking-wider">{`Y-Axis: ${witnessBetaName} Position`}</span>
             {onHelpClick && <HelpButton topic="heatmapAxisBeta" onClick={onHelpClick} />}
           </div>
         </div>

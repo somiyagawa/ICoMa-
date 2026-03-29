@@ -4,9 +4,16 @@ import { Match } from '../types';
 interface MatchDetailModalProps {
   match: Match | null;
   onClose: () => void;
+  witnessAlphaName?: string;
+  witnessBetaName?: string;
 }
 
-const MatchDetailModal: React.FC<MatchDetailModalProps> = ({ match, onClose }) => {
+const MatchDetailModal: React.FC<MatchDetailModalProps> = ({
+  match,
+  onClose,
+  witnessAlphaName = 'Witness α',
+  witnessBetaName = 'Witness β'
+}) => {
   if (!match) return null;
 
   return (
@@ -36,7 +43,7 @@ const MatchDetailModal: React.FC<MatchDetailModalProps> = ({ match, onClose }) =
           {/* Witness α */}
           <div className="flex flex-col">
             <span className="text-xs font-bold text-gray-400 mb-2 border-b border-gray-200 pb-1">
-              Witness α (Primary) <span className="font-mono ml-2">Pos: {match.sourcePosition}</span>
+              {witnessAlphaName} <span className="font-mono ml-2">Pos: {match.sourcePosition}</span>
             </span>
             <div className="bg-white p-4 rounded border border-gray-200 shadow-sm h-full">
               <p className="font-coptic text-lg leading-relaxed text-academic-blue">
@@ -48,7 +55,7 @@ const MatchDetailModal: React.FC<MatchDetailModalProps> = ({ match, onClose }) =
           {/* Witness β */}
           <div className="flex flex-col">
             <span className="text-xs font-bold text-gray-400 mb-2 border-b border-gray-200 pb-1">
-              Witness β (Comparandum) <span className="font-mono ml-2">Pos: {match.targetPosition}</span>
+              {witnessBetaName} <span className="font-mono ml-2">Pos: {match.targetPosition}</span>
             </span>
             <div className="bg-white p-4 rounded border border-gray-200 shadow-sm h-full">
               <p className="font-coptic text-lg leading-relaxed text-academic-blue">
