@@ -53,7 +53,7 @@ export async function loadModel(onProgress?: (p: number) => void): Promise<void>
     const { pipeline: createPipeline, env } = await import('@huggingface/transformers');
 
     // Use WebAssembly backend (onnxruntime-web)
-    env.backends.onnx.wasm.numThreads = 1;
+    env.backends.onnx.wasm.proxy = false;
 
     pipeline = await createPipeline(
       'feature-extraction',

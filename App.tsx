@@ -13,7 +13,7 @@ import ChartToolbar, { ZoomControls, FullscreenButton } from './components/Chart
 import { getHelpContent, getAlgorithmHelp, getIntertextualityCategoryHelp } from './services/helpContent';
 import DiffView from './components/DiffView';
 import HistoryPanel from './components/HistoryPanel';
-import { HistorySession, saveSession, getAllSessions } from './services/historyDB';
+import { HistorySession, saveSession } from './services/historyDB';
 import { runOnnxAnalysis, OnnxAnalysisProgress } from './services/onnxAnalysis';
 import { downloadReport, ReportData } from './services/reportGenerator';
 
@@ -228,6 +228,14 @@ const App: React.FC = () => {
   const [onnxProgress, setOnnxProgress] = useState<OnnxAnalysisProgress | null>(null);
   const [showReportMenu, setShowReportMenu] = useState(false);
 
+  // Close report menu on outside click
+  useEffect(() => {
+    if (!showReportMenu) return;
+    const handler = (e: MouseEvent) => setShowReportMenu(false);
+    document.addEventListener('click', handler);
+    return () => document.removeEventListener('click', handler);
+  }, [showReportMenu]);
+
   // Refs for chart containers (fullscreen + download)
   const alignmentFlowRef = useRef<HTMLDivElement>(null);
   const histogramRef = useRef<HTMLDivElement>(null);
@@ -265,7 +273,7 @@ const App: React.FC = () => {
           tokensA: res.tokensA,
           tokensB: res.tokensB,
           matches: res.matches,
-          alignments: res.matches.map(m => ({ sourceStart: m.sourcePosition, sourceEnd: m.sourcePosition + (m.length || 1), targetStart: m.targetPosition, targetEnd: m.targetPosition + (m.length || 1) })),
+          alignments: res.matches.map(m => ({ sourceIndex: m.sourcePosition, targetIndex: m.targetPosition, similarity: m.similarity, sourceText: m.sourcePhrase, targetText: m.targetPhrase })),
           stats: {
             meanSimilarity,
             coverage,
@@ -476,7 +484,7 @@ const App: React.FC = () => {
                       <svg className="w-5 h-5 text-green-400 group-hover:text-green-200 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
                     </button>
                     <div className="relative">
-                      <button onClick={() => setShowReportMenu(!showReportMenu)} className="flex flex-col items-center gap-0.5 group" title={t(lang, 'Download Report')}>
+                      <button onClick={(e) => { e.stopPropagation(); setShowReportMenu(!showReportMenu); }} className="flex flex-col items-center gap-0.5 group" title={t(lang, 'Download Report')}>
                         <div className="text-[10px] text-gray-400 uppercase font-sans">{t(lang, 'Report')}</div>
                         <svg className="w-5 h-5 text-yellow-300 group-hover:text-yellow-100 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                       </button>
@@ -888,7 +896,7 @@ const App: React.FC = () => {
       
       {/* Visual Footer */}
       <footer className="mt-auto py-6 border-t border-gray-200 bg-white text-center flex flex-col items-center gap-3">
-         <p className="text-[10px] text-gray-400 uppercase tracking-[0.3em]">{t(lang, 'Advanced Digital Humanities Collation Tool')} • v2.9.0 Enterprise</p>
+         <p className="text-[10px] text-gray-400 uppercase tracking-[0.3em]">{t(lang, 'Advanced Digital Humanities Collation Tool')} • v3.0.0 Enterprise</p>
          <div className="flex items-center gap-4 text-[10px] text-gray-500 uppercase tracking-widest">
             <div className="flex items-center gap-1">
               <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="hover:text-academic-blue transition-colors flex items-center gap-1">
@@ -925,6 +933,26 @@ const App: React.FC = () => {
               </button>
             </div>
             <div className="p-6 overflow-y-auto font-sans text-sm text-gray-700 space-y-6">
+              <div>
+                <h3 className="font-bold text-academic-blue text-base border-b border-gray-100 pb-2 mb-2">v3.0.0 Enterprise (March 2026)</h3>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Added <strong>ONNX Semantic Similarity</strong> algorithm: browser-local sentence-transformer (<code>all-MiniLM-L6-v2</code>) via <code>onnxruntime-web</code> / <code>@huggingface/transformers</code> for semantic matching without external API.</li>
+                  <li>Added <strong>Session History</strong> panel: IndexedDB-based persistence allows saving, loading, renaming, and deleting past analysis sessions.</li>
+                  <li>Added <strong>Report Download</strong> in 4 formats: <strong>PDF</strong> (jsPDF + autoTable), <strong>DOCX</strong> (docx.js), <strong>LaTeX</strong> (.tex with booktabs/longtable), and <strong>TEI XML</strong> (P5-compliant).</li>
+                  <li>Added <strong>Italiano (Italian)</strong> as a new UI language (7 languages total).</li>
+                  <li>Complete <strong>i18n coverage</strong>: all algorithm names, UI controls, tooltips, match gallery labels, and chart controls now fully translated across all 7 languages.</li>
+                  <li>Added <strong>Editable Witness Names</strong>: inline-editable α/β name inputs propagate custom names throughout all visualization panels.</li>
+                  <li>Added <strong>Inline Diff View</strong> in Match Gallery: word-level LCS diff with colour-coded insertions/deletions for sub-100% matches.</li>
+                  <li>Added <strong>Match Gallery Fullscreen</strong> with ranked card layout, medal badges for top 3 matches, and similarity progress bars.</li>
+                  <li>Added <strong>Cross-Panel Synchronization</strong>: selecting a match in any panel (Histogram, Network Graph, Heatmap, Dispersion, Gallery) highlights it everywhere.</li>
+                  <li><strong>Network Graph</strong> auto zoom-in on selected cluster with label backgrounds and NaN position guards.</li>
+                  <li><strong>Heatmap</strong> header reorganized into 3 rows (title, axis legends, toolbar) to prevent layout crowding.</li>
+                  <li><strong>Fullscreen Exit</strong> button made more prominent with floating red bar, gradient overlay, and Esc key support.</li>
+                  <li>Fixed <strong>zoom overflow</strong>: CSS <code>transform: scale()</code> no longer covers sibling components via <code>maxHeight</code> + <code>overflow: auto</code> containment.</li>
+                  <li>Unified all Witness naming to <strong>Greek lowercase</strong> (α/β) — removed forced CSS <code>uppercase</code> that turned α into Α.</li>
+                  <li>ONNX progress indicator: phase-specific feedback (model loading → embedding α → embedding β → comparing) with percentage.</li>
+                </ul>
+              </div>
               <div>
                 <h3 className="font-bold text-academic-blue text-base border-b border-gray-100 pb-2 mb-2">v2.9.0 Enterprise (March 2026)</h3>
                 <ul className="list-disc pl-5 space-y-1">

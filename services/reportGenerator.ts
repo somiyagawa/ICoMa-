@@ -2,7 +2,7 @@
  * Report Generator for ICoMa — Intertextuality Collation Machine
  * Exports analysis results as PDF, docx, LaTeX, and TEI XML.
  */
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import {
   Document, Packer, Paragraph, Table, TableRow, TableCell,
