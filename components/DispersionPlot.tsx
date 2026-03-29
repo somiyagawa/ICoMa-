@@ -53,7 +53,7 @@ const DispersionPlot: React.FC<DispersionPlotProps> = ({ matches, sourceLength, 
         const color = isSelected ? "#c9302c" : (match.similarity >= 80 ? "#2980b9" : "#95a5a6");
         const opacity = isSelected ? 1 : (selectedMatch ? 0.3 : 0.6);
 
-        // Bar A
+        // Bar α
         g.append("rect")
          .attr("x", x1)
          .attr("y", row1Y)
@@ -63,9 +63,9 @@ const DispersionPlot: React.FC<DispersionPlotProps> = ({ matches, sourceLength, 
          .attr("opacity", opacity)
          .attr("cursor", "pointer")
          .on("click", (e) => { e.stopPropagation(); onSelectMatch(match); })
-         .append("title").text(`α pos: ${match.sourcePosition} (Click to view)`);
+         .append("title").text(`Witness α pos: ${match.sourcePosition} (Click to view)`);
 
-        // Bar B
+        // Bar β
         g.append("rect")
          .attr("x", x2)
          .attr("y", row2Y)
@@ -75,7 +75,7 @@ const DispersionPlot: React.FC<DispersionPlotProps> = ({ matches, sourceLength, 
          .attr("opacity", opacity)
          .attr("cursor", "pointer")
          .on("click", (e) => { e.stopPropagation(); onSelectMatch(match); })
-         .append("title").text(`β pos: ${match.targetPosition} (Click to view)`);
+         .append("title").text(`Witness β pos: ${match.targetPosition} (Click to view)`);
     });
 
   }, [matches, sourceLength, targetLength, selectedMatch]);

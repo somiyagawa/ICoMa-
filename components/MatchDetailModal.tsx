@@ -33,7 +33,7 @@ const MatchDetailModal: React.FC<MatchDetailModalProps> = ({ match, onClose }) =
 
         {/* Content */}
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 bg-academic-cream">
-          {/* Witness A */}
+          {/* Witness α */}
           <div className="flex flex-col">
             <span className="text-xs font-bold text-gray-400 uppercase mb-2 border-b border-gray-200 pb-1">
               Witness α (Primary) <span className="font-mono ml-2">Pos: {match.sourcePosition}</span>
@@ -45,7 +45,7 @@ const MatchDetailModal: React.FC<MatchDetailModalProps> = ({ match, onClose }) =
             </div>
           </div>
 
-          {/* Witness B */}
+          {/* Witness β */}
           <div className="flex flex-col">
             <span className="text-xs font-bold text-gray-400 uppercase mb-2 border-b border-gray-200 pb-1">
               Witness β (Comparandum) <span className="font-mono ml-2">Pos: {match.targetPosition}</span>
