@@ -97,12 +97,16 @@ const DiffView: React.FC<DiffViewProps> = ({
 }) => {
   const diff = useMemo(() => computeDiff(source, target), [source, target]);
 
+  // Truncate long witness names for compact display (max 12 chars)
+  const shortAlpha = witnessAlphaName.length > 12 ? witnessAlphaName.slice(0, 11) + '…' : witnessAlphaName;
+  const shortBeta = witnessBetaName.length > 12 ? witnessBetaName.slice(0, 11) + '…' : witnessBetaName;
+
   // For 100% matches, just show the text directly
   if (similarity >= 99.9) {
     return (
       <div style={{ fontSize: `${fontSize}px` }} className="leading-relaxed font-coptic">
         <div className="mb-1">
-          <span className="text-[8px] font-bold tracking-wider text-gray-400 mr-1">α</span>
+          <span className="text-[8px] font-bold tracking-wider text-gray-400 mr-1" title={witnessAlphaName}>{shortAlpha}</span>
           <span className="text-academic-blue italic">"{source}"</span>
         </div>
         <div className="text-[8px] text-green-600 font-bold uppercase tracking-wider">= Exact Match</div>
@@ -112,14 +116,14 @@ const DiffView: React.FC<DiffViewProps> = ({
 
   return (
     <div style={{ fontSize: `${fontSize}px` }} className="leading-relaxed">
-      {/* Source (α) line */}
+      {/* Source line */}
       <div className="mb-1.5">
-        <span className="text-[8px] font-bold tracking-wider mr-1" style={{ color: '#34495e' }}>α</span>
+        <span className="text-[8px] font-bold tracking-wider mr-1" style={{ color: '#34495e' }} title={witnessAlphaName}>{shortAlpha}</span>
         <span className="font-coptic italic text-academic-blue">"{source}"</span>
       </div>
-      {/* Target (β) line */}
+      {/* Target line */}
       <div className="mb-1.5">
-        <span className="text-[8px] font-bold tracking-wider mr-1" style={{ color: '#8b7355' }}>β</span>
+        <span className="text-[8px] font-bold tracking-wider mr-1" style={{ color: '#8b7355' }} title={witnessBetaName}>{shortBeta}</span>
         <span className="font-coptic italic" style={{ color: '#5a4a3a' }}>"{target}"</span>
       </div>
       {/* Inline diff */}
