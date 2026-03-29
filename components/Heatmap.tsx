@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { Match } from '../types';
+import ChartToolbar from './ChartControls';
 
 interface HeatmapProps {
   matches: Match[];
@@ -24,6 +25,7 @@ const HelpButton = ({ topic, onClick }: { topic: string, onClick: (topic: string
 );
 
 const Heatmap: React.FC<HeatmapProps> = ({ matches, sourceLength, targetLength, onSelectMatch, selectedMatch, onHelpClick }) => {
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,7 +35,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ matches, sourceLength, targetLength, 
 
     const margin = { top: 10, right: 20, bottom: 20, left: 50 };
     const width = containerRef.current.clientWidth - margin.left - margin.right;
-    const height = 340 - margin.top - margin.bottom;
+    const height = 320 - margin.top - margin.bottom;
 
     const svg = d3.select(containerRef.current)
       .append("svg")
@@ -78,13 +80,14 @@ const Heatmap: React.FC<HeatmapProps> = ({ matches, sourceLength, targetLength, 
   }, [matches, sourceLength, targetLength, selectedMatch]);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-sm shadow-sm flex flex-col overflow-hidden">
+    <div ref={wrapperRef} className="bg-white border border-gray-200 rounded-sm shadow-sm flex flex-col overflow-hidden">
       {/* Header with title */}
       <div className="bg-academic-paper px-4 py-3 border-b border-gray-200 flex justify-between items-center shrink-0">
         <span className="text-[11px] font-bold uppercase text-academic-blue tracking-widest flex items-center">
           Position Correspondence (Heatmap)
           {onHelpClick && <HelpButton topic="heatmapView" onClick={onHelpClick} />}
         </span>
+        <ChartToolbar containerRef={wrapperRef} filename="icoma-heatmap" />
       </div>
       {/* Axis labels */}
       <div className="px-4 pt-2 flex justify-between items-center">
@@ -98,7 +101,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ matches, sourceLength, targetLength, 
         </div>
       </div>
       {/* Chart */}
-      <div ref={containerRef} className="w-full h-[340px] px-2 pb-2" />
+      <div ref={containerRef} className="w-full flex-1 min-h-[320px] px-2 pb-2" />
     </div>
   );
 };

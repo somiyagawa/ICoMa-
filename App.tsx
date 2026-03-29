@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { AnalysisConfig, AnalysisResult, Match } from './types';
 import { runAnalysis } from './services/collationUtils';
 import { Language, LANGUAGES, t } from './services/i18n';
@@ -9,6 +9,7 @@ import DispersionPlot from './components/DispersionPlot';
 import AlignmentFlow from './components/AlignmentFlow';
 import SimilarityHistogram from './components/SimilarityHistogram';
 import AIAnalysisPanel from './components/AIAnalysisPanel';
+import ChartToolbar from './components/ChartControls';
 
 const EXAMPLES = {
   english_long: {
@@ -420,6 +421,12 @@ const App: React.FC = () => {
   const [fontFamily, setFontFamily] = useState<string>('serif');
   const [activeHelpModal, setActiveHelpModal] = useState<string | null>(null);
 
+  // Refs for chart containers (fullscreen + download)
+  const alignmentFlowRef = useRef<HTMLDivElement>(null);
+  const histogramRef = useRef<HTMLDivElement>(null);
+  const networkRef = useRef<HTMLDivElement>(null);
+  const dispersionRef = useRef<HTMLDivElement>(null);
+
   const performAnalysis = useCallback(() => {
     if (!sourceText || !targetText) return;
     setIsProcessing(true);
@@ -447,7 +454,7 @@ const App: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-academic-cream text-academic-blue pb-20 flex flex-col" style={{ fontFamily: fontFamily, fontSize: `${fontSize}px` }}>
+    <div className="min-h-screen bg-academic-cream text-academic-blue pb-20 flex flex-col" style={{ fontFamily: fontFamily }}>
       <header className="bg-gradient-to-r from-academic-lightBlue to-academic-blue text-white border-b-4 border-academic-red px-6 py-5 shadow-lg shrink-0">
         <div className="w-full flex justify-between items-center">
           <div>
@@ -518,7 +525,7 @@ const App: React.FC = () => {
                    </div>
                    <span className="text-[9px] text-gray-400 font-mono">{sourceText.length} chars</span>
                 </div>
-                <textarea className="w-full h-40 p-4 text-sm font-coptic border border-gray-200 rounded-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-academic-gold/20 focus:border-academic-gold outline-none transition-all shadow-inner leading-relaxed" value={sourceText} onChange={(e) => setSourceText(e.target.value)} placeholder={t(lang, 'Insert primary text (Source)...')} dir="auto" />
+                <textarea className="w-full h-40 p-4 font-coptic border border-gray-200 rounded-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-academic-gold/20 focus:border-academic-gold outline-none transition-all shadow-inner leading-relaxed" style={{ fontSize: `${fontSize}px` }} value={sourceText} onChange={(e) => setSourceText(e.target.value)} placeholder={t(lang, 'Insert primary text (Source)...')} dir="auto" />
               </div>
               <div className="flex flex-col">
                 <div className="flex justify-between items-center mb-2 px-1">
@@ -528,7 +535,7 @@ const App: React.FC = () => {
                    </div>
                    <span className="text-[9px] text-gray-400 font-mono">{targetText.length} chars</span>
                 </div>
-                <textarea className="w-full h-40 p-4 text-sm font-coptic border border-gray-200 rounded-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-academic-gold/20 focus:border-academic-gold outline-none transition-all shadow-inner leading-relaxed" value={targetText} onChange={(e) => setTargetText(e.target.value)} placeholder={t(lang, 'Insert comparative text (Target)...')} dir="auto" />
+                <textarea className="w-full h-40 p-4 font-coptic border border-gray-200 rounded-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-academic-gold/20 focus:border-academic-gold outline-none transition-all shadow-inner leading-relaxed" style={{ fontSize: `${fontSize}px` }} value={targetText} onChange={(e) => setTargetText(e.target.value)} placeholder={t(lang, 'Insert comparative text (Target)...')} dir="auto" />
               </div>
             </div>
           </div>
@@ -642,10 +649,13 @@ const App: React.FC = () => {
             </div>
 
             {/* Macro-level Alignment Flow */}
-            <div className="bg-white p-6 rounded-sm border border-gray-200 shadow-lg">
-              <h3 className="text-xs font-bold uppercase text-academic-blue tracking-widest mb-4 flex items-center">
-                {t(lang, 'Macro-Level Alignment Flow')}
-                <HelpButton topic="macroAlignment" onClick={setActiveHelpModal} />
+            <div ref={alignmentFlowRef} className="bg-white p-6 rounded-sm border border-gray-200 shadow-lg">
+              <h3 className="text-xs font-bold uppercase text-academic-blue tracking-widest mb-4 flex items-center justify-between">
+                <span className="flex items-center">
+                  {t(lang, 'Macro-Level Alignment Flow')}
+                  <HelpButton topic="macroAlignment" onClick={setActiveHelpModal} />
+                </span>
+                <ChartToolbar containerRef={alignmentFlowRef} filename="icoma-alignment-flow" />
               </h3>
               <AlignmentFlow matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} />
             </div>
@@ -659,7 +669,7 @@ const App: React.FC = () => {
 
               {/* Right Column: High-Density Analytics & Navigation */}
               <div className="xl:col-span-5 flex flex-col gap-8">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[400px]">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[460px]">
                    {/* Match Gallery (Sidebar) */}
                    <div className="bg-white border border-gray-200 rounded-sm shadow-lg flex flex-col overflow-hidden">
                       <div className="bg-academic-paper px-4 py-3 border-b border-gray-200 flex justify-between items-center shrink-0">
@@ -685,7 +695,7 @@ const App: React.FC = () => {
                                 <span className={`text-[11px] font-bold ${m.similarity >= 95 ? 'text-green-600' : (m.similarity >= 80 ? 'text-blue-600' : 'text-academic-gold')}`}>{m.similarity.toFixed(1)}%</span>
                               </div>
                             </div>
-                            <div className="text-[12px] font-coptic text-academic-blue leading-tight line-clamp-2 group-hover:text-black italic">
+                            <div className="font-coptic text-academic-blue leading-tight line-clamp-2 group-hover:text-black italic" style={{ fontSize: `${Math.max(10, fontSize - 2)}px` }}>
                               "{m.sourcePhrase}"
                             </div>
                           </div>
@@ -705,26 +715,35 @@ const App: React.FC = () => {
 
                 <div className="flex flex-col gap-8">
                    {/* Similarity Histogram */}
-                   <div className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm">
-                     <h3 className="text-[10px] font-bold uppercase text-academic-blue tracking-widest mb-2 flex items-center">
-                       {t(lang, 'Similarity Distribution')}
-                       <HelpButton topic="similarityDistribution" onClick={setActiveHelpModal} />
+                   <div ref={histogramRef} className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm">
+                     <h3 className="text-[10px] font-bold uppercase text-academic-blue tracking-widest mb-2 flex items-center justify-between">
+                       <span className="flex items-center">
+                         {t(lang, 'Similarity Distribution')}
+                         <HelpButton topic="similarityDistribution" onClick={setActiveHelpModal} />
+                       </span>
+                       <ChartToolbar containerRef={histogramRef} filename="icoma-similarity-histogram" />
                      </h3>
                      <SimilarityHistogram matches={result.matches} />
                    </div>
                    {/* Network Graph (Cluster Discovery) */}
-                   <div className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm">
-                     <h3 className="text-[10px] font-bold uppercase text-academic-blue tracking-widest mb-2 flex items-center">
-                       {t(lang, 'Cluster View (Network Graph)')}
-                       <HelpButton topic="clusterView" onClick={setActiveHelpModal} />
+                   <div ref={networkRef} className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm">
+                     <h3 className="text-[10px] font-bold uppercase text-academic-blue tracking-widest mb-2 flex items-center justify-between">
+                       <span className="flex items-center">
+                         {t(lang, 'Cluster View (Network Graph)')}
+                         <HelpButton topic="clusterView" onClick={setActiveHelpModal} />
+                       </span>
+                       <ChartToolbar containerRef={networkRef} filename="icoma-network-graph" />
                      </h3>
                      <NetworkGraph matches={result.matches} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} />
                    </div>
                    {/* Dispersion Plot (Distribution) */}
-                   <div className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm">
-                     <h3 className="text-[10px] font-bold uppercase text-academic-blue tracking-widest mb-2 flex items-center">
-                       {t(lang, 'Witness Dispersion')}
-                       <HelpButton topic="witnessDispersion" onClick={setActiveHelpModal} />
+                   <div ref={dispersionRef} className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm">
+                     <h3 className="text-[10px] font-bold uppercase text-academic-blue tracking-widest mb-2 flex items-center justify-between">
+                       <span className="flex items-center">
+                         {t(lang, 'Witness Dispersion')}
+                         <HelpButton topic="witnessDispersion" onClick={setActiveHelpModal} />
+                       </span>
+                       <ChartToolbar containerRef={dispersionRef} filename="icoma-dispersion-plot" />
                      </h3>
                      <DispersionPlot matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} />
                    </div>
