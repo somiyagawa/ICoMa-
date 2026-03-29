@@ -79,6 +79,8 @@ const App: React.FC = () => {
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
   const [isAlgorithmHelpOpen, setIsAlgorithmHelpOpen] = useState(false);
+  const [isThresholdHelpOpen, setIsThresholdHelpOpen] = useState(false);
+  const [isNSizeHelpOpen, setIsNSizeHelpOpen] = useState(false);
 
   const performAnalysis = useCallback(() => {
     if (!sourceText || !targetText) return;
@@ -169,11 +171,21 @@ const App: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-6">
                   <div className="flex-1">
-                    <label className="block text-[11px] font-bold text-academic-blue mb-2 uppercase">Similarity Threshold: {config.threshold}%</label>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-[11px] font-bold text-academic-blue uppercase">Similarity Threshold: {config.threshold}%</label>
+                      <button onClick={() => setIsThresholdHelpOpen(true)} className="text-gray-400 hover:text-academic-blue transition-colors" title="Threshold Help">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      </button>
+                    </div>
                     <input type="range" min="20" max="100" value={config.threshold} onChange={(e) => setConfig({ ...config, threshold: Number(e.target.value) })} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-academic-gold" />
                   </div>
                   <div className="w-20">
-                    <label className="block text-[11px] font-bold text-academic-blue mb-2 uppercase">N-Size</label>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-[11px] font-bold text-academic-blue uppercase">N-Size</label>
+                      <button onClick={() => setIsNSizeHelpOpen(true)} className="text-gray-400 hover:text-academic-blue transition-colors" title="N-Size Help">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      </button>
+                    </div>
                     <input type="number" min="1" max="20" value={config.windowSize} onChange={(e) => setConfig({...config, windowSize: Number(e.target.value)})} className="w-full p-1.5 border border-gray-200 rounded-sm text-xs shadow-sm" />
                   </div>
                 </div>
@@ -484,6 +496,73 @@ const App: React.FC = () => {
                 </div>
               </div>
 
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Threshold Help Modal */}
+      {isThresholdHelpOpen && (
+        <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setIsThresholdHelpOpen(false)}>
+          <div className="bg-white rounded-sm shadow-2xl max-w-lg w-full flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h2 className="text-lg font-bold text-academic-blue font-serif tracking-tight flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                Similarity Threshold
+              </h2>
+              <button onClick={() => setIsThresholdHelpOpen(false)} className="text-gray-400 hover:text-academic-red transition-colors">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <div className="p-6 font-sans text-sm text-gray-700 space-y-4">
+              <p className="text-gray-600">Determines the minimum similarity score (percentage) required for a match to be highlighted and reported.</p>
+              <div className="grid grid-cols-1 gap-4 text-xs">
+                <div className="border border-gray-100 rounded-sm p-3 bg-gray-50/50">
+                  <span className="font-bold text-green-600 block mb-1">High Threshold (80% - 100%)</span>
+                  Reduces false positives. Best for finding exact quotes, verbatim copying, or highly conserved passages. Might miss subtle text reuses or heavily edited sections.
+                </div>
+                <div className="border border-gray-100 rounded-sm p-3 bg-gray-50/50">
+                  <span className="font-bold text-academic-gold block mb-1">Medium Threshold (50% - 79%)</span>
+                  A balanced approach. Good for finding paraphrases, translations, or texts with moderate scribal variations.
+                </div>
+                <div className="border border-gray-100 rounded-sm p-3 bg-gray-50/50">
+                  <span className="font-bold text-red-500 block mb-1">Low Threshold (20% - 49%)</span>
+                  Catches highly fragmented, heavily corrupted, or loosely related texts. Will significantly increase noise and false positives.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* N-Size Help Modal */}
+      {isNSizeHelpOpen && (
+        <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setIsNSizeHelpOpen(false)}>
+          <div className="bg-white rounded-sm shadow-2xl max-w-lg w-full flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h2 className="text-lg font-bold text-academic-blue font-serif tracking-tight flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                N-Size / Window Size
+              </h2>
+              <button onClick={() => setIsNSizeHelpOpen(false)} className="text-gray-400 hover:text-academic-red transition-colors">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <div className="p-6 font-sans text-sm text-gray-700 space-y-4">
+              <p className="text-gray-600">Defines the length of the sequence (number of words or characters) used as the base unit for comparison.</p>
+              <div className="grid grid-cols-1 gap-4 text-xs">
+                <div className="border border-gray-100 rounded-sm p-3 bg-gray-50/50">
+                  <span className="font-bold text-green-600 block mb-1">Larger N-Size (e.g., 5-10+)</span>
+                  Captures more context and drastically reduces random matches (noise). Best when looking for long, contiguous blocks of reused text. If set too high, it will fail to match texts with frequent small insertions or deletions.
+                </div>
+                <div className="border border-gray-100 rounded-sm p-3 bg-gray-50/50">
+                  <span className="font-bold text-red-500 block mb-1">Smaller N-Size (e.g., 1-4)</span>
+                  Highly flexible. Catches fragmented, heavily rearranged, or loosely paraphrased text. However, it will generate many false positives (e.g., matching common stop words or short, coincidental character sequences).
+                </div>
+              </div>
+              <div className="mt-4 text-xs bg-blue-50 text-blue-800 p-3 rounded-sm border border-blue-100">
+                <span className="font-bold">Pro Tip:</span> For word-level algorithms, 3-5 is usually optimal. For character-level algorithms, 5-10 is recommended to avoid matching random syllables.
+              </div>
             </div>
           </div>
         </div>
