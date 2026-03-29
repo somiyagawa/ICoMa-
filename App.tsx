@@ -7,6 +7,7 @@ import ParallelViewer from './components/ParallelViewer';
 import DispersionPlot from './components/DispersionPlot';
 import AlignmentFlow from './components/AlignmentFlow';
 import SimilarityHistogram from './components/SimilarityHistogram';
+import AIAnalysisPanel from './components/AIAnalysisPanel';
 
 const EXAMPLES = {
   english_long: {
@@ -608,13 +609,21 @@ const App: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {/* AI Intertextuality Analysis */}
+            <AIAnalysisPanel sourceText={sourceText} targetText={targetText} />
           </div>
+        )}
+
+        {/* AI Analysis available even without collation results */}
+        {!result && (
+          <AIAnalysisPanel sourceText={sourceText} targetText={targetText} />
         )}
       </main>
       
       {/* Visual Footer */}
       <footer className="mt-auto py-6 border-t border-gray-200 bg-white text-center flex flex-col items-center gap-3">
-         <p className="text-[10px] text-gray-400 uppercase tracking-[0.3em]">Advanced Digital Humanities Collation Tool • v2.5.2 Enterprise</p>
+         <p className="text-[10px] text-gray-400 uppercase tracking-[0.3em]">Advanced Digital Humanities Collation Tool • v2.6.0 Enterprise</p>
          <div className="flex items-center gap-4 text-[10px] text-gray-500 uppercase tracking-widest">
             <div className="flex items-center gap-1">
               <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="hover:text-academic-blue transition-colors flex items-center gap-1">
@@ -651,6 +660,16 @@ const App: React.FC = () => {
               </button>
             </div>
             <div className="p-6 overflow-y-auto font-sans text-sm text-gray-700 space-y-6">
+              <div>
+                <h3 className="font-bold text-academic-blue text-base border-b border-gray-100 pb-2 mb-2">v2.6.0 Enterprise (March 2026)</h3>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Added <strong>AI Intertextuality Analysis</strong> system with multi-model support (Claude, Gemini, ChatGPT).</li>
+                  <li>AI-powered detection of <strong>direct quotations, allusions, echoes, paraphrases, structural parallels, thematic reuse,</strong> and <strong>formulaic language</strong>.</li>
+                  <li>Users can input their own API keys for each provider; keys are stored only in browser memory.</li>
+                  <li>Comparative view for side-by-side analysis across multiple AI models.</li>
+                  <li>Category-based filtering and expandable match cards with scholarly explanations.</li>
+                </ul>
+              </div>
               <div>
                 <h3 className="font-bold text-academic-blue text-base border-b border-gray-100 pb-2 mb-2">v2.5.2 Enterprise (March 2026)</h3>
                 <ul className="list-disc pl-5 space-y-1">
