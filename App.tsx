@@ -71,12 +71,13 @@ const App: React.FC = () => {
   const [config, setConfig] = useState<AnalysisConfig>({
     windowSize: 4,
     threshold: 60,
-    algorithm: 'fasttext',
+    algorithm: 'levenshtein',
     scriptMode: 'auto'
   });
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+  const [isChangelogOpen, setIsChangelogOpen] = useState(false);
 
   const performAnalysis = useCallback(() => {
     if (!sourceText || !targetText) return;
@@ -156,7 +157,8 @@ const App: React.FC = () => {
                     <option value="jaccard">Jaccard (Set Similarity)</option>
                     <option value="word-ngram">Word-Level N-Gram</option>
                     <option value="char-ngram">Character-Level N-Gram</option>
-                    <option value="fasttext">FastText (Subword Embeddings)</option>
+                    <option value="fasttext">FastText-like (Subword N-Grams)</option>
+                    <option value="word2vec">Word2Vec-like (Local Co-occurrence)</option>
                   </select>
                 </div>
                 <div className="flex items-center gap-6">
@@ -306,18 +308,65 @@ const App: React.FC = () => {
       <footer className="mt-auto py-6 border-t border-gray-200 bg-white text-center flex flex-col items-center gap-3">
          <p className="text-[10px] text-gray-400 uppercase tracking-[0.3em]">Advanced Digital Humanities Collation Tool • v2.5 Enterprise</p>
          <div className="flex items-center gap-4 text-[10px] text-gray-500 uppercase tracking-widest">
-            <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="hover:text-academic-blue transition-colors flex items-center gap-1">
-              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-14h2v8h-2zm0 10h2v2h-2z"/></svg>
-              CC BY 4.0 License (So Miyagawa)
-            </a>
+            <div className="flex items-center gap-1">
+              <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="hover:text-academic-blue transition-colors flex items-center gap-1">
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-14h2v8h-2zm0 10h2v2h-2z"/></svg>
+                CC BY 4.0 License
+              </a>
+              <span>(<a href="https://somiyagawa.com/" target="_blank" rel="noopener noreferrer" className="hover:text-academic-blue underline transition-colors">So Miyagawa</a>)</span>
+            </div>
             <span className="text-gray-300">|</span>
-            <a href="/CHANGELOG.md" target="_blank" rel="noopener noreferrer" className="hover:text-academic-blue transition-colors flex items-center gap-1">
+            <button onClick={() => setIsChangelogOpen(true)} className="hover:text-academic-blue transition-colors flex items-center gap-1">
               <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
               Changelog
-            </a>
+            </button>
          </div>
-         <p className="text-[9px] text-gray-400 mt-1">© 2026 So Miyagawa Computational Linguistics Lab, University of Tsukuba</p>
+         <p className="text-[9px] text-gray-400 mt-1">© 2026 <a href="https://somiyagawa.com/" target="_blank" rel="noopener noreferrer" className="hover:text-academic-blue underline transition-colors">So Miyagawa</a> Computational Linguistics Lab, University of Tsukuba</p>
       </footer>
+
+      {/* Changelog Modal */}
+      {isChangelogOpen && (
+        <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setIsChangelogOpen(false)}>
+          <div className="bg-white rounded-sm shadow-2xl max-w-2xl w-full max-h-[80vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h2 className="text-lg font-bold text-academic-blue font-serif tracking-tight flex items-center gap-2">
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Changelog
+              </h2>
+              <button onClick={() => setIsChangelogOpen(false)} className="text-gray-400 hover:text-academic-red transition-colors">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto font-sans text-sm text-gray-700 space-y-6">
+              <div>
+                <h3 className="font-bold text-academic-blue text-base border-b border-gray-100 pb-2 mb-2">v2.5 Enterprise (March 2026)</h3>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Added <strong>FastText-like (Subword N-Grams)</strong> algorithm for robust matching against spelling variations and morphology.</li>
+                  <li>Added <strong>Word2Vec-like (Local Co-occurrence)</strong> algorithm for distributional semantic matching.</li>
+                  <li>Updated institutional affiliation to include University of Tsukuba.</li>
+                  <li>Added Google Analytics tracking.</li>
+                  <li>Integrated CC BY 4.0 License (<a href="https://somiyagawa.com/" target="_blank" rel="noopener noreferrer" className="text-academic-blue hover:underline">So Miyagawa</a>).</li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-bold text-academic-blue text-base border-b border-gray-100 pb-2 mb-2">v2.4</h3>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Introduced Coptic-Aware algorithm with vowel and mark normalization.</li>
+                  <li>Added Smith-Waterman local alignment for multi-peak matching.</li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-bold text-academic-blue text-base border-b border-gray-100 pb-2 mb-2">v2.0</h3>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Initial release of the Advanced Digital Humanities Collation Tool (ICoMa).</li>
+                  <li>Support for Character and Word N-Grams, Jaccard, and Levenshtein distance.</li>
+                  <li>Added interactive visualization dashboard for text reuse analysis.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

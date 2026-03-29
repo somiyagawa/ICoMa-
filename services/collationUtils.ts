@@ -265,6 +265,7 @@ export const runAnalysis = (
     
     let tokenVectorsA: Record<string, number>[] = [];
     let tokenVectorsB: Record<string, number>[] = [];
+    let contextVectors: Record<string, Record<string, number>> = {};
 
     if (config.algorithm === 'fasttext') {
       const getVector = (word: string) => {
@@ -281,6 +282,22 @@ export const runAnalysis = (
       };
       tokenVectorsA = tokensA.map(t => getVector(t.normalized));
       tokenVectorsB = tokensB.map(t => getVector(t.normalized));
+    } else if (config.algorithm === 'word2vec') {
+      // Build a local co-occurrence matrix (context window of +/- 2 words)
+      const buildContext = (tokens: Token[], window: number = 2) => {
+        for (let i = 0; i < tokens.length; i++) {
+          const word = tokens[i].normalized;
+          if (!contextVectors[word]) contextVectors[word] = {};
+          for (let j = Math.max(0, i - window); j <= Math.min(tokens.length - 1, i + window); j++) {
+            if (i !== j) {
+              const ctxWord = tokens[j].normalized;
+              contextVectors[word][ctxWord] = (contextVectors[word][ctxWord] || 0) + 1;
+            }
+          }
+        }
+      };
+      buildContext(tokensA);
+      buildContext(tokensB);
     }
 
     for (let i = 0; i <= tokensA.length - n; i++) {
@@ -320,6 +337,35 @@ export const runAnalysis = (
             normB += freqB[key] * freqB[key];
           }
           sim = normA === 0 || normB === 0 ? 0 : (dotProduct / (Math.sqrt(normA) * Math.sqrt(normB))) * 100;
+        } else if (config.algorithm === 'word2vec') {
+          const freqA: Record<string, number> = {};
+          const freqB: Record<string, number> = {};
+          for (let k = 0; k < n; k++) {
+            const wordA = tokensA[i + k].normalized;
+            const vecA = contextVectors[wordA] || {};
+            for (const key in vecA) freqA[key] = (freqA[key] || 0) + vecA[key];
+            
+            const wordB = tokensB[j + k].normalized;
+            const vecB = contextVectors[wordB] || {};
+            for (const key in vecB) freqB[key] = (freqB[key] || 0) + vecB[key];
+          }
+          let dotProduct = 0;
+          let normA = 0;
+          let normB = 0;
+          for (const key in freqA) {
+            const a = freqA[key];
+            normA += a * a;
+            if (freqB[key]) dotProduct += a * freqB[key];
+          }
+          for (const key in freqB) {
+            normB += freqB[key] * freqB[key];
+          }
+          if (normA === 0 && normB === 0) {
+            // Fallback for very short texts with no context
+            sim = jaccard(sliceA.map(t => t.normalized), sliceB.map(t => t.normalized)) * 100;
+          } else {
+            sim = normA === 0 || normB === 0 ? 0 : (dotProduct / (Math.sqrt(normA) * Math.sqrt(normB))) * 100;
+          }
         }
 
         if (sim >= config.threshold) {

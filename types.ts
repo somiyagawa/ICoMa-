@@ -27,7 +27,7 @@ export interface Match {
 }
 
 // Renamed 'passim' -> 'char-ngram', 'tracer' -> 'word-ngram'
-export type AlgorithmType = 'char-ngram' | 'word-ngram' | 'jaccard' | 'levenshtein' | 'coptic-aware' | 'smith-waterman' | 'fasttext';
+export type AlgorithmType = 'char-ngram' | 'word-ngram' | 'jaccard' | 'levenshtein' | 'coptic-aware' | 'smith-waterman' | 'fasttext' | 'word2vec';
 export type ScriptMode = 'auto' | 'coptic' | 'mixed' | 'latin';
 
 export interface AnalysisConfig {
