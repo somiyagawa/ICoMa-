@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 interface DownloadButtonsProps {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -7,6 +7,11 @@ interface DownloadButtonsProps {
 
 interface FullscreenButtonProps {
   containerRef: React.RefObject<HTMLDivElement | null>;
+}
+
+interface ZoomControlsProps {
+  zoom: number;
+  onZoomChange: (zoom: number) => void;
 }
 
 interface ChartToolbarProps {
@@ -36,6 +41,58 @@ const CollapseIcon = () => (
   </svg>
 );
 
+const ZoomInIcon = () => (
+  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+    <line x1="11" y1="8" x2="11" y2="14" /><line x1="8" y1="11" x2="14" y2="11" />
+  </svg>
+);
+
+const ZoomOutIcon = () => (
+  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+    <line x1="8" y1="11" x2="14" y2="11" />
+  </svg>
+);
+
+export const ZoomControls: React.FC<ZoomControlsProps> = ({ zoom, onZoomChange }) => {
+  const MIN_ZOOM = 0.5;
+  const MAX_ZOOM = 2.0;
+  const STEP = 0.1;
+
+  const zoomIn = () => onZoomChange(Math.min(MAX_ZOOM, Math.round((zoom + STEP) * 10) / 10));
+  const zoomOut = () => onZoomChange(Math.max(MIN_ZOOM, Math.round((zoom - STEP) * 10) / 10));
+  const resetZoom = () => onZoomChange(1.0);
+
+  return (
+    <div className="flex items-center gap-0.5">
+      <button
+        onClick={zoomOut}
+        disabled={zoom <= MIN_ZOOM}
+        className="text-gray-400 hover:text-academic-blue disabled:opacity-30 disabled:cursor-not-allowed transition-colors p-0.5 rounded-sm hover:bg-gray-100"
+        title="Zoom Out"
+      >
+        <ZoomOutIcon />
+      </button>
+      <button
+        onClick={resetZoom}
+        className="text-[8px] font-bold text-gray-400 hover:text-academic-blue transition-colors px-1 py-0.5 rounded-sm hover:bg-gray-100 min-w-[32px] text-center tabular-nums"
+        title="Reset Zoom"
+      >
+        {Math.round(zoom * 100)}%
+      </button>
+      <button
+        onClick={zoomIn}
+        disabled={zoom >= MAX_ZOOM}
+        className="text-gray-400 hover:text-academic-blue disabled:opacity-30 disabled:cursor-not-allowed transition-colors p-0.5 rounded-sm hover:bg-gray-100"
+        title="Zoom In"
+      >
+        <ZoomInIcon />
+      </button>
+    </div>
+  );
+};
+
 export const DownloadButtons: React.FC<DownloadButtonsProps> = ({ containerRef, filename }) => {
   const downloadSVG = () => {
     if (!containerRef.current) return;
@@ -43,7 +100,6 @@ export const DownloadButtons: React.FC<DownloadButtonsProps> = ({ containerRef, 
     if (!svg) return;
 
     const svgClone = svg.cloneNode(true) as SVGElement;
-    // Ensure width/height attributes are set for proper export
     if (!svgClone.getAttribute('xmlns')) {
       svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     }
@@ -68,9 +124,8 @@ export const DownloadButtons: React.FC<DownloadButtonsProps> = ({ containerRef, 
     const svgClone = svg.cloneNode(true) as SVGElement;
     svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
-    // Get actual rendered size
     const bbox = svg.getBoundingClientRect();
-    const scale = 2; // 2x resolution for crisp export
+    const scale = 2;
     const w = bbox.width * scale;
     const h = bbox.height * scale;
 
@@ -152,7 +207,7 @@ export const FullscreenButton: React.FC<FullscreenButtonProps> = ({ containerRef
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handler = () => setIsFullscreen(!!document.fullscreenElement);
     document.addEventListener('fullscreenchange', handler);
     return () => document.removeEventListener('fullscreenchange', handler);
@@ -171,8 +226,32 @@ export const FullscreenButton: React.FC<FullscreenButtonProps> = ({ containerRef
 };
 
 const ChartToolbar: React.FC<ChartToolbarProps> = ({ containerRef, filename, className = '' }) => {
+  const [zoom, setZoom] = useState(1.0);
+
+  const applyZoom = useCallback((newZoom: number) => {
+    setZoom(newZoom);
+    if (!containerRef.current) return;
+    // Apply zoom to all children except the first (header/h3)
+    const children = containerRef.current.children;
+    for (let i = 1; i < children.length; i++) {
+      const el = children[i] as HTMLElement;
+      el.style.transform = `scale(${newZoom})`;
+      el.style.transformOrigin = 'top left';
+      // Adjust the wrapper to account for scaled size
+      if (newZoom !== 1) {
+        el.style.width = `${100 / newZoom}%`;
+        el.style.overflow = 'auto';
+      } else {
+        el.style.width = '';
+        el.style.overflow = '';
+      }
+    }
+  }, [containerRef]);
+
   return (
     <div className={`flex items-center gap-1 ${className}`}>
+      <ZoomControls zoom={zoom} onZoomChange={applyZoom} />
+      <div className="w-px h-3 bg-gray-200"></div>
       <DownloadButtons containerRef={containerRef} filename={filename} />
       <div className="w-px h-3 bg-gray-200"></div>
       <FullscreenButton containerRef={containerRef} />

@@ -2,13 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.8.0] - 2026-03-30
+### Added
+- Per-panel zoom controls (50%–200%) for all visualization panels (Match Gallery, Heatmap, Alignment Flow, Similarity Histogram, Network Graph, Dispersion Plot).
+- Cross-panel synchronized scroll: clicking a match in any panel scrolls and highlights the corresponding item in Match Gallery, Parallel Viewer, Heatmap, and all D3 chart containers.
+- Fully localized help modals (?) in 6 languages (EN, JA, ZH, KO, DE, LA): all 20 help topics, 8 algorithm descriptions, and 8 intertextuality categories now display in the selected UI language.
+- New service: `helpContent.ts` (1087 lines) providing `getHelpContent`, `getAlgorithmHelp`, and `getIntertextualityCategoryHelp` with scholarly translations.
+
+### Changed
+- Match Gallery and Heatmap panels constrained to fixed height (420px) with internal scrolling, reducing vertical space consumption.
+- `ChartControls.tsx` expanded with `ZoomControls` component (zoom in/out/reset with percentage display).
+- Help modal rendering refactored from static `HELP_CONTENT` constant to dynamic `renderHelpContent(topic, lang)` function.
+
 ## [2.7.0] - 2026-03-29
 ### Added
 - Internationalization (i18n) system supporting 6 languages: English, 日本語, 中文, 한국어, Deutsch, Latina.
 - New service: `i18n.ts` with full UI translation coverage.
 - Old Japanese (万葉集 & 注釈) example added to Quick Load.
-- SVG/PNG download and fullscreen mode for all visualization panels.
-- New component: `ChartControls.tsx` (DownloadButtons, FullscreenButton, ChartToolbar).
+- SVG/PNG download (2× resolution) and fullscreen mode for all visualization panels: Alignment Flow, Similarity Histogram, Network Graph, Dispersion Plot, and Heatmap.
+- New component: `ChartControls.tsx` (DownloadButtons, FullscreenButton, ChartToolbar) integrated into every chart header.
 - Font size and font family controls in the menu bar.
 - Interactive help modals (?) for Heatmap axis labels (Witness α/β Position).
 - Interactive help modals for AI Intertextuality Analysis section and classification taxonomy.

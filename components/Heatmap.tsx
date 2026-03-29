@@ -79,8 +79,22 @@ const Heatmap: React.FC<HeatmapProps> = ({ matches, sourceLength, targetLength, 
 
   }, [matches, sourceLength, targetLength, selectedMatch]);
 
+  // Scroll to selected cell within the chart container
+  useEffect(() => {
+    if (!selectedMatch || !containerRef.current) return;
+    const selected = containerRef.current.querySelector('rect[stroke="black"]');
+    if (selected && containerRef.current.scrollHeight > containerRef.current.clientHeight) {
+      const rect = selected.getBoundingClientRect();
+      const parentRect = containerRef.current.getBoundingClientRect();
+      containerRef.current.scrollTo({
+        top: containerRef.current.scrollTop + (rect.top - parentRect.top) - 20,
+        behavior: 'smooth'
+      });
+    }
+  }, [selectedMatch]);
+
   return (
-    <div ref={wrapperRef} className="bg-white border border-gray-200 rounded-sm shadow-sm flex flex-col overflow-hidden">
+    <div ref={wrapperRef} className="bg-white border border-gray-200 rounded-sm shadow-sm flex flex-col overflow-hidden max-h-[420px]">
       {/* Header with title */}
       <div className="bg-academic-paper px-4 py-3 border-b border-gray-200 flex justify-between items-center shrink-0">
         <span className="text-[11px] font-bold uppercase text-academic-blue tracking-widest flex items-center">
@@ -101,7 +115,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ matches, sourceLength, targetLength, 
         </div>
       </div>
       {/* Chart */}
-      <div ref={containerRef} className="w-full flex-1 min-h-[320px] px-2 pb-2" />
+      <div ref={containerRef} className="w-full flex-1 min-h-[280px] overflow-y-auto px-2 pb-2" />
     </div>
   );
 };
