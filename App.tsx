@@ -218,6 +218,12 @@ const App: React.FC = () => {
                </div>
             </div>
 
+            {/* Macro-level Alignment Flow */}
+            <div className="bg-white p-6 rounded-sm border border-gray-200 shadow-lg">
+              <h3 className="text-xs font-bold uppercase text-academic-blue tracking-widest mb-4">Macro-Level Alignment Flow</h3>
+              <AlignmentFlow matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} />
+            </div>
+
             {/* Main Visual/Analysis Grid */}
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 h-full min-h-[750px]">
               {/* Left Column: Parallel Viewer & Navigation Map */}
@@ -269,6 +275,11 @@ const App: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col gap-8">
+                   {/* Similarity Histogram */}
+                   <div className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm">
+                     <h3 className="text-[10px] font-bold uppercase text-academic-blue tracking-widest mb-2">Similarity Distribution</h3>
+                     <SimilarityHistogram matches={result.matches} />
+                   </div>
                    {/* Network Graph (Cluster Discovery) */}
                    <NetworkGraph matches={result.matches} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} />
                    {/* Dispersion Plot (Distribution) */}
