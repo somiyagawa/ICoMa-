@@ -7,9 +7,17 @@ import autoTable from 'jspdf-autotable';
 import {
   Document, Packer, Paragraph, Table, TableRow, TableCell,
   HeadingLevel, AlignmentType, TextRun, WidthType, BorderStyle,
+  ImageRun,
 } from 'docx';
 import { saveAs } from 'file-saver';
 import { AnalysisResult, AnalysisConfig, Match } from '../types';
+
+export interface ChartImage {
+  label: string;       // e.g. "Position Correspondence (Heatmap)"
+  dataUrl: string;     // PNG data URL
+  width: number;       // original pixel width
+  height: number;      // original pixel height
+}
 
 export interface ReportData {
   witnessAlphaName: string;
@@ -20,6 +28,78 @@ export interface ReportData {
   result: AnalysisResult;
   aiAnalysis?: any;
   date: string;
+  chartImages?: ChartImage[];
+}
+
+// ── Chart capture ────────────────────────────────────────────────────
+
+/**
+ * Captures an SVG inside a container DOM element as a PNG data URL.
+ * Works by serializing the SVG, rendering it onto a Canvas, and exporting.
+ */
+export async function captureChartFromRef(
+  container: HTMLElement,
+  label: string,
+  scaleFactor = 2,
+): Promise<ChartImage | null> {
+  const svg = container.querySelector('svg');
+  if (!svg) return null;
+
+  // Clone SVG to avoid mutating the DOM
+  const clone = svg.cloneNode(true) as SVGSVGElement;
+
+  // Ensure the clone has explicit dimensions
+  const bbox = svg.getBoundingClientRect();
+  const w = bbox.width || parseInt(svg.getAttribute('width') || '800');
+  const h = bbox.height || parseInt(svg.getAttribute('height') || '400');
+  clone.setAttribute('width', String(w));
+  clone.setAttribute('height', String(h));
+  clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+  // Inline computed styles for all elements (so they render correctly off-DOM)
+  const inlineStyles = (source: Element, target: Element) => {
+    const computed = window.getComputedStyle(source);
+    const important = ['font-family', 'font-size', 'font-weight', 'fill', 'stroke',
+      'stroke-width', 'opacity', 'text-anchor', 'dominant-baseline'];
+    for (const prop of important) {
+      (target as HTMLElement).style.setProperty(prop, computed.getPropertyValue(prop));
+    }
+    const srcChildren = source.children;
+    const tgtChildren = target.children;
+    for (let i = 0; i < srcChildren.length; i++) {
+      if (tgtChildren[i]) inlineStyles(srcChildren[i], tgtChildren[i]);
+    }
+  };
+  inlineStyles(svg, clone);
+
+  // Add white background
+  const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  bg.setAttribute('width', '100%');
+  bg.setAttribute('height', '100%');
+  bg.setAttribute('fill', 'white');
+  clone.insertBefore(bg, clone.firstChild);
+
+  const serializer = new XMLSerializer();
+  const svgString = serializer.serializeToString(clone);
+  const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(svgBlob);
+
+  return new Promise<ChartImage | null>((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = w * scaleFactor;
+      canvas.height = h * scaleFactor;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) { URL.revokeObjectURL(url); resolve(null); return; }
+      ctx.scale(scaleFactor, scaleFactor);
+      ctx.drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      resolve({ label, dataUrl: canvas.toDataURL('image/png'), width: w, height: h });
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+    img.src = url;
+  });
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────
@@ -79,7 +159,7 @@ export async function generatePDF(data: ReportData): Promise<Blob> {
       ['Script Mode', config.scriptMode],
     ],
     theme: 'grid',
-    headStyles: { fillColor: [52, 73, 94] },
+    headStyles: { fillColor: [37, 99, 235] },
     margin: { left: 14, right: 14 },
   });
 
@@ -100,7 +180,7 @@ export async function generatePDF(data: ReportData): Promise<Blob> {
       ['Total Matches', String(result.matches.length)],
     ],
     theme: 'grid',
-    headStyles: { fillColor: [139, 115, 85] },
+    headStyles: { fillColor: [217, 119, 6] },
     margin: { left: 14, right: 14 },
   });
 
@@ -121,11 +201,72 @@ export async function generatePDF(data: ReportData): Promise<Blob> {
       String(m.targetPosition),
     ]),
     theme: 'striped',
-    headStyles: { fillColor: [52, 73, 94], fontSize: 8 },
+    headStyles: { fillColor: [37, 99, 235], fontSize: 8 },
     bodyStyles: { fontSize: 7 },
     columnStyles: { 0: { cellWidth: 8 }, 1: { cellWidth: 12 } },
     margin: { left: 14, right: 14 },
   });
+
+  // ── Visualization Charts ──
+  if (data.chartImages && data.chartImages.length > 0) {
+    doc.addPage();
+    doc.setFontSize(14);
+    doc.text('4. Visualizations', 14, 20);
+    let curY = 30;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const maxW = pageWidth - 28; // 14mm margin each side
+
+    for (const chart of data.chartImages) {
+      // Calculate image dimensions to fit page width
+      const aspectRatio = chart.height / chart.width;
+      const imgW = maxW;
+      const imgH = imgW * aspectRatio;
+
+      // Check if we need a new page
+      if (curY + imgH + 12 > doc.internal.pageSize.getHeight() - 14) {
+        doc.addPage();
+        curY = 20;
+      }
+
+      doc.setFontSize(10);
+      doc.setTextColor(37, 99, 235);
+      doc.text(pdfSafe(chart.label), 14, curY);
+      doc.setTextColor(0, 0, 0);
+      curY += 4;
+
+      try {
+        doc.addImage(chart.dataUrl, 'PNG', 14, curY, imgW, imgH);
+      } catch (e) {
+        doc.setFontSize(8);
+        doc.text('[Chart image could not be embedded]', 14, curY + 5);
+      }
+      curY += imgH + 10;
+    }
+  }
+
+  // ── AI Analysis ──
+  if (data.aiAnalysis) {
+    const aiY = (data.chartImages && data.chartImages.length > 0)
+      ? undefined  // already on a potentially new page
+      : (doc as any).lastAutoTable?.finalY + 12;
+    if (aiY) {
+      if (aiY > doc.internal.pageSize.getHeight() - 40) doc.addPage();
+    } else {
+      doc.addPage();
+    }
+    const startAiY = aiY || 20;
+    doc.setFontSize(14);
+    const sectionNum = (data.chartImages && data.chartImages.length > 0) ? '5' : '4';
+    doc.text(`${sectionNum}. AI Intertextuality Analysis`, 14, startAiY);
+    doc.setFontSize(9);
+    const aiText = typeof data.aiAnalysis === 'string'
+      ? data.aiAnalysis
+      : JSON.stringify(data.aiAnalysis, null, 2);
+    const aiSafe = pdfSafe(aiText);
+    const aiMaxW = doc.internal.pageSize.getWidth() - 28;
+    const lines = doc.splitTextToSize(aiSafe, aiMaxW);
+    doc.text(lines, 14, startAiY + 8);
+  }
 
   return doc.output('blob');
 }
@@ -202,6 +343,51 @@ export async function generateDocx(data: ReportData): Promise<Blob> {
             })),
           ],
         }),
+
+        // Visualization charts
+        ...(data.chartImages && data.chartImages.length > 0 ? [
+          new Paragraph({ text: '' }),
+          new Paragraph({ text: '4. Visualizations', heading: HeadingLevel.HEADING_1 }),
+          ...data.chartImages.flatMap(chart => {
+            try {
+              const base64 = chart.dataUrl.split(',')[1];
+              const buf = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+              // Scale to ~6 inches wide (EMU: 1 inch = 914400)
+              const maxEmuW = 5_500_000;
+              const aspectRatio = chart.height / chart.width;
+              const emuW = maxEmuW;
+              const emuH = Math.round(emuW * aspectRatio);
+              return [
+                new Paragraph({
+                  children: [new TextRun({ text: chart.label, bold: true, size: 20, color: '2563EB' })],
+                }),
+                new Paragraph({
+                  children: [
+                    new ImageRun({ data: buf, transformation: { width: emuW / 9144, height: emuH / 9144 }, type: 'png' }),
+                  ],
+                }),
+                new Paragraph({ text: '' }),
+              ];
+            } catch {
+              return [new Paragraph({ text: `[${chart.label}: image could not be embedded]` })];
+            }
+          }),
+        ] : []),
+
+        // AI Analysis
+        ...(data.aiAnalysis ? [
+          new Paragraph({ text: '' }),
+          new Paragraph({
+            text: (data.chartImages && data.chartImages.length > 0) ? '5. AI Intertextuality Analysis' : '4. AI Intertextuality Analysis',
+            heading: HeadingLevel.HEADING_1,
+          }),
+          new Paragraph({
+            children: [new TextRun({
+              text: typeof data.aiAnalysis === 'string' ? data.aiAnalysis : JSON.stringify(data.aiAnalysis, null, 2),
+              size: 18,
+            })],
+          }),
+        ] : []),
       ],
     }],
   });
@@ -223,7 +409,7 @@ export function generateLaTeX(data: ReportData): string {
   return `\\documentclass[a4paper,11pt]{article}
 \\usepackage[utf8]{inputenc}
 \\usepackage[T1]{fontenc}
-\\usepackage{booktabs,longtable,hyperref,geometry}
+\\usepackage{booktabs,longtable,hyperref,geometry,graphicx}
 \\geometry{margin=2.5cm}
 \\title{ICoMa --- Intertextuality Analysis Report\\\\\\large ${eA} $\\leftrightarrow$ ${eB}}
 \\author{Generated by ICoMa}
@@ -268,6 +454,39 @@ Total Matches & ${result.matches.length} \\\\
 ${matchRows}
 \\bottomrule
 \\end{longtable}
+
+\\section{Visualizations}
+\\textit{Note: Visualization charts (Alignment Flow, Heatmap, Similarity Distribution, Network Graph, Dispersion Plot) are included in the PDF and DOCX versions of this report. To include them in the LaTeX version, export the charts from the ICoMa interface and use \\texttt{\\textbackslash{}includegraphics} commands below.}
+
+% \\begin{figure}[htbp]
+%   \\centering
+%   \\includegraphics[width=\\textwidth]{icoma-alignment-flow.png}
+%   \\caption{Macro-Level Alignment Flow}
+% \\end{figure}
+%
+% \\begin{figure}[htbp]
+%   \\centering
+%   \\includegraphics[width=\\textwidth]{icoma-heatmap.png}
+%   \\caption{Position Correspondence (Heatmap)}
+% \\end{figure}
+%
+% \\begin{figure}[htbp]
+%   \\centering
+%   \\includegraphics[width=\\textwidth]{icoma-similarity-histogram.png}
+%   \\caption{Similarity Distribution}
+% \\end{figure}
+%
+% \\begin{figure}[htbp]
+%   \\centering
+%   \\includegraphics[width=\\textwidth]{icoma-network-graph.png}
+%   \\caption{Cluster View (Network Graph)}
+% \\end{figure}
+%
+% \\begin{figure}[htbp]
+%   \\centering
+%   \\includegraphics[width=\\textwidth]{icoma-dispersion-plot.png}
+%   \\caption{Witness Dispersion}
+% \\end{figure}
 
 \\end{document}
 `;

@@ -15,7 +15,7 @@ import DiffView from './components/DiffView';
 import HistoryPanel from './components/HistoryPanel';
 import { HistorySession, saveSession } from './services/historyDB';
 import { runOnnxAnalysis, OnnxAnalysisProgress } from './services/onnxAnalysis';
-import { downloadReport, ReportData } from './services/reportGenerator';
+import { downloadReport, ReportData, captureChartFromRef, ChartImage } from './services/reportGenerator';
 
 const EXAMPLES = {
   english_long: {
@@ -241,6 +241,7 @@ const App: React.FC = () => {
   const histogramRef = useRef<HTMLDivElement>(null);
   const networkRef = useRef<HTMLDivElement>(null);
   const dispersionRef = useRef<HTMLDivElement>(null);
+  const heatmapRef = useRef<HTMLDivElement>(null);
   const matchGalleryScrollRef = useRef<HTMLDivElement>(null);
   const matchGalleryContainerRef = useRef<HTMLDivElement>(null);
   const [galleryFullscreen, setGalleryFullscreen] = useState(false);
@@ -335,6 +336,25 @@ const App: React.FC = () => {
 
   const handleDownloadReport = useCallback(async (format: 'pdf' | 'docx' | 'latex' | 'tei-xml') => {
     if (!result) return;
+
+    // Capture chart visualizations as PNG images
+    const chartImages: ChartImage[] = [];
+    const chartRefs: { ref: React.RefObject<HTMLDivElement | null>; label: string }[] = [
+      { ref: alignmentFlowRef, label: 'Macro-Level Alignment Flow' },
+      { ref: heatmapRef, label: 'Position Correspondence (Heatmap)' },
+      { ref: histogramRef, label: 'Similarity Distribution' },
+      { ref: networkRef, label: 'Cluster View (Network Graph)' },
+      { ref: dispersionRef, label: 'Witness Dispersion' },
+    ];
+    if (format === 'pdf' || format === 'docx') {
+      for (const { ref, label } of chartRefs) {
+        if (ref.current) {
+          const img = await captureChartFromRef(ref.current, label);
+          if (img) chartImages.push(img);
+        }
+      }
+    }
+
     const reportData: ReportData = {
       witnessAlphaName,
       witnessBetaName,
@@ -343,6 +363,7 @@ const App: React.FC = () => {
       config,
       result,
       date: new Date().toLocaleString(),
+      chartImages: chartImages.length > 0 ? chartImages : undefined,
     };
     try {
       await downloadReport(reportData, format);
@@ -852,7 +873,9 @@ const App: React.FC = () => {
                       </div>
                    </div>
                    {/* Heatmap (Position Correspondence) */}
-                   <Heatmap matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} onHelpClick={setActiveHelpModal} lang={lang} witnessAlphaName={witnessAlphaName} witnessBetaName={witnessBetaName} />
+                   <div ref={heatmapRef}>
+                     <Heatmap matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} onHelpClick={setActiveHelpModal} lang={lang} witnessAlphaName={witnessAlphaName} witnessBetaName={witnessBetaName} />
+                   </div>
                 </div>
 
                 <div className="flex flex-col gap-8">
