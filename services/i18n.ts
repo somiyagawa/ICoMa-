@@ -142,6 +142,19 @@ export const translations: Record<Language, Record<string, string>> = {
     'Privacy Note: API keys are stored only in browser memory (never persisted) and sent only to the respective API provider.':
       'Privacy Note: API keys are stored only in browser memory (never persisted) and sent only to the respective API provider.',
 
+    // ONNX / History / Report
+    'ONNX Semantic (Local Embedding)': 'ONNX Semantic (Local Embedding)',
+    'Loading ONNX Model...': 'Loading ONNX Model...',
+    'Embedding': 'Embedding',
+    'Comparing': 'Comparing',
+    'Save Session': 'Save Session',
+    'Save': 'Save',
+    'Session saved to history': 'Session saved to history',
+    'Download Report': 'Download Report',
+    'Report': 'Report',
+    'Session History': 'Session History',
+    'History': 'History',
+
     // Header/UI Controls
     'UI Language': 'UI Language',
     'Font': 'Font',
@@ -325,6 +338,19 @@ export const translations: Record<Language, Record<string, string>> = {
     'Privacy Note: API keys are stored only in browser memory (never persisted) and sent only to the respective API provider.':
       'プライバシーに関する注意：APIキーはブラウザメモリにのみ保存され（永続化されない）、各APIプロバイダーにのみ送信されます。',
 
+    // ONNX / 履歴 / レポート
+    'ONNX Semantic (Local Embedding)': 'ONNXセマンティック（ローカル埋め込み）',
+    'Loading ONNX Model...': 'ONNXモデルを読み込み中...',
+    'Embedding': '埋め込み',
+    'Comparing': '比較中',
+    'Save Session': 'セッションを保存',
+    'Save': '保存',
+    'Session saved to history': 'セッションを履歴に保存しました',
+    'Download Report': 'レポートをダウンロード',
+    'Report': 'レポート',
+    'Session History': 'セッション履歴',
+    'History': '履歴',
+
     // ヘッダー/UI コントロール
     'UI Language': 'UI言語',
     'Font': 'フォント',
@@ -507,6 +533,19 @@ export const translations: Record<Language, Record<string, string>> = {
     // 隐私说明
     'Privacy Note: API keys are stored only in browser memory (never persisted) and sent only to the respective API provider.':
       '隐私说明：API密钥仅存储在浏览器内存中（从不持久化），仅发送给相应的API提供商。',
+
+    // ONNX / 历史 / 报告
+    'ONNX Semantic (Local Embedding)': 'ONNX语义（本地嵌入）',
+    'Loading ONNX Model...': '正在加载ONNX模型...',
+    'Embedding': '嵌入',
+    'Comparing': '比较中',
+    'Save Session': '保存会话',
+    'Save': '保存',
+    'Session saved to history': '会话已保存到历史记录',
+    'Download Report': '下载报告',
+    'Report': '报告',
+    'Session History': '会话历史',
+    'History': '历史',
 
     // 页眉/UI控制
     'UI Language': 'UI语言',
@@ -692,6 +731,19 @@ export const translations: Record<Language, Record<string, string>> = {
     'Privacy Note: API keys are stored only in browser memory (never persisted) and sent only to the respective API provider.':
       '개인정보 보호 주의: API 키는 브라우저 메모리에만 저장되며（지속되지 않음）, 각 API 제공자에게만 전송됩니다.',
 
+    // ONNX / 기록 / 보고서
+    'ONNX Semantic (Local Embedding)': 'ONNX 의미론적 (로컬 임베딩)',
+    'Loading ONNX Model...': 'ONNX 모델 로딩 중...',
+    'Embedding': '임베딩',
+    'Comparing': '비교 중',
+    'Save Session': '세션 저장',
+    'Save': '저장',
+    'Session saved to history': '세션이 기록에 저장되었습니다',
+    'Download Report': '보고서 다운로드',
+    'Report': '보고서',
+    'Session History': '세션 기록',
+    'History': '기록',
+
     // 헤더/UI 컨트롤
     'UI Language': 'UI 언어',
     'Font': '글꼴',
@@ -874,6 +926,19 @@ export const translations: Record<Language, Record<string, string>> = {
     // Datenschutzhinweis
     'Privacy Note: API keys are stored only in browser memory (never persisted) and sent only to the respective API provider.':
       'Datenschutzhinweis: API-Schlüssel werden nur im Browserspeicher gespeichert (nie persistent) und nur an den jeweiligen API-Anbieter gesendet.',
+
+    // ONNX / Verlauf / Bericht
+    'ONNX Semantic (Local Embedding)': 'ONNX Semantisch (Lokale Einbettung)',
+    'Loading ONNX Model...': 'ONNX-Modell wird geladen...',
+    'Embedding': 'Einbettung',
+    'Comparing': 'Vergleiche',
+    'Save Session': 'Sitzung speichern',
+    'Save': 'Speichern',
+    'Session saved to history': 'Sitzung im Verlauf gespeichert',
+    'Download Report': 'Bericht herunterladen',
+    'Report': 'Bericht',
+    'Session History': 'Sitzungsverlauf',
+    'History': 'Verlauf',
 
     // Kopfzeile/UI-Steuerelemente
     'UI Language': 'UI-Sprache',
@@ -1059,6 +1124,19 @@ export const translations: Record<Language, Record<string, string>> = {
     'Privacy Note: API keys are stored only in browser memory (never persisted) and sent only to the respective API provider.':
       'Monitio Secretarii: Claves API in memoria navigationis tantum conservantur (numquam persistuntur) et ad praecisam API providentem mittuntur.',
 
+    // ONNX / Historia / Relatio
+    'ONNX Semantic (Local Embedding)': 'ONNX Semanticum (Incorporatio Localis)',
+    'Loading ONNX Model...': 'Exemplar ONNX importatur...',
+    'Embedding': 'Incorporatio',
+    'Comparing': 'Comparans',
+    'Save Session': 'Sessionem Servare',
+    'Save': 'Servare',
+    'Session saved to history': 'Sessio in historiam servata est',
+    'Download Report': 'Relationem Demittere',
+    'Report': 'Relatio',
+    'Session History': 'Historia Sessionum',
+    'History': 'Historia',
+
     // Capitis / Moderationes UI
     'UI Language': 'Lingua UI',
     'Font': 'Typus Litterarum',
@@ -1241,6 +1319,19 @@ export const translations: Record<Language, Record<string, string>> = {
     // Nota sulla Privacy
     'Privacy Note: API keys are stored only in browser memory (never persisted) and sent only to the respective API provider.':
       'Nota sulla privacy: le chiavi API sono memorizzate solo nella memoria del browser (mai persistite) e inviate solo al rispettivo fornitore API.',
+
+    // ONNX / Cronologia / Rapporto
+    'ONNX Semantic (Local Embedding)': 'ONNX Semantico (Embedding Locale)',
+    'Loading ONNX Model...': 'Caricamento modello ONNX...',
+    'Embedding': 'Incorporamento',
+    'Comparing': 'Confronto',
+    'Save Session': 'Salva Sessione',
+    'Save': 'Salva',
+    'Session saved to history': 'Sessione salvata nella cronologia',
+    'Download Report': 'Scarica Rapporto',
+    'Report': 'Rapporto',
+    'Session History': 'Cronologia Sessioni',
+    'History': 'Cronologia',
 
     // Controlli Intestazione/UI
     'UI Language': 'Lingua UI',

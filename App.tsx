@@ -12,6 +12,10 @@ import AIAnalysisPanel from './components/AIAnalysisPanel';
 import ChartToolbar, { ZoomControls, FullscreenButton } from './components/ChartControls';
 import { getHelpContent, getAlgorithmHelp, getIntertextualityCategoryHelp } from './services/helpContent';
 import DiffView from './components/DiffView';
+import HistoryPanel from './components/HistoryPanel';
+import { HistorySession, saveSession, getAllSessions } from './services/historyDB';
+import { runOnnxAnalysis, OnnxAnalysisProgress } from './services/onnxAnalysis';
+import { downloadReport, ReportData } from './services/reportGenerator';
 
 const EXAMPLES = {
   english_long: {
@@ -220,6 +224,9 @@ const App: React.FC = () => {
   const [activeHelpModal, setActiveHelpModal] = useState<string | null>(null);
   const [witnessAlphaName, setWitnessAlphaName] = useState<string>('Witness α');
   const [witnessBetaName, setWitnessBetaName] = useState<string>('Witness β');
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [onnxProgress, setOnnxProgress] = useState<OnnxAnalysisProgress | null>(null);
+  const [showReportMenu, setShowReportMenu] = useState(false);
 
   // Refs for chart containers (fullscreen + download)
   const alignmentFlowRef = useRef<HTMLDivElement>(null);
@@ -230,18 +237,113 @@ const App: React.FC = () => {
   const matchGalleryContainerRef = useRef<HTMLDivElement>(null);
   const [galleryFullscreen, setGalleryFullscreen] = useState(false);
 
-  const performAnalysis = useCallback(() => {
+  const performAnalysis = useCallback(async () => {
     if (!sourceText || !targetText) return;
     setIsProcessing(true);
-    // Use timeout to allow UI to render 'Processing' state
-    setTimeout(() => {
-      const res = runAnalysis(sourceText, targetText, config);
-      setResult(res);
-      setSelectedMatch(null);
-      setIsProcessing(false);
-      setCollationTrigger(prev => prev + 1);
-    }, 50);
+    setOnnxProgress(null);
+
+    if (config.algorithm === 'onnx-semantic') {
+      try {
+        const res = await runOnnxAnalysis(
+          sourceText, targetText,
+          config.windowSize, config.threshold,
+          (p) => setOnnxProgress(p)
+        );
+        // Compute stats
+        const totalSim = res.matches.reduce((s, m) => s + m.similarity, 0);
+        const meanSimilarity = res.matches.length > 0 ? totalSim / res.matches.length : 0;
+        const uniquePhrases = new Set(res.matches.map(m => m.sourcePhrase));
+        const coveredPositions = new Set<number>();
+        res.matches.forEach(m => {
+          for (let i = m.sourcePosition; i < m.sourcePosition + (m.length || config.windowSize); i++) {
+            coveredPositions.add(i);
+          }
+        });
+        const coverage = res.tokensA.length > 0 ? (coveredPositions.size / res.tokensA.length) * 100 : 0;
+
+        setResult({
+          tokensA: res.tokensA,
+          tokensB: res.tokensB,
+          matches: res.matches,
+          alignments: res.matches.map(m => ({ sourceStart: m.sourcePosition, sourceEnd: m.sourcePosition + (m.length || 1), targetStart: m.targetPosition, targetEnd: m.targetPosition + (m.length || 1) })),
+          stats: {
+            meanSimilarity,
+            coverage,
+            totalAlignments: res.matches.length,
+            uniqueNgrams: uniquePhrases.size,
+          },
+        });
+        setSelectedMatch(null);
+        setCollationTrigger(prev => prev + 1);
+      } catch (err) {
+        console.error('ONNX analysis failed:', err);
+        alert('ONNX semantic analysis failed. Check console for details.');
+      } finally {
+        setIsProcessing(false);
+        setOnnxProgress(null);
+      }
+    } else {
+      // Use timeout to allow UI to render 'Processing' state
+      setTimeout(() => {
+        const res = runAnalysis(sourceText, targetText, config);
+        setResult(res);
+        setSelectedMatch(null);
+        setIsProcessing(false);
+        setCollationTrigger(prev => prev + 1);
+      }, 50);
+    }
   }, [sourceText, targetText, config]);
+
+  const handleSaveSession = useCallback(async () => {
+    if (!result) return;
+    const label = `${witnessAlphaName} ↔ ${witnessBetaName} — ${new Date().toLocaleString()}`;
+    try {
+      await saveSession({
+        timestamp: Date.now(),
+        label,
+        witnessAlphaName,
+        witnessBetaName,
+        sourceText,
+        targetText,
+        config,
+        result,
+      });
+      alert(t(lang, 'Session saved to history'));
+    } catch (err) {
+      console.error('Failed to save session:', err);
+    }
+  }, [result, witnessAlphaName, witnessBetaName, sourceText, targetText, config, lang]);
+
+  const handleLoadSession = useCallback((session: HistorySession) => {
+    setSourceText(session.sourceText);
+    setTargetText(session.targetText);
+    setConfig(session.config);
+    setWitnessAlphaName(session.witnessAlphaName);
+    setWitnessBetaName(session.witnessBetaName);
+    setResult(session.result);
+    setSelectedMatch(null);
+    setCollationTrigger(prev => prev + 1);
+  }, []);
+
+  const handleDownloadReport = useCallback(async (format: 'pdf' | 'docx' | 'latex' | 'tei-xml') => {
+    if (!result) return;
+    const reportData: ReportData = {
+      witnessAlphaName,
+      witnessBetaName,
+      sourceText,
+      targetText,
+      config,
+      result,
+      date: new Date().toLocaleString(),
+    };
+    try {
+      await downloadReport(reportData, format);
+    } catch (err) {
+      console.error('Report generation failed:', err);
+      alert('Report generation failed. Check console for details.');
+    }
+    setShowReportMenu(false);
+  }, [result, witnessAlphaName, witnessBetaName, sourceText, targetText, config]);
 
   const sortedMatches = useMemo(() => {
     if (!result) return [];
@@ -365,6 +467,36 @@ const App: React.FC = () => {
                </div>
              </a>
 
+             {/* History + Save + Report */}
+             <div className="flex items-center gap-2">
+                {result && (
+                  <>
+                    <button onClick={handleSaveSession} className="flex flex-col items-center gap-0.5 group" title={t(lang, 'Save Session')}>
+                      <div className="text-[10px] text-gray-400 uppercase font-sans">{t(lang, 'Save')}</div>
+                      <svg className="w-5 h-5 text-green-400 group-hover:text-green-200 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                    </button>
+                    <div className="relative">
+                      <button onClick={() => setShowReportMenu(!showReportMenu)} className="flex flex-col items-center gap-0.5 group" title={t(lang, 'Download Report')}>
+                        <div className="text-[10px] text-gray-400 uppercase font-sans">{t(lang, 'Report')}</div>
+                        <svg className="w-5 h-5 text-yellow-300 group-hover:text-yellow-100 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                      </button>
+                      {showReportMenu && (
+                        <div className="absolute top-full right-0 mt-1 bg-white rounded shadow-xl border border-gray-200 py-1 z-50 min-w-[160px]">
+                          <button onClick={() => handleDownloadReport('pdf')} className="w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-50 font-mono">PDF</button>
+                          <button onClick={() => handleDownloadReport('docx')} className="w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-50 font-mono">DOCX (Word)</button>
+                          <button onClick={() => handleDownloadReport('latex')} className="w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-50 font-mono">LaTeX (.tex)</button>
+                          <button onClick={() => handleDownloadReport('tei-xml')} className="w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-50 font-mono">TEI XML (P5)</button>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+                <button onClick={() => setIsHistoryOpen(true)} className="flex flex-col items-center gap-0.5 group" title={t(lang, 'Session History')}>
+                  <div className="text-[10px] text-gray-400 uppercase font-sans">{t(lang, 'History')}</div>
+                  <svg className="w-5 h-5 text-blue-300 group-hover:text-blue-100 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </button>
+             </div>
+
              {/* Engine Status */}
              <div className="text-right">
                 <div className="text-[10px] text-gray-400 uppercase font-sans">{t(lang, 'Engine Status')}</div>
@@ -445,6 +577,7 @@ const App: React.FC = () => {
                     <option value="char-ngram">{t(lang, 'Character-Level N-Gram')}</option>
                     <option value="fasttext">{t(lang, 'FastText-like (Subword N-Grams)')}</option>
                     <option value="word2vec">{t(lang, 'Word2Vec-like (Local Co-occurrence)')}</option>
+                    <option value="onnx-semantic">{t(lang, 'ONNX Semantic (Local Embedding)')}</option>
                   </select>
                 </div>
                 <div className="flex items-center gap-6">
@@ -468,7 +601,14 @@ const App: React.FC = () => {
                 {isProcessing ? (
                    <>
                     <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    {t(lang, 'PROCESSING LARGE DATASET...')}
+                    {onnxProgress ? (
+                      <span className="text-[10px]">
+                        {onnxProgress.phase === 'model' && t(lang, 'Loading ONNX Model...')}
+                        {onnxProgress.phase === 'embedding-alpha' && `${t(lang, 'Embedding')} α: ${onnxProgress.percent}%`}
+                        {onnxProgress.phase === 'embedding-beta' && `${t(lang, 'Embedding')} β: ${onnxProgress.percent}%`}
+                        {onnxProgress.phase === 'comparing' && `${t(lang, 'Comparing')}: ${onnxProgress.percent}%`}
+                      </span>
+                    ) : t(lang, 'PROCESSING LARGE DATASET...')}
                    </>
                 ) : t(lang, 'RUN COLLATION ENGINE')}
               </button>
@@ -877,6 +1017,13 @@ const App: React.FC = () => {
           </div>
         );
       })()}
+
+      {/* History Panel */}
+      <HistoryPanel
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        onLoadSession={handleLoadSession}
+      />
     </div>
   );
 };
