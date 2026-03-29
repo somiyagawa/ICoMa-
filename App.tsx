@@ -324,7 +324,7 @@ const App: React.FC = () => {
       
       {/* Visual Footer */}
       <footer className="mt-auto py-6 border-t border-gray-200 bg-white text-center flex flex-col items-center gap-3">
-         <p className="text-[10px] text-gray-400 uppercase tracking-[0.3em]">Advanced Digital Humanities Collation Tool • v2.5.1 Enterprise</p>
+         <p className="text-[10px] text-gray-400 uppercase tracking-[0.3em]">Advanced Digital Humanities Collation Tool • v2.5.2 Enterprise</p>
          <div className="flex items-center gap-4 text-[10px] text-gray-500 uppercase tracking-widest">
             <div className="flex items-center gap-1">
               <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="hover:text-academic-blue transition-colors flex items-center gap-1">
@@ -361,6 +361,12 @@ const App: React.FC = () => {
               </button>
             </div>
             <div className="p-6 overflow-y-auto font-sans text-sm text-gray-700 space-y-6">
+              <div>
+                <h3 className="font-bold text-academic-blue text-base border-b border-gray-100 pb-2 mb-2">v2.5.2 Enterprise (March 2026)</h3>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Added interactive help modals for <strong>Similarity Threshold</strong> and <strong>N-Size</strong> parameters.</li>
+                </ul>
+              </div>
               <div>
                 <h3 className="font-bold text-academic-blue text-base border-b border-gray-100 pb-2 mb-2">v2.5.1 Enterprise (March 2026)</h3>
                 <ul className="list-disc pl-5 space-y-1">
