@@ -619,7 +619,7 @@ const App: React.FC = () => {
               ))}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="flex flex-col">
+              <div className="flex flex-col" data-tour="step-source">
                 <div className="flex justify-between items-center mb-2 px-1">
                    <div className="flex items-center gap-1.5">
                      <span className="text-[10px] font-bold shrink-0 w-4 h-4 rounded-full flex items-center justify-center" style={{background:'#2563eb', color:'#fff'}}>α</span>
@@ -640,7 +640,7 @@ const App: React.FC = () => {
                 </div>
                 <textarea className="w-full h-40 p-4 font-coptic border border-gray-200 rounded-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-academic-gold/20 focus:border-academic-gold outline-none transition-all shadow-inner leading-relaxed" style={{ fontSize: `${fontSize}px` }} value={sourceText} onChange={(e) => setSourceText(e.target.value)} placeholder={t(lang, 'Insert primary text (Source)...')} dir="auto" />
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col" data-tour="step-target">
                 <div className="flex justify-between items-center mb-2 px-1">
                    <div className="flex items-center gap-1.5">
                      <span className="text-[10px] font-bold shrink-0 w-4 h-4 rounded-full flex items-center justify-center" style={{background:'#d97706', color:'#fff'}}>β</span>
@@ -665,7 +665,7 @@ const App: React.FC = () => {
           </div>
 
           {/* Configuration Section */}
-          <div className="xl:col-span-4 flex flex-col gap-6">
+          <div className="xl:col-span-4 flex flex-col gap-6" data-tour="step-config">
             <div className="bg-white p-6 border border-gray-200 shadow-md rounded-sm flex-1">
               <h2 className="text-xs font-bold uppercase text-gray-400 border-b border-gray-100 pb-2 mb-6 tracking-widest flex items-center justify-between">
                 <span>{t(lang, 'Collation Parameters')}</span>
