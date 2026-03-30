@@ -93,16 +93,49 @@ export const ZoomControls: React.FC<ZoomControlsProps> = ({ zoom, onZoomChange }
   );
 };
 
+/**
+ * Find the largest SVG inside a container, skipping tiny icon SVGs
+ * from HelpButton, ZoomControls, DownloadButtons, etc.
+ */
+function findChartSVG(container: HTMLElement): SVGSVGElement | null {
+  const allSvgs = container.querySelectorAll('svg');
+  if (allSvgs.length === 0) return null;
+  if (allSvgs.length === 1) return allSvgs[0] as SVGSVGElement;
+  let best: SVGSVGElement | null = null;
+  let bestArea = 0;
+  allSvgs.forEach(s => {
+    const r = s.getBoundingClientRect();
+    const area = r.width * r.height;
+    const vb = s.getAttribute('viewBox');
+    let vbArea = 0;
+    if (vb) {
+      const parts = vb.split(/[\s,]+/).map(Number);
+      if (parts.length === 4) vbArea = parts[2] * parts[3];
+    }
+    const maxArea = Math.max(area, vbArea);
+    if (maxArea > bestArea) {
+      bestArea = maxArea;
+      best = s as SVGSVGElement;
+    }
+  });
+  return best;
+}
+
 export const DownloadButtons: React.FC<DownloadButtonsProps> = ({ containerRef, filename }) => {
   const downloadSVG = () => {
     if (!containerRef.current) return;
-    const svg = containerRef.current.querySelector('svg');
+    const svg = findChartSVG(containerRef.current);
     if (!svg) return;
 
     const svgClone = svg.cloneNode(true) as SVGElement;
     if (!svgClone.getAttribute('xmlns')) {
       svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     }
+    // Force absolute pixel dimensions
+    const rect = svg.getBoundingClientRect();
+    if (rect.width > 0) svgClone.setAttribute('width', String(Math.round(rect.width)));
+    if (rect.height > 0) svgClone.setAttribute('height', String(Math.round(rect.height)));
+
     const serializer = new XMLSerializer();
     const svgString = serializer.serializeToString(svgClone);
     const blob = new Blob([svgString], { type: 'image/svg+xml' });
@@ -118,7 +151,7 @@ export const DownloadButtons: React.FC<DownloadButtonsProps> = ({ containerRef, 
 
   const downloadPNG = () => {
     if (!containerRef.current) return;
-    const svg = containerRef.current.querySelector('svg');
+    const svg = findChartSVG(containerRef.current);
     if (!svg) return;
 
     const svgClone = svg.cloneNode(true) as SVGElement;
@@ -129,8 +162,8 @@ export const DownloadButtons: React.FC<DownloadButtonsProps> = ({ containerRef, 
     const w = bbox.width * scale;
     const h = bbox.height * scale;
 
-    svgClone.setAttribute('width', String(bbox.width));
-    svgClone.setAttribute('height', String(bbox.height));
+    svgClone.setAttribute('width', String(Math.round(bbox.width)));
+    svgClone.setAttribute('height', String(Math.round(bbox.height)));
 
     const serializer = new XMLSerializer();
     const svgString = serializer.serializeToString(svgClone);

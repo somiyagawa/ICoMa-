@@ -16,6 +16,7 @@ interface AIAnalysisPanelProps {
   onHelpClick?: (topic: string) => void;
   collationTrigger?: number;
   lang?: Language;
+  onResultChange?: (results: AIAnalysisResult[]) => void;
 }
 
 const PROVIDER_INFO: Record<AIProvider, { label: string; color: string; bgColor: string; borderColor: string; models: { value: string; label: string }[] }> = {
@@ -358,7 +359,7 @@ const ResultView: React.FC<{ result: AIAnalysisResult; lang?: Language }> = ({ r
   );
 };
 
-const AIAnalysisPanel: React.FC<AIAnalysisPanelProps> = ({ sourceText, targetText, onHelpClick, collationTrigger, lang = 'en' as Language }) => {
+const AIAnalysisPanel: React.FC<AIAnalysisPanelProps> = ({ sourceText, targetText, onHelpClick, collationTrigger, lang = 'en' as Language, onResultChange }) => {
   const [apiKeys, setApiKeys] = useState<Record<AIProvider, string>>({
     claude: '',
     gemini: '',
@@ -404,6 +405,7 @@ const AIAnalysisPanel: React.FC<AIAnalysisPanelProps> = ({ sourceText, targetTex
     try {
       const res = await runMultiProviderAnalysis(configs, sourceText, targetText);
       setResults(res);
+      onResultChange?.(res);
       setShowConfig(false);
       if (res.length === 1) {
         setActiveTab(res[0].provider);

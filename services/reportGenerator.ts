@@ -34,67 +34,39 @@ export interface ReportData {
 // ── Chart capture ────────────────────────────────────────────────────
 
 /**
- * Recursively inline computed styles from a live SVG onto a cloned SVG.
- * This is necessary because cloneNode does not preserve computed styles,
- * and when we serialize the SVG for off-screen rendering, CSS won't apply.
+ * Find the largest SVG in a container — skipping tiny icon SVGs from
+ * HelpButton, ChartToolbar, ZoomControls, etc.
  */
-function inlineAllStyles(source: Element, target: Element): void {
-  // Only inline styles that were explicitly set (via D3 .style() or CSS classes).
-  // We compare computed style against a blank SVG element to detect non-default values.
-  // This avoids overwriting correct SVG attribute-based styling with bogus defaults.
-  const SVG_STYLE_PROPS = [
-    'fill', 'fill-opacity', 'fill-rule',
-    'stroke', 'stroke-width', 'stroke-opacity', 'stroke-dasharray',
-    'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit',
-    'opacity', 'visibility', 'display',
-    'font-family', 'font-size', 'font-weight', 'font-style',
-    'text-anchor', 'dominant-baseline', 'text-decoration',
-    'color', 'letter-spacing', 'word-spacing',
-  ];
-  try {
-    const computed = window.getComputedStyle(source);
-    const sourceEl = source as SVGElement | HTMLElement;
-    for (const prop of SVG_STYLE_PROPS) {
-      // Only inline if the source has this property set inline or via stylesheet
-      // Check inline style first (highest priority)
-      const inlineVal = sourceEl.style?.getPropertyValue(prop);
-      if (inlineVal) {
-        (target as SVGElement).style.setProperty(prop, inlineVal);
-        continue;
-      }
-      // Check if there's an SVG attribute for this property (e.g., fill="red")
-      const attrVal = source.getAttribute(prop);
-      if (attrVal) {
-        // SVG attribute already cloned by cloneNode, no need to inline as CSS
-        continue;
-      }
-      // For text elements, always inline font and fill from computed (CSS class-based)
-      const tagName = source.tagName.toLowerCase();
-      if (tagName === 'text' || tagName === 'tspan') {
-        const val = computed.getPropertyValue(prop);
-        if (val && val !== 'auto' && val !== 'normal' && val !== 'inherit') {
-          (target as SVGElement).style.setProperty(prop, val);
-        }
-      }
+function findChartSVG(container: HTMLElement): SVGSVGElement | null {
+  const allSvgs = container.querySelectorAll('svg');
+  if (allSvgs.length === 0) return null;
+  if (allSvgs.length === 1) return allSvgs[0] as SVGSVGElement;
+  // Pick the SVG with the largest rendered area (the D3 chart, not icons)
+  let best: SVGSVGElement | null = null;
+  let bestArea = 0;
+  allSvgs.forEach(s => {
+    const r = s.getBoundingClientRect();
+    const area = r.width * r.height;
+    // Also check viewBox for off-screen SVGs
+    const vb = s.getAttribute('viewBox');
+    let vbArea = 0;
+    if (vb) {
+      const parts = vb.split(/[\s,]+/).map(Number);
+      if (parts.length === 4) vbArea = parts[2] * parts[3];
     }
-  } catch { /* some elements may not support getComputedStyle */ }
-
-  const srcChildren = source.children;
-  const tgtChildren = target.children;
-  for (let i = 0; i < srcChildren.length && i < tgtChildren.length; i++) {
-    inlineAllStyles(srcChildren[i], tgtChildren[i]);
-  }
+    const maxArea = Math.max(area, vbArea);
+    if (maxArea > bestArea) {
+      bestArea = maxArea;
+      best = s as SVGSVGElement;
+    }
+  });
+  return best;
 }
 
 /**
  * Captures an SVG inside a container as a PNG data URL.
- *
- * Strategy:
- * 1. Find the first <svg> descendant of the container
- * 2. Deep-clone it, inline all computed styles, set explicit pixel dimensions
- * 3. Serialize with XMLSerializer → encode as a data: URI (using encodeURIComponent
- *    for full Unicode safety — no btoa/atob needed)
- * 4. Load into an off-screen Image, draw onto a 2× Canvas, export as PNG
+ * Uses Blob URL approach for same-origin image loading,
+ * plus explicit pixel dimensions to handle width="100%" SVGs.
  */
 export async function captureChartFromRef(
   container: HTMLElement,
@@ -102,103 +74,87 @@ export async function captureChartFromRef(
   scaleFactor = 2,
 ): Promise<ChartImage | null> {
   try {
-    // 1. Locate SVG
-    const svg = container.querySelector('svg');
+    const svg = findChartSVG(container);
     if (!svg) {
-      console.warn(`[ICoMa Report] No <svg> found for "${label}"`);
+      console.warn(`[ICoMa Report] No chart <svg> found for "${label}"`);
       return null;
     }
 
-    // 2. Measure actual rendered size (works even if element is off-viewport)
+    // Measure actual rendered size
     const rect = svg.getBoundingClientRect();
     let w = Math.round(rect.width);
     let h = Math.round(rect.height);
-
-    // Fallback to explicit attributes if getBoundingClientRect returns 0
     if (w <= 0) w = parseInt(svg.getAttribute('width') || '0') || 800;
     if (h <= 0) h = parseInt(svg.getAttribute('height') || '0') || 400;
-
-    // Also check viewBox as a dimension source
     if ((w <= 0 || h <= 0) && svg.getAttribute('viewBox')) {
       const vb = svg.getAttribute('viewBox')!.split(/[\s,]+/).map(Number);
       if (vb.length === 4) { w = w || Math.round(vb[2]); h = h || Math.round(vb[3]); }
     }
+    console.log(`[ICoMa Report] "${label}": SVG ${w}×${h}px`);
 
-    console.log(`[ICoMa Report] "${label}": SVG found, measured ${w}×${h}px`);
-
-    // 3. Clone and prepare
+    // Clone, set absolute pixel dimensions, add xmlns
     const clone = svg.cloneNode(true) as SVGSVGElement;
-
-    // Force absolute pixel dimensions (replaces "100%", percentage, etc.)
     clone.setAttribute('width', String(w));
     clone.setAttribute('height', String(h));
-    // Ensure viewBox is present for proper scaling
     if (!clone.getAttribute('viewBox')) {
       clone.setAttribute('viewBox', `0 0 ${w} ${h}`);
     }
     clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
-    // Inline computed styles for off-DOM rendering
-    inlineAllStyles(svg, clone);
+    // Serialize → Blob URL (same-origin, no CORS issues)
+    const svgString = new XMLSerializer().serializeToString(clone);
+    const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+    const blobUrl = URL.createObjectURL(blob);
 
-    // Insert white background
-    const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    bg.setAttribute('width', String(w));
-    bg.setAttribute('height', String(h));
-    bg.setAttribute('fill', 'white');
-    clone.insertBefore(bg, clone.firstChild);
-
-    // 4. Serialize → data URI (encodeURIComponent is Unicode-safe, no btoa needed)
-    const serializer = new XMLSerializer();
-    const svgString = serializer.serializeToString(clone);
-    const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
-
-    // 5. Render to Canvas
     return new Promise<ChartImage | null>((resolve) => {
       const img = new Image();
-      // Timeout guard: some browsers silently fail without firing onload/onerror
       const timer = setTimeout(() => {
-        console.warn(`[ICoMa Report] Image load timeout for "${label}" (5s)`);
+        URL.revokeObjectURL(blobUrl);
+        console.warn(`[ICoMa Report] Timeout "${label}"`);
         resolve(null);
-      }, 5000);
+      }, 8000);
+
       img.onload = () => {
         clearTimeout(timer);
         try {
+          const cw = w * scaleFactor;
+          const ch = h * scaleFactor;
           const canvas = document.createElement('canvas');
-          canvas.width = w * scaleFactor;
-          canvas.height = h * scaleFactor;
+          canvas.width = cw;
+          canvas.height = ch;
           const ctx = canvas.getContext('2d');
-          if (!ctx) { console.error(`[ICoMa Report] No 2D context for "${label}"`); resolve(null); return; }
+          if (!ctx) { URL.revokeObjectURL(blobUrl); resolve(null); return; }
 
-          // White background on canvas (in case SVG bg fails)
           ctx.fillStyle = '#ffffff';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-          ctx.scale(scaleFactor, scaleFactor);
-          ctx.drawImage(img, 0, 0, w, h);
+          ctx.fillRect(0, 0, cw, ch);
+          ctx.drawImage(img, 0, 0, cw, ch);
+          URL.revokeObjectURL(blobUrl);
 
           const pngDataUrl = canvas.toDataURL('image/png');
           if (!pngDataUrl || pngDataUrl === 'data:,') {
-            console.error(`[ICoMa Report] Canvas toDataURL returned empty for "${label}"`);
+            console.error(`[ICoMa Report] Empty PNG for "${label}"`);
             resolve(null);
             return;
           }
-          console.log(`[ICoMa Report] ✓ Captured "${label}": ${w}×${h}px → PNG (${Math.round(pngDataUrl.length / 1024)}KB)`);
+          console.log(`[ICoMa Report] ✓ "${label}": ${w}×${h} → PNG ${Math.round(pngDataUrl.length / 1024)}KB`);
           resolve({ label, dataUrl: pngDataUrl, width: w, height: h });
         } catch (err) {
-          console.error(`[ICoMa Report] Canvas export error for "${label}":`, err);
+          URL.revokeObjectURL(blobUrl);
+          console.error(`[ICoMa Report] Canvas error "${label}":`, err);
           resolve(null);
         }
       };
-      img.onerror = (ev) => {
+      img.onerror = () => {
         clearTimeout(timer);
-        console.error(`[ICoMa Report] Image load error for "${label}". DataURL length: ${dataUrl.length}`, ev);
+        URL.revokeObjectURL(blobUrl);
+        console.error(`[ICoMa Report] Image load failed "${label}"`);
         resolve(null);
       };
-      img.src = dataUrl;
+      img.src = blobUrl;
     });
   } catch (err) {
-    console.error(`[ICoMa Report] captureChartFromRef exception for "${label}":`, err);
+    console.error(`[ICoMa Report] Exception "${label}":`, err);
     return null;
   }
 }

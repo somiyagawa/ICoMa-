@@ -245,6 +245,7 @@ const App: React.FC = () => {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [onnxProgress, setOnnxProgress] = useState<OnnxAnalysisProgress | null>(null);
   const [showReportMenu, setShowReportMenu] = useState(false);
+  const [aiAnalysisResults, setAiAnalysisResults] = useState<any[]>([]);
 
   // Close report menu on outside click
   useEffect(() => {
@@ -383,6 +384,13 @@ const App: React.FC = () => {
       console.log(`[ICoMa Report] Captured ${chartImages.length}/${chartRefs.length} charts`);
     }
 
+    // Format AI analysis for report
+    const aiText = aiAnalysisResults.length > 0
+      ? aiAnalysisResults.map(r =>
+          `[${r.provider} — ${r.model}]\n${r.summary}\n\nOverall: ${r.overallAssessment}\n\nMatches:\n${(r.matches || []).map((m: any, i: number) => `  ${i + 1}. [${m.category}] "${m.sourcePhrase}" ↔ "${m.targetPhrase}" — ${m.explanation}`).join('\n')}`
+        ).join('\n\n---\n\n')
+      : undefined;
+
     const reportData: ReportData = {
       witnessAlphaName,
       witnessBetaName,
@@ -390,6 +398,7 @@ const App: React.FC = () => {
       targetText,
       config,
       result,
+      aiAnalysis: aiText,
       date: new Date().toLocaleString(),
       chartImages: chartImages.length > 0 ? chartImages : undefined,
     };
@@ -400,7 +409,7 @@ const App: React.FC = () => {
       alert('Report generation failed. Check console for details.');
     }
     setShowReportMenu(false);
-  }, [result, witnessAlphaName, witnessBetaName, sourceText, targetText, config]);
+  }, [result, witnessAlphaName, witnessBetaName, sourceText, targetText, config, aiAnalysisResults]);
 
   const sortedMatches = useMemo(() => {
     if (!result) return [];
@@ -736,7 +745,7 @@ const App: React.FC = () => {
             </div>
 
             {/* Macro-level Alignment Flow */}
-            <div ref={alignmentFlowRef} className="bg-white p-6 rounded-sm border border-gray-200 shadow-lg">
+            <div ref={alignmentFlowRef} className="bg-white p-6 rounded-sm border border-gray-200 shadow-lg" style={{resize:'vertical', overflow:'auto', minHeight:'120px'}}>
               <h3 className="text-xs font-bold uppercase text-academic-blue tracking-widest mb-4 flex items-center justify-between">
                 <span className="flex items-center">
                   {t(lang, 'Macro-Level Alignment Flow')}
@@ -750,7 +759,7 @@ const App: React.FC = () => {
             {/* Main Visual/Analysis Grid */}
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 h-full min-h-[750px]">
               {/* Left Column: Parallel Viewer & Navigation Map */}
-              <div className="xl:col-span-7 flex flex-col h-full bg-white shadow-xl rounded-sm overflow-hidden border border-gray-200">
+              <div className="xl:col-span-7 flex flex-col h-full bg-white shadow-xl rounded-sm overflow-hidden border border-gray-200" style={{resize:'both', overflow:'auto', minHeight:'300px', minWidth:'300px'}}>
                 <ParallelViewer tokensA={result.tokensA} tokensB={result.tokensB} alignments={result.alignments} matches={result.matches} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} witnessAlphaName={witnessAlphaName} witnessBetaName={witnessBetaName} />
               </div>
 
@@ -901,14 +910,14 @@ const App: React.FC = () => {
                       </div>
                    </div>
                    {/* Heatmap (Position Correspondence) */}
-                   <div ref={heatmapRef}>
+                   <div ref={heatmapRef} style={{resize:'vertical', overflow:'auto', minHeight:'100px'}}>
                      <Heatmap matches={result.matches} sourceLength={result.tokensA.length} targetLength={result.tokensB.length} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} onHelpClick={setActiveHelpModal} lang={lang} witnessAlphaName={witnessAlphaName} witnessBetaName={witnessBetaName} />
                    </div>
                 </div>
 
                 <div className="flex flex-col gap-8">
                    {/* Similarity Histogram */}
-                   <div ref={histogramRef} className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm">
+                   <div ref={histogramRef} className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm" style={{resize:'vertical', overflow:'auto', minHeight:'100px'}}>
                      <h3 className="text-[10px] font-bold uppercase text-academic-blue tracking-widest mb-2 flex items-center justify-between">
                        <span className="flex items-center">
                          {t(lang, 'Similarity Distribution')}
@@ -919,7 +928,7 @@ const App: React.FC = () => {
                      <SimilarityHistogram matches={result.matches} selectedMatch={selectedMatch} onSelectMatch={setSelectedMatch} />
                    </div>
                    {/* Network Graph (Cluster Discovery) */}
-                   <div ref={networkRef} className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm">
+                   <div ref={networkRef} className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm" style={{resize:'vertical', overflow:'auto', minHeight:'100px'}}>
                      <h3 className="text-[10px] font-bold uppercase text-academic-blue tracking-widest mb-2 flex items-center justify-between">
                        <span className="flex items-center">
                          {t(lang, 'Cluster View (Network Graph)')}
@@ -930,7 +939,7 @@ const App: React.FC = () => {
                      <NetworkGraph matches={result.matches} onSelectMatch={setSelectedMatch} selectedMatch={selectedMatch} witnessAlphaName={witnessAlphaName} witnessBetaName={witnessBetaName} />
                    </div>
                    {/* Dispersion Plot (Distribution) */}
-                   <div ref={dispersionRef} className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm">
+                   <div ref={dispersionRef} className="bg-white p-4 rounded-sm border border-gray-200 shadow-sm" style={{resize:'vertical', overflow:'auto', minHeight:'100px'}}>
                      <h3 className="text-[10px] font-bold uppercase text-academic-blue tracking-widest mb-2 flex items-center justify-between">
                        <span className="flex items-center">
                          {t(lang, 'Witness Dispersion')}
@@ -945,13 +954,13 @@ const App: React.FC = () => {
             </div>
 
             {/* AI Intertextuality Analysis */}
-            <AIAnalysisPanel sourceText={sourceText} targetText={targetText} onHelpClick={setActiveHelpModal} collationTrigger={collationTrigger} lang={lang} />
+            <AIAnalysisPanel sourceText={sourceText} targetText={targetText} onHelpClick={setActiveHelpModal} collationTrigger={collationTrigger} lang={lang} onResultChange={setAiAnalysisResults} />
           </div>
         )}
 
         {/* AI Analysis available even without collation results */}
         {!result && (
-          <AIAnalysisPanel sourceText={sourceText} targetText={targetText} onHelpClick={setActiveHelpModal} collationTrigger={collationTrigger} />
+          <AIAnalysisPanel sourceText={sourceText} targetText={targetText} onHelpClick={setActiveHelpModal} collationTrigger={collationTrigger} onResultChange={setAiAnalysisResults} />
         )}
       </main>
       
