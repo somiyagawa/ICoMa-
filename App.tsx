@@ -881,12 +881,12 @@ const App: React.FC = () => {
                                       source={m.sourcePhrase}
                                       target={m.targetPhrase}
                                       similarity={m.similarity}
-                                      fontSize={Math.max(12, fontSize)}
+                                      fontSize={Math.max(18, fontSize + 6)}
                                       witnessAlphaName={witnessAlphaName}
                                       witnessBetaName={witnessBetaName}
                                     />
                                     {/* Position info */}
-                                    <div className="flex gap-4 mt-3 text-[9px] text-gray-400 font-mono">
+                                    <div className="flex gap-4 mt-3 text-xs text-gray-400 font-mono">
                                       <span title={witnessAlphaName} className="truncate" style={{maxWidth:'180px'}}>{witnessAlphaName} {t(lang, 'pos')}: {m.sourcePosition}</span>
                                       <span title={witnessBetaName} className="truncate" style={{maxWidth:'180px'}}>{witnessBetaName} {t(lang, 'pos')}: {m.targetPosition}</span>
                                       {m.length && <span>{t(lang, 'Length')}: {m.length} {t(lang, 'tokens')}</span>}

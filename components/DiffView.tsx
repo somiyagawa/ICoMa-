@@ -97,23 +97,28 @@ const DiffView: React.FC<DiffViewProps> = ({
 }) => {
   const diff = useMemo(() => computeDiff(source, target), [source, target]);
 
-  // Truncate long witness names for compact display (max 12 chars)
-  const shortAlpha = witnessAlphaName.length > 12 ? witnessAlphaName.slice(0, 11) + '…' : witnessAlphaName;
-  const shortBeta = witnessBetaName.length > 12 ? witnessBetaName.slice(0, 11) + '…' : witnessBetaName;
+  // Adaptive label size: scales with fontSize for fullscreen readability
+  const labelSize = Math.max(8, Math.round(fontSize * 0.55));
+  const isLarge = fontSize >= 16;
+
+  // Truncate long witness names for compact display
+  const maxNameLen = isLarge ? 24 : 12;
+  const shortAlpha = witnessAlphaName.length > maxNameLen ? witnessAlphaName.slice(0, maxNameLen - 1) + '…' : witnessAlphaName;
+  const shortBeta = witnessBetaName.length > maxNameLen ? witnessBetaName.slice(0, maxNameLen - 1) + '…' : witnessBetaName;
 
   // For 100% matches, show both texts clearly with exact match label
   if (similarity >= 99.9) {
     return (
       <div style={{ fontSize: `${fontSize}px` }} className="leading-relaxed font-coptic">
-        <div className="mb-1">
-          <span className="text-[8px] font-bold tracking-wider mr-1" style={{ color: '#2563eb' }} title={witnessAlphaName}>{shortAlpha}</span>
+        <div className={isLarge ? 'mb-3' : 'mb-1'}>
+          <span className="font-bold tracking-wider mr-1" style={{ fontSize: `${labelSize}px`, color: '#2563eb' }} title={witnessAlphaName}>{shortAlpha}</span>
           <span className="text-academic-blue italic">"{source}"</span>
         </div>
-        <div className="mb-1">
-          <span className="text-[8px] font-bold tracking-wider mr-1" style={{ color: '#d97706' }} title={witnessBetaName}>{shortBeta}</span>
+        <div className={isLarge ? 'mb-3' : 'mb-1'}>
+          <span className="font-bold tracking-wider mr-1" style={{ fontSize: `${labelSize}px`, color: '#d97706' }} title={witnessBetaName}>{shortBeta}</span>
           <span className="font-coptic italic" style={{ color: '#92400e' }}>"{target}"</span>
         </div>
-        <div className="text-[8px] font-bold uppercase tracking-wider" style={{ color: '#1e3a8a' }}>= Exact Match</div>
+        <div className="font-bold uppercase tracking-wider" style={{ fontSize: `${labelSize}px`, color: '#1e3a8a' }}>= Exact Match</div>
       </div>
     );
   }
@@ -121,18 +126,18 @@ const DiffView: React.FC<DiffViewProps> = ({
   return (
     <div style={{ fontSize: `${fontSize}px` }} className="leading-relaxed">
       {/* Source line */}
-      <div className="mb-1.5">
-        <span className="text-[8px] font-bold tracking-wider mr-1" style={{ color: '#2563eb' }} title={witnessAlphaName}>{shortAlpha}</span>
+      <div className={isLarge ? 'mb-3' : 'mb-1.5'}>
+        <span className="font-bold tracking-wider mr-1" style={{ fontSize: `${labelSize}px`, color: '#2563eb' }} title={witnessAlphaName}>{shortAlpha}</span>
         <span className="font-coptic italic text-academic-blue">"{source}"</span>
       </div>
       {/* Target line */}
-      <div className="mb-1.5">
-        <span className="text-[8px] font-bold tracking-wider mr-1" style={{ color: '#d97706' }} title={witnessBetaName}>{shortBeta}</span>
+      <div className={isLarge ? 'mb-3' : 'mb-1.5'}>
+        <span className="font-bold tracking-wider mr-1" style={{ fontSize: `${labelSize}px`, color: '#d97706' }} title={witnessBetaName}>{shortBeta}</span>
         <span className="font-coptic italic" style={{ color: '#92400e' }}>"{target}"</span>
       </div>
       {/* Inline diff */}
-      <div className="mt-1 pt-1 border-t border-gray-100">
-        <span className="text-[8px] font-bold uppercase tracking-wider text-gray-400 mr-1">Diff</span>
+      <div className={`${isLarge ? 'mt-3 pt-3' : 'mt-1 pt-1'} border-t border-gray-100`}>
+        <span className="font-bold uppercase tracking-wider text-gray-400 mr-1" style={{ fontSize: `${labelSize}px` }}>Diff</span>
         <span className="font-coptic">
           {diff.map((seg, i) => {
             if (seg.type === 'equal') {
