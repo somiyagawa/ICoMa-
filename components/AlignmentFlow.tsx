@@ -18,8 +18,8 @@ const AlignmentFlow: React.FC<AlignmentFlowProps> = ({
   targetLength,
   onSelectMatch,
   selectedMatch,
-  witnessAlphaName = 'Witness α',
-  witnessBetaName = 'Witness β'
+  witnessAlphaName = 'Source Text',
+  witnessBetaName = 'Target Text'
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -42,7 +42,7 @@ const AlignmentFlow: React.FC<AlignmentFlowProps> = ({
     const xScaleA = d3.scaleLinear().domain([0, sourceLength]).range([0, width]);
     const xScaleB = d3.scaleLinear().domain([0, targetLength]).range([0, width]);
 
-    // === Witness α (top) ===
+    // === Source Text (top) ===
     // Label
     svg.append("text")
       .attr("x", width / 2)
@@ -70,14 +70,14 @@ const AlignmentFlow: React.FC<AlignmentFlowProps> = ({
       .attr("fill", "#7f8c8d")
       .text("End →");
 
-    // Top bar (Witness α)
+    // Top bar (Source Text)
     svg.append("rect").attr("width", width).attr("height", 10).attr("fill", "#2563eb").attr("rx", 2);
 
-    // === Witness β (bottom) ===
-    // Bottom bar (Witness β)
+    // === Target Text (bottom) ===
+    // Bottom bar (Target Text)
     svg.append("rect").attr("y", height - 10).attr("width", width).attr("height", 10).attr("fill", "#d97706").attr("rx", 2);
 
-    // Direction arrow for β
+    // Direction arrow for Target Text
     svg.append("text")
       .attr("x", 0)
       .attr("y", height + 14)
@@ -94,7 +94,7 @@ const AlignmentFlow: React.FC<AlignmentFlowProps> = ({
       .attr("fill", "#7f8c8d")
       .text("End →");
 
-    // Label
+    // Direction arrow for Target Text
     svg.append("text")
       .attr("x", width / 2)
       .attr("y", height + 28)

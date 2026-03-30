@@ -193,7 +193,7 @@ export async function generatePDF(data: ReportData): Promise<Blob> {
   const { config, result, witnessAlphaName: wA, witnessBetaName: wB } = data;
 
   // jsPDF default fonts don't support Unicode Greek — use ASCII fallbacks
-  const pdfSafe = (s: string) => s.replace(/α/g, '(alpha)').replace(/β/g, '(beta)').replace(/↔/g, '<->').replace(/…/g, '...').replace(/[^\x00-\x7F]/g, '?');
+  const pdfSafe = (s: string) => s.replace(/α/g, '(S)').replace(/β/g, '(T)').replace(/↔/g, '<->').replace(/…/g, '...').replace(/[^\x00-\x7F]/g, '?');
   const pA = pdfSafe(wA), pB = pdfSafe(wB);
 
   // Title
@@ -392,7 +392,7 @@ export async function generateDocx(data: ReportData): Promise<Blob> {
           width: { size: 100, type: WidthType.PERCENTAGE },
           rows: [
             new TableRow({
-              children: [makeCell('#', true), makeCell('Sim%', true), makeCell(`${wA} (α)`, true), makeCell(`${wB} (β)`, true), makeCell('α pos', true), makeCell('β pos', true)],
+              children: [makeCell('#', true), makeCell('Sim%', true), makeCell(`${wA} (S)`, true), makeCell(`${wB} (T)`, true), makeCell('S pos', true), makeCell('T pos', true)],
             }),
             ...top.map((m, i) => new TableRow({
               children: [

@@ -535,11 +535,11 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
       tip: "For word-level algorithms, 3-5 is usually optimal. For character-level algorithms, 5-10 is recommended to avoid matching random syllables."
     },
     witnessAlpha: {
-      title: "Witness α (Primary)",
-      body: "The primary text or base text used for the collation. This is typically the source text, the older manuscript, or the reference text against which the comparandum is evaluated. The distinction between α and β is mostly for visualization purposes. Most algorithms are symmetric, meaning the similarity score will be the same regardless of which text is α or β."
+      title: "Source Text (Primary)",
+      body: "The primary text or base text used for the collation. This is typically the source text, the older manuscript, or the reference text against which the comparandum is evaluated. The distinction between S and T is mostly for visualization purposes. Most algorithms are symmetric, meaning the similarity score will be the same regardless of which text is S or T."
     },
     witnessBeta: {
-      title: "Witness β (Comparandum)",
+      title: "Target Text (Comparandum)",
       body: "The secondary text, target text, or comparandum. This is typically the text suspected of reusing the primary text, a later manuscript, or a translation."
     },
     meanSimilarity: {
@@ -565,7 +565,7 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
     },
     totalTokenCount: {
       title: "Total Token Count",
-      body: "The total number of tokens (words or characters, depending on the algorithm) in each witness. This helps contextualize the 'Reuse Coverage' metric. If Witness α is much larger than Witness β, a 100% coverage of β might only represent a 5% coverage of α."
+      body: "The total number of tokens (words or characters, depending on the algorithm) in each witness. This helps contextualize the 'Reuse Coverage' metric. If Source Text is much larger than Target Text, a 100% coverage of T might only represent a 5% coverage of Source Text."
     },
     macroAlignment: {
       title: "Macro-Level Alignment Flow",
@@ -590,22 +590,22 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
     },
     witnessDispersion: {
       title: "Witness Dispersion",
-      body: "A scatter plot showing where matches occur within the linear progression of each text. The X-axis represents the position in Witness α, and the Y-axis represents the position in Witness β. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse."
+      body: "A scatter plot showing where matches occur within the linear progression of each text. The X-axis represents the position in Source Text, and the Y-axis represents the position in Target Text. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse."
     },
     heatmapView: {
       title: "Position Correspondence (Heatmap)",
-      body: "A two-dimensional grid showing the positional correspondence of matching segments between the two witnesses. Each coloured cell represents a detected match. The cell's position on the X-axis corresponds to where the match occurs in Witness α, and its Y-axis position corresponds to the location in Witness β. Colour intensity encodes similarity: warmer tones indicate higher similarity scores.",
+      body: "A two-dimensional grid showing the positional correspondence of matching segments between the two witnesses. Each coloured cell represents a detected match. The cell's position on the X-axis corresponds to where the match occurs in Source Text, and its Y-axis position corresponds to the location in Target Text. Colour intensity encodes similarity: warmer tones indicate higher similarity scores.",
       tip: "A diagonal pattern suggests that both texts follow the same sequential order. Scattered cells indicate selective or fragmented reuse. Dense clusters reveal sections of heavy textual borrowing."
     },
     heatmapAxisAlpha: {
-      title: "X-Axis: Witness α Position",
-      body: "The horizontal axis represents the token position within Witness α (the primary text). Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Witness α. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.",
-      tip: "The total range of this axis equals the total token count of Witness α, as displayed in the statistics dashboard."
+      title: "X-Axis: Source Text Position",
+      body: "The horizontal axis represents the token position within Source Text (the primary text). Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Source Text. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.",
+      tip: "The total range of this axis equals the total token count of Source Text, as displayed in the statistics dashboard."
     },
     heatmapAxisBeta: {
-      title: "Y-Axis: Witness β Position",
-      body: "The vertical axis represents the token position within Witness β (the comparandum). Each unit on this axis corresponds to a token index in Witness β. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.",
-      tip: "The total range of this axis equals the total token count of Witness β. If Witness β is significantly shorter or longer than Witness α, the aspect ratio of the heatmap will reflect this asymmetry."
+      title: "Y-Axis: Target Text Position",
+      body: "The vertical axis represents the token position within Target Text (the comparandum). Each unit on this axis corresponds to a token index in Target Text. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.",
+      tip: "The total range of this axis equals the total token count of Target Text. If Target Text is significantly shorter or longer than Source Text, the aspect ratio of the heatmap will reflect this asymmetry."
     },
     aiIntertextuality: {
       title: "AI Intertextuality Analysis",
@@ -642,11 +642,11 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
       tip: "単語レベルのアルゴリズムでは、3-5が通常最適です。文字レベルのアルゴリズムでは、ランダムな音節のマッチングを避けるために5-10が推奨されます。"
     },
     witnessAlpha: {
-      title: "証人α（一次）",
-      body: "校合に使用される一次テキストまたは基礎テキスト。これは通常、ソーステキスト、古い写本、または比較物を評価する参照テキストです。αとβの区別は主に可視化目的のためのものです。ほとんどのアルゴリズムは対称的です。つまり、どのテキストがαまたはβであるかに関係なく、類似度スコアは同じになります。"
+      title: "証人Source Text（一次）",
+      body: "校合に使用される一次テキストまたは基礎テキスト。これは通常、ソーステキスト、古い写本、または比較物を評価する参照テキストです。Source TextとTarget Textの区別は主に可視化目的のためのものです。ほとんどのアルゴリズムは対称的です。つまり、どのテキストがSource TextまたはTarget Textであるかに関係なく、類似度スコアは同じになります。"
     },
     witnessBeta: {
-      title: "証人β（比較物）",
+      title: "証人Target Text（比較物）",
       body: "二次テキスト、ターゲットテキスト、または比較物。これは通常、一次テキストを再利用していると疑われるテキスト、後の写本、または翻訳です。"
     },
     meanSimilarity: {
@@ -672,7 +672,7 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
     },
     totalTokenCount: {
       title: "トークン総数",
-      body: "各証人内のトークン（アルゴリズムに応じて単語または文字）の総数。これは「再利用カバレッジ」メトリックを文脈化するのに役立ちます。証人αが証人βよりはるかに大きい場合、βの100%カバレッジはαの5%カバレッジのみを表す可能性があります。"
+      body: "各証人内のトークン（アルゴリズムに応じて単語または文字）の総数。これは「再利用カバレッジ」メトリックを文脈化するのに役立ちます。証人Source Textが証人Target Textよりはるかに大きい場合、Target Textの100%カバレッジはSource Textの5%カバレッジのみを表す可能性があります。"
     },
     macroAlignment: {
       title: "マクロレベルアライメントフロー",
@@ -697,22 +697,22 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
     },
     witnessDispersion: {
       title: "証人分散",
-      body: "各テキストの線形進行内でマッチが発生する場所を示す散布図。X軸は証人αの位置を表し、Y軸は証人βの位置を表します。完璧な対角線は同一の構造を示します。対角線から離れた点のクラスターは、構造的再配列または局所化された再利用を示します。"
+      body: "各テキストの線形進行内でマッチが発生する場所を示す散布図。X軸は証人Source Textの位置を表し、Y軸は証人Target Textの位置を表します。完璧な対角線は同一の構造を示します。対角線から離れた点のクラスターは、構造的再配列または局所化された再利用を示します。"
     },
     heatmapView: {
       title: "位置対応（ヒートマップ）",
-      body: "2つの証人間のマッチングセグメントの位置対応を示す2次元グリッド。各着色されたセルは検出されたマッチを表します。セルのX軸上の位置は証人αでマッチが発生する場所に対応し、Y軸の位置は証人β内の位置に対応します。色の強度は類似度をエンコードします：暖色調はより高い類似度スコアを示します。",
+      body: "2つの証人間のマッチングセグメントの位置対応を示す2次元グリッド。各着色されたセルは検出されたマッチを表します。セルのX軸上の位置は証人Source Textでマッチが発生する場所に対応し、Y軸の位置は証人Target Text内の位置に対応します。色の強度は類似度をエンコードします：暖色調はより高い類似度スコアを示します。",
       tip: "対角パターンは、両方のテキストが同じ順序に従うことを示唆しています。散布セルは選択的または断片化された再利用を示します。密集したクラスターは、大量のテキスト借用のセクションを明らかにします。"
     },
     heatmapAxisAlpha: {
-      title: "X軸：証人α位置",
-      body: "水平軸は証人α（一次テキスト）内のトークン位置を表します。この軸上の各単位は、証人α内のトークンインデックス（選択されたアルゴリズムに応じて単語または文字）に対応します。X軸上の位置50にプロットされたマッチは、マッチされたセグメントが一次テキストの約50番目のトークンで始まることを意味します。",
-      tip: "この軸の総範囲は、統計ダッシュボードに表示されている証人αのトークン総数に等しいです。"
+      title: "X軸：証人Source Text位置",
+      body: "水平軸は証人Source Text（一次テキスト）内のトークン位置を表します。この軸上の各単位は、証人Source Text内のトークンインデックス（選択されたアルゴリズムに応じて単語または文字）に対応します。X軸上の位置50にプロットされたマッチは、マッチされたセグメントが一次テキストの約50番目のトークンで始まることを意味します。",
+      tip: "この軸の総範囲は、統計ダッシュボードに表示されている証人Source Textのトークン総数に等しいです。"
     },
     heatmapAxisBeta: {
-      title: "Y軸：証人β位置",
-      body: "垂直軸は証人β（比較物）内のトークン位置を表します。この軸上の各単位は、証人βのトークンインデックスに対応しています。Y軸上の位置30にプロットされたマッチは、マッチされたセグメントが比較テキストの約30番目のトークンで始まることを意味します。",
-      tip: "この軸の総範囲は、証人βのトークン総数に等しいです。証人βが証人αよりも著しく短いか長い場合、ヒートマップのアスペクト比はこの非対称性を反映します。"
+      title: "Y軸：証人Target Text位置",
+      body: "垂直軸は証人Target Text（比較物）内のトークン位置を表します。この軸上の各単位は、証人Target Textのトークンインデックスに対応しています。Y軸上の位置30にプロットされたマッチは、マッチされたセグメントが比較テキストの約30番目のトークンで始まることを意味します。",
+      tip: "この軸の総範囲は、証人Target Textのトークン総数に等しいです。証人Target Textが証人Source Textよりも著しく短いか長い場合、ヒートマップのアスペクト比はこの非対称性を反映します。"
     },
     aiIntertextuality: {
       title: "AI中間性分析",
@@ -749,11 +749,11 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
       tip: "对于词级算法，3-5通常是最优的。对于字符级算法，建议使用5-10以避免匹配随机音节。"
     },
     witnessAlpha: {
-      title: "证人α（主要）",
-      body: "用于对照的主要文本或基础文本。这通常是源文本、较旧的手稿或参考文本，据此评估比较项。α和β之间的区别主要是为了可视化目的。大多数算法是对称的，这意味着无论哪个文本是α或β，相似度分数都将相同。"
+      title: "证人Source Text（主要）",
+      body: "用于对照的主要文本或基础文本。这通常是源文本、较旧的手稿或参考文本，据此评估比较项。Source Text和Target Text之间的区别主要是为了可视化目的。大多数算法是对称的，这意味着无论哪个文本是Source Text或Target Text，相似度分数都将相同。"
     },
     witnessBeta: {
-      title: "证人β（比较项）",
+      title: "证人Target Text（比较项）",
       body: "辅助文本、目标文本或比较项。这通常是怀疑重用主要文本的文本、较晚的手稿或翻译。"
     },
     meanSimilarity: {
@@ -779,7 +779,7 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
     },
     totalTokenCount: {
       title: "令牌总数",
-      body: "每个证人中的令牌（取决于算法的单词或字符）的总数。这有助于为「重用覆盖范围」指标提供背景。如果证人α远大于证人β，则β的100%覆盖范围可能仅代表α的5%覆盖范围。"
+      body: "每个证人中的令牌（取决于算法的单词或字符）的总数。这有助于为「重用覆盖范围」指标提供背景。如果证人Source Text远大于证人Target Text，则Target Text的100%覆盖范围可能仅代表Source Text的5%覆盖范围。"
     },
     macroAlignment: {
       title: "宏观级对齐流",
@@ -804,22 +804,22 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
     },
     witnessDispersion: {
       title: "证人分散",
-      body: "显示匹配在每个文本的线性进展内发生位置的散点图。X轴表示证人α中的位置，Y轴表示证人β中的位置。完美的对角线表示相同的结构。对角线外的点群表示结构重排或本地化重用。"
+      body: "显示匹配在每个文本的线性进展内发生位置的散点图。X轴表示证人Source Text中的位置，Y轴表示证人Target Text中的位置。完美的对角线表示相同的结构。对角线外的点群表示结构重排或本地化重用。"
     },
     heatmapView: {
       title: "位置对应（热图）",
-      body: "显示两个证人之间的匹配段的位置对应的二维网格。每个着色的单元格代表一个检测到的匹配。单元格在X轴上的位置对应于证人α中发生匹配的位置，其Y轴位置对应于证人β中的位置。颜色强度编码相似度：暖色表示较高的相似度分数。",
+      body: "显示两个证人之间的匹配段的位置对应的二维网格。每个着色的单元格代表一个检测到的匹配。单元格在X轴上的位置对应于证人Source Text中发生匹配的位置，其Y轴位置对应于证人Target Text中的位置。颜色强度编码相似度：暖色表示较高的相似度分数。",
       tip: "对角线模式表明两个文本都遵循相同的顺序。散布的单元格表示选择性或碎片化的重用。密集的群集揭示了大量文本借用的部分。"
     },
     heatmapAxisAlpha: {
-      title: "X轴：证人α位置",
-      body: "水平轴表示证人α（主要文本）内的令牌位置。此轴上的每个单位对应于证人α中的令牌索引（取决于所选算法的单词或字符）。在X轴上的位置50处绘制的匹配意味着匹配的段从主要文本的大约第50个令牌开始。",
-      tip: "该轴的总范围等于统计仪表板中显示的证人α的令牌总数。"
+      title: "X轴：证人Source Text位置",
+      body: "水平轴表示证人Source Text（主要文本）内的令牌位置。此轴上的每个单位对应于证人Source Text中的令牌索引（取决于所选算法的单词或字符）。在X轴上的位置50处绘制的匹配意味着匹配的段从主要文本的大约第50个令牌开始。",
+      tip: "该轴的总范围等于统计仪表板中显示的证人Source Text的令牌总数。"
     },
     heatmapAxisBeta: {
-      title: "Y轴：证人β位置",
-      body: "垂直轴表示证人β（比较项）内的令牌位置。此轴上的每个单位对应于证人β中的令牌索引。在Y轴上的位置30处绘制的匹配意味着匹配的段从比较文本的大约第30个令牌开始。",
-      tip: "该轴的总范围等于证人β的令牌总数。如果证人β的长度明显短于或长于证人α，热图的纵横比将反映此不对称性。"
+      title: "Y轴：证人Target Text位置",
+      body: "垂直轴表示证人Target Text（比较项）内的令牌位置。此轴上的每个单位对应于证人Target Text中的令牌索引。在Y轴上的位置30处绘制的匹配意味着匹配的段从比较文本的大约第30个令牌开始。",
+      tip: "该轴的总范围等于证人Target Text的令牌总数。如果证人Target Text的长度明显短于或长于证人Source Text，热图的纵横比将反映此不对称性。"
     },
     aiIntertextuality: {
       title: "AI互文性分析",
@@ -856,11 +856,11 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
       tip: "단어 수준 알고리즘의 경우 3-5가 보통 최적입니다. 문자 수준 알고리즘의 경우 무작위 음절 일치를 피하기 위해 5-10이 권장됩니다."
     },
     witnessAlpha: {
-      title: "증인 α(주요)",
-      body: "대조에 사용되는 주요 텍스트 또는 기본 텍스트입니다. 이는 일반적으로 원본 텍스트, 구형 필사본 또는 비교 대상이 평가되는 참조 텍스트입니다. α와 β 간의 구별은 주로 시각화 목적을 위한 것입니다. 대부분의 알고리즘은 대칭이므로 α 또는 β가 어느 텍스트이든 유사도 점수는 동일합니다."
+      title: "증인 Source Text(주요)",
+      body: "대조에 사용되는 주요 텍스트 또는 기본 텍스트입니다. 이는 일반적으로 원본 텍스트, 구형 필사본 또는 비교 대상이 평가되는 참조 텍스트입니다. Source Text와 T 간의 구별은 주로 시각화 목적을 위한 것입니다. 대부분의 알고리즘은 대칭이므로 S 또는 Target Text가 어느 텍스트이든 유사도 점수는 동일합니다."
     },
     witnessBeta: {
-      title: "증인 β(비교 대상)",
+      title: "증인 Target Text(비교 대상)",
       body: "보조 텍스트, 대상 텍스트 또는 비교 대상입니다. 이는 일반적으로 주요 텍스트를 재사용했다고 의심되는 텍스트, 후대 필사본 또는 번역입니다."
     },
     meanSimilarity: {
@@ -886,7 +886,7 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
     },
     totalTokenCount: {
       title: "토큰 총수",
-      body: "각 증인의 토큰(알고리즘에 따라 단어 또는 문자)의 총 수입니다. 이는 \"재사용 커버리지\" 메트릭을 맥락화하는 데 도움이 됩니다. 증인 α가 증인 β보다 훨씬 크면 β의 100% 커버리지는 α의 5% 커버리지만 나타낼 수 있습니다."
+      body: "각 증인의 토큰(알고리즘에 따라 단어 또는 문자)의 총 수입니다. 이는 \"재사용 커버리지\" 메트릭을 맥락화하는 데 도움이 됩니다. 증인 Source Text가 증인 Target Text보다 훨씬 크면 Target Text의 100% 커버리지는 Source Text의 5% 커버리지만 나타낼 수 있습니다."
     },
     macroAlignment: {
       title: "매크로 수준 정렬 흐름",
@@ -911,22 +911,22 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
     },
     witnessDispersion: {
       title: "증인 분산",
-      body: "각 텍스트의 선형 진행 내에서 일치가 발생하는 위치를 보여주는 산포도입니다. X축은 증인 α의 위치를 나타내고 Y축은 증인 β의 위치를 나타냅니다. 완벽한 대각선은 동일한 구조를 나타냅니다. 대각선 밖의 점 클러스터는 구조적 재배열 또는 국소화된 재사용을 나타냅니다."
+      body: "각 텍스트의 선형 진행 내에서 일치가 발생하는 위치를 보여주는 산포도입니다. X축은 증인 Source Text의 위치를 나타내고 Y축은 증인 Target Text의 위치를 나타냅니다. 완벽한 대각선은 동일한 구조를 나타냅니다. 대각선 밖의 점 클러스터는 구조적 재배열 또는 국소화된 재사용을 나타냅니다."
     },
     heatmapView: {
       title: "위치 대응(히트맵)",
-      body: "두 증인 간 일치 세그먼트의 위치 대응을 보여주는 2차원 그리드입니다. 각 색칠된 셀은 감지된 일치를 나타냅니다. 셀의 X축 위치는 증인 α에서 일치가 발생하는 위치에 해당하고, Y축 위치는 증인 β 내의 위치에 해당합니다. 색상 강도는 유사도를 인코딩합니다: 따뜻한 톤은 더 높은 유사도 점수를 나타냅니다.",
+      body: "두 증인 간 일치 세그먼트의 위치 대응을 보여주는 2차원 그리드입니다. 각 색칠된 셀은 감지된 일치를 나타냅니다. 셀의 X축 위치는 증인 Source Text에서 일치가 발생하는 위치에 해당하고, Y축 위치는 증인 T 내의 위치에 해당합니다. 색상 강도는 유사도를 인코딩합니다: 따뜻한 톤은 더 높은 유사도 점수를 나타냅니다.",
       tip: "대각선 패턴은 두 텍스트가 동일한 순서를 따름을 시사합니다. 분산된 셀은 선택적 또는 단편화된 재사용을 나타냅니다. 밀집된 클러스터는 대량의 텍스트 차용 섹션을 드러냅니다."
     },
     heatmapAxisAlpha: {
-      title: "X축: 증인 α 위치",
-      body: "수평축은 증인 α(주요 텍스트) 내의 토큰 위치를 나타냅니다. 이 축의 각 단위는 증인 α의 토큰 인덱스(선택한 알고리즘에 따라 단어 또는 문자)에 해당합니다. X축의 위치 50에 표시된 일치는 일치된 세그먼트가 주요 텍스트의 약 50번째 토큰에서 시작됨을 의미합니다.",
-      tip: "이 축의 총 범위는 통계 대시보드에 표시된 증인 α의 토큰 총수와 같습니다."
+      title: "X축: 증인 S 위치",
+      body: "수평축은 증인 Source Text(주요 텍스트) 내의 토큰 위치를 나타냅니다. 이 축의 각 단위는 증인 Source Text의 토큰 인덱스(선택한 알고리즘에 따라 단어 또는 문자)에 해당합니다. X축의 위치 50에 표시된 일치는 일치된 세그먼트가 주요 텍스트의 약 50번째 토큰에서 시작됨을 의미합니다.",
+      tip: "이 축의 총 범위는 통계 대시보드에 표시된 증인 Source Text의 토큰 총수와 같습니다."
     },
     heatmapAxisBeta: {
-      title: "Y축: 증인 β 위치",
-      body: "세로축은 증인 β(비교 대상) 내의 토큰 위치를 나타냅니다. 이 축의 각 단위는 증인 β의 토큰 인덱스에 해당합니다. Y축의 위치 30에 표시된 일치는 일치된 세그먼트가 비교 텍스트의 약 30번째 토큰에서 시작됨을 의미합니다.",
-      tip: "이 축의 총 범위는 증인 β의 토큰 총수와 같습니다. 증인 β가 증인 α보다 훨씬 짧거나 길면 히트맵의 종횡비가 이 비대칭성을 반영합니다."
+      title: "Y축: 증인 T 위치",
+      body: "세로축은 증인 Target Text(비교 대상) 내의 토큰 위치를 나타냅니다. 이 축의 각 단위는 증인 Target Text의 토큰 인덱스에 해당합니다. Y축의 위치 30에 표시된 일치는 일치된 세그먼트가 비교 텍스트의 약 30번째 토큰에서 시작됨을 의미합니다.",
+      tip: "이 축의 총 범위는 증인 Target Text의 토큰 총수와 같습니다. 증인 Target Text가 증인 Source Text보다 훨씬 짧거나 길면 히트맵의 종횡비가 이 비대칭성을 반영합니다."
     },
     aiIntertextuality: {
       title: "AI 상호텍스트성 분석",
@@ -963,11 +963,11 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
       tip: "Für Wort-Ebenen-Algorithmen sind 3-5 normalerweise optimal. Für Zeichen-Ebenen-Algorithmen wird 5-10 empfohlen, um eine Übereinstimmung mit zufälligen Silben zu vermeiden."
     },
     witnessAlpha: {
-      title: "Zeuge α (Primär)",
-      body: "Der primäre Text oder Grundtext, der für die Kollation verwendet wird. Dies ist typischerweise der Quelltext, das ältere Manuskript oder der Referenztext, gegen den das Vergleichsobjekt bewertet wird. Die Unterscheidung zwischen α und β dient hauptsächlich zu Visualisierungszwecken. Die meisten Algorithmen sind symmetrisch, was bedeutet, dass der Ähnlichkeitswert unabhängig davon gleich ist, welcher Text α oder β ist."
+      title: "Zeuge S (Primär)",
+      body: "Der primäre Text oder Grundtext, der für die Kollation verwendet wird. Dies ist typischerweise der Quelltext, das ältere Manuskript oder der Referenztext, gegen den das Vergleichsobjekt bewertet wird. Die Unterscheidung zwischen S und T dient hauptsächlich zu Visualisierungszwecken. Die meisten Algorithmen sind symmetrisch, was bedeutet, dass der Ähnlichkeitswert unabhängig davon gleich ist, welcher Text S oder T ist."
     },
     witnessBeta: {
-      title: "Zeuge β (Vergleichsobjekt)",
+      title: "Zeuge T (Vergleichsobjekt)",
       body: "Der sekundäre Text, Zieltext oder das Vergleichsobjekt. Dies ist typischerweise der Text, der den primären Text wiederzuverwenden verdächtigt wird, ein späteres Manuskript oder eine Übersetzung."
     },
     meanSimilarity: {
@@ -993,7 +993,7 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
     },
     totalTokenCount: {
       title: "Gesamttokenanzahl",
-      body: "Die Gesamtzahl der Token (Wörter oder Zeichen, je nach Algorithmus) in jedem Zeugen. Dies hilft, die Metrik \"Wiederverwendungsabdeckung\" in den Kontext einzuordnen. Wenn Zeuge α viel größer ist als Zeuge β, könnte eine 100%ige Abdeckung von β nur eine 5%ige Abdeckung von α darstellen."
+      body: "Die Gesamtzahl der Token (Wörter oder Zeichen, je nach Algorithmus) in jedem Zeugen. Dies hilft, die Metrik \"Wiederverwendungsabdeckung\" in den Kontext einzuordnen. Wenn Zeuge S viel größer ist als Zeuge Target Text, könnte eine 100%ige Abdeckung von T nur eine 5%ige Abdeckung von S darstellen."
     },
     macroAlignment: {
       title: "Makro-Level-Ausrichtungsfluss",
@@ -1018,22 +1018,22 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
     },
     witnessDispersion: {
       title: "Zeuge Dispersion",
-      body: "Ein Streudiagramm, das zeigt, wo Übereinstimmungen innerhalb des linearen Fortschritts jedes Textes auftreten. Die X-Achse stellt die Position in Zeuge α dar, und die Y-Achse stellt die Position in Zeuge β dar. Eine perfekte Diagonallinie zeigt identische Struktur an. Punktcluster neben der Diagonale deuten auf strukturelle Umordnung oder lokalisierte Wiederverwendung hin."
+      body: "Ein Streudiagramm, das zeigt, wo Übereinstimmungen innerhalb des linearen Fortschritts jedes Textes auftreten. Die X-Achse stellt die Position in Zeuge S dar, und die Y-Achse stellt die Position in Zeuge T dar. Eine perfekte Diagonallinie zeigt identische Struktur an. Punktcluster neben der Diagonale deuten auf strukturelle Umordnung oder lokalisierte Wiederverwendung hin."
     },
     heatmapView: {
       title: "Positionskorrespondenz (Wärmekarte)",
-      body: "Ein zweidimensionales Gitter, das die Positionskorrespondenz von Übereinstimmungssegmenten zwischen den beiden Zeugen zeigt. Jede farbige Zelle stellt eine erkannte Übereinstimmung dar. Die Position der Zelle auf der X-Achse entspricht, wo die Übereinstimmung in Zeuge α auftritt, und ihre Y-Achsen-Position entspricht dem Ort in Zeuge β. Die Farbintensität codiert Ähnlichkeit: Wärmere Töne deuten auf höhere Ähnlichkeitswerte hin.",
+      body: "Ein zweidimensionales Gitter, das die Positionskorrespondenz von Übereinstimmungssegmenten zwischen den beiden Zeugen zeigt. Jede farbige Zelle stellt eine erkannte Übereinstimmung dar. Die Position der Zelle auf der X-Achse entspricht, wo die Übereinstimmung in Zeuge S auftritt, und ihre Y-Achsen-Position entspricht dem Ort in Zeuge Target Text. Die Farbintensität codiert Ähnlichkeit: Wärmere Töne deuten auf höhere Ähnlichkeitswerte hin.",
       tip: "Ein Diagonalmuster deutet darauf hin, dass beide Texte derselben sequenziellen Reihenfolge folgen. Verstreute Zellen deuten auf selektive oder fragmentierte Wiederverwendung hin. Dichte Cluster zeigen Abschnitte mit schwerer Textwiederver wendung."
     },
     heatmapAxisAlpha: {
-      title: "X-Achse: Zeugen α Position",
-      body: "Die horizontale Achse stellt die Tokenposition innerhalb von Zeuge α (dem primären Text) dar. Jede Einheit auf dieser Achse entspricht einem Token-Index (Wort oder Zeichen, je nach ausgewähltem Algorithmus) in Zeuge α. Eine Übereinstimmung, die auf Position 50 auf der X-Achse aufgezeichnet ist, bedeutet, dass das übereinstimmende Segment ungefähr beim 50. Token des primären Textes beginnt.",
-      tip: "Der Gesamtbereich dieser Achse entspricht der Gesamttokenanzahl von Zeuge α, wie im Statistik-Dashboard angezeigt."
+      title: "X-Achse: Zeugen S Position",
+      body: "Die horizontale Achse stellt die Tokenposition innerhalb von Zeuge S (dem primären Text) dar. Jede Einheit auf dieser Achse entspricht einem Token-Index (Wort oder Zeichen, je nach ausgewähltem Algorithmus) in Zeuge Source Text. Eine Übereinstimmung, die auf Position 50 auf der X-Achse aufgezeichnet ist, bedeutet, dass das übereinstimmende Segment ungefähr beim 50. Token des primären Textes beginnt.",
+      tip: "Der Gesamtbereich dieser Achse entspricht der Gesamttokenanzahl von Zeuge Source Text, wie im Statistik-Dashboard angezeigt."
     },
     heatmapAxisBeta: {
-      title: "Y-Achse: Zeugen β Position",
-      body: "Die vertikale Achse stellt die Tokenposition innerhalb von Zeuge β (dem Vergleichsobjekt) dar. Jede Einheit auf dieser Achse entspricht einem Token-Index in Zeuge β. Eine Übereinstimmung, die auf Position 30 auf der Y-Achse aufgezeichnet ist, bedeutet, dass das übereinstimmende Segment ungefähr beim 30. Token des Vergleichstextes beginnt.",
-      tip: "Der Gesamtbereich dieser Achse entspricht der Gesamttokenanzahl von Zeuge β. Wenn Zeuge β erheblich kürzer oder länger als Zeuge α ist, spiegelt das Seitenverhältnis der Wärmekarte diese Asymmetrie wider."
+      title: "Y-Achse: Zeugen T Position",
+      body: "Die vertikale Achse stellt die Tokenposition innerhalb von Zeuge T (dem Vergleichsobjekt) dar. Jede Einheit auf dieser Achse entspricht einem Token-Index in Zeuge Target Text. Eine Übereinstimmung, die auf Position 30 auf der Y-Achse aufgezeichnet ist, bedeutet, dass das übereinstimmende Segment ungefähr beim 30. Token des Vergleichstextes beginnt.",
+      tip: "Der Gesamtbereich dieser Achse entspricht der Gesamttokenanzahl von Zeuge Target Text. Wenn Zeuge T erheblich kürzer oder länger als Zeuge S ist, spiegelt das Seitenverhältnis der Wärmekarte diese Asymmetrie wider."
     },
     aiIntertextuality: {
       title: "KI-Intertextualitätsanalyse",
@@ -1065,11 +1065,11 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
       body: "Longitudinem sequentiae (numerum verborum aut characterum) quae ut basus comparationis unitas adhibetur definit."
     },
     witnessAlpha: {
-      title: "Testis α (Primus)",
-      body: "Textus primus aut fundamentalis collationem adhibitus. Hoc typice textus fons, manuscriptum antiquius, aut textus referentiae est contra quem comparandum exaenigitur. Distinctio inter α et β maxime ad visualizationis proposita est. Maxima algoritha symmetrica sunt, significans puncta similitudinis eadem sunt sive α sive β quodlibet textum sit."
+      title: "Testis S (Primus)",
+      body: "Textus primus aut fundamentalis collationem adhibitus. Hoc typice textus fons, manuscriptum antiquius, aut textus referentiae est contra quem comparandum exaenigitur. Distinctio inter S et T maxime ad visualizationis proposita est. Maxima algoritha symmetrica sunt, significans puncta similitudinis eadem sunt sive S sive T quodlibet textum sit."
     },
     witnessBeta: {
-      title: "Testis β (Comparandum)",
+      title: "Testis T (Comparandum)",
       body: "Textus secundarius, textus directionis, aut comparandum. Hoc typice textus est qui primarium textum reutilisare suspicatur, manuscriptum posterius, aut translatio."
     },
     meanSimilarity: {
@@ -1090,7 +1090,7 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
     },
     totalTokenCount: {
       title: "Numerus Tokenorum Totalis",
-      body: "Numerus totalis tokenorum (verba aut characteres, secundum algorithma) in quoque testis. Hoc metrum \"Operimenti Reutilisationis\" contextualizar adiuvat. Si testis α multo maior quam testis β sit, operimentum 100% β tantummodo operimentum 5% α repraesentare potest."
+      body: "Numerus totalis tokenorum (verba aut characteres, secundum algorithma) in quoque testis. Hoc metrum \"Operimenti Reutilisationis\" contextualizar adiuvat. Si testis S multo maior quam testis T sit, operimentum 100% T tantummodo operimentum 5% S repraesentare potest."
     },
     macroAlignment: {
       title: "Fluxus Conformationis Macro-Ordinis",
@@ -1115,20 +1115,20 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
     },
     witnessDispersion: {
       title: "Dispersio Testis",
-      body: "Scatterplot ostendens ubi concordantiae in progressione lineari uniusquisque textus occurrunt. Axis X positionem in testis α refert, axis Y positionem in testis β refert. Linea diagonalis perfecta structuram identicum significat. Coetus punctorum ab diagonali recedentes ordinationem structuralem reformam aut reutilisationem localisatam significant."
+      body: "Scatterplot ostendens ubi concordantiae in progressione lineari uniusquisque textus occurrunt. Axis X positionem in testis S refert, axis Y positionem in testis T refert. Linea diagonalis perfecta structuram identicum significat. Coetus punctorum ab diagonali recedentes ordinationem structuralem reformam aut reutilisationem localisatam significant."
     },
     heatmapView: {
       title: "Correspondentia Positionis (Cartogram Caloris)",
-      body: "Reticula bidimensionale correspondentiain positionis segmentorum congruentiorum inter duos testes ostendens. Quodlibet cellulum coloratum concordantiam detectam repraesentat. Positio celluli in axe X ubi concordantia in testis α occurrit correspondet, et positio Y axeos in testis β locum correspondet. Intensio coloris similitudinem ncodat: tonae calidiores puncta similitudinis altiora significant.",
+      body: "Reticula bidimensionale correspondentiain positionis segmentorum congruentiorum inter duos testes ostendens. Quodlibet cellulum coloratum concordantiam detectam repraesentat. Positio celluli in axe X ubi concordantia in testis S occurrit correspondet, et positio Y axeos in testis T locum correspondet. Intensio coloris similitudinem ncodat: tonae calidiores puncta similitudinis altiora significant.",
       tip: "Pattern diagonale quod ambo texti eandem ordinem sequuntur significat. Cellulae dispersae reutilisationem selectivam aut fragmentatam significant. Aggregata densa sectiones gravibus mutuis textui ostendunt."
     },
     heatmapAxisAlpha: {
-      title: "Axis X: Positio Testis α",
-      body: "Axis horizontalis positionem tokenum in testis α (textus primario) repraesentat. Quodlibet unitas in axe hac indici tokenorum (verbum aut character, secundum algorithma selectum) in testis α correspondet. Concordantia positionem 50 in axe X delineata significat segmentum concordans ab ca. 50.mo tokeno textus primarii incipit."
+      title: "Axis X: Positio Testis Source Text",
+      body: "Axis horizontalis positionem tokenum in testis S (textus primario) repraesentat. Quodlibet unitas in axe hac indici tokenorum (verbum aut character, secundum algorithma selectum) in testis S correspondet. Concordantia positionem 50 in axe X delineata significat segmentum concordans ab ca. 50.mo tokeno textus primarii incipit."
     },
     heatmapAxisBeta: {
-      title: "Axis Y: Positio Testis β",
-      body: "Axis verticalis positionem tokenum in testis β (comparandum) repraesentat. Quodlibet unitas in axe hac indici tokenorum in testis β correspondet. Concordantia positionem 30 in axe Y delineata significat segmentum concordans ab ca. 30.mo tokeno textus comparationis incipit."
+      title: "Axis Y: Positio Testis Target Text",
+      body: "Axis verticalis positionem tokenum in testis T (comparandum) repraesentat. Quodlibet unitas in axe hac indici tokenorum in testis T correspondet. Concordantia positionem 30 in axe Y delineata significat segmentum concordans ab ca. 30.mo tokeno textus comparationis incipit."
     },
     aiIntertextuality: {
       title: "Analysi Intertextualitatis AI",
@@ -1170,7 +1170,7 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
     },
     macroAlignment: {
       title: 'Flusso di Allineamento Macro',
-      body: 'Questa visualizzazione mostra il flusso complessivo delle corrispondenze tra i due testi testimoni. Ogni banda connette le posizioni delle corrispondenze nel Testimone α (sinistra) alle posizioni nel Testimone β (destra).',
+      body: 'Questa visualizzazione mostra il flusso complessivo delle corrispondenze tra i due testi testimoni. Ogni banda connette le posizioni delle corrispondenze nel Testimone S (sinistra) alle posizioni nel Testimone T (destra).',
       tip: 'Bande parallele suggeriscono struttura preservata; bande incrociate indicano riarrangiamento del testo.',
     },
     matchGallery: {
@@ -1215,15 +1215,15 @@ const helpTopicData: Record<Language, Record<string, HelpTopic>> = {
     },
     totalTokenCount: {
       title: 'Conteggio Totale Token',
-      body: 'Questo aiuta a contestualizzare la metrica "Copertura di Riuso". Se il Testimone α è molto più grande del Testimone β, una copertura del 100% di β potrebbe rappresentare solo il 5% della copertura di α.',
+      body: 'Questo aiuta a contestualizzare la metrica "Copertura di Riuso". Se il Testimone S è molto più grande del Testimone Target Text, una copertura del 100% di T potrebbe rappresentare solo il 5% della copertura di Source Text.',
     },
     witnessAlpha: {
-      title: 'Testimone α (Primario)',
+      title: 'Testimone S (Primario)',
       body: 'Il testo primario di riferimento — il "testo fonte" con cui viene confrontato il secondo testo. Nella filologia classica, questo è spesso il testo più antico o autorevole.',
     },
     witnessBeta: {
-      title: 'Testimone β (Comparandum)',
-      body: 'Il testo comparativo — il testo che viene confrontato con il Testimone α. Questo potrebbe essere un testimone successivo, una traduzione, un commento o un testo dipendente sospetto.',
+      title: 'Testimone T (Comparandum)',
+      body: 'Il testo comparativo — il testo che viene confrontato con il Testimone Source Text. Questo potrebbe essere un testimone successivo, una traduzione, un commento o un testo dipendente sospetto.',
     },
   }
 };

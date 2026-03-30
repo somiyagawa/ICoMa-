@@ -19,8 +19,8 @@ const ParallelViewer: React.FC<ParallelViewerProps> = ({
   matches,
   onSelectMatch,
   selectedMatch,
-  witnessAlphaName = 'Witness α',
-  witnessBetaName = 'Witness β'
+  witnessAlphaName = 'Source Text',
+  witnessBetaName = 'Target Text'
 }) => {
   const [hoveredIdx, setHoveredIdx] = useState<{ side: 'A' | 'B', index: number } | null>(null);
   const containerARef = useRef<HTMLDivElement>(null);
@@ -173,8 +173,8 @@ const ParallelViewer: React.FC<ParallelViewerProps> = ({
             </div>
           </div>
         </div>
-        
-        {/* Witness β Column */}
+
+        {/* Target Text Column */}
         <div className="flex overflow-hidden h-full group">
           {renderMinimap('B', tokensB)}
           <div className="flex-1 flex flex-col overflow-hidden">

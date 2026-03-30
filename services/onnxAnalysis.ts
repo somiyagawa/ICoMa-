@@ -83,7 +83,7 @@ export async function runOnnxAnalysis(
     segmentsB.push({ phrase: tokensB.map(t => t.text).join(' '), position: 0, tokens: tokensB });
   }
 
-  // 3. Compute embeddings for Witness α segments
+  // 3. Compute embeddings for Source Text segments
   const embA: Float32Array[] = [];
   for (let i = 0; i < segmentsA.length; i++) {
     embA.push(await embed(segmentsA[i].phrase));
@@ -95,7 +95,7 @@ export async function runOnnxAnalysis(
     });
   }
 
-  // 4. Compute embeddings for Witness β segments
+  // 4. Compute embeddings for Target Text segments
   const embB: Float32Array[] = [];
   for (let i = 0; i < segmentsB.length; i++) {
     embB.push(await embed(segmentsB[i].phrase));

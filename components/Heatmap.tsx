@@ -36,8 +36,8 @@ const Heatmap: React.FC<HeatmapProps> = ({
   selectedMatch,
   onHelpClick,
   lang = 'en' as Language,
-  witnessAlphaName = 'Witness α',
-  witnessBetaName = 'Witness β'
+  witnessAlphaName = 'Source Text',
+  witnessBetaName = 'Target Text'
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);

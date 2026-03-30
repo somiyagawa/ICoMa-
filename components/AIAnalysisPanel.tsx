@@ -152,7 +152,7 @@ const MatchCard: React.FC<{ match: AIIntertextualityMatch; index: number; lang?:
             <div>
               <div className="text-[9px] font-bold uppercase text-gray-500 mb-1 flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full" style={{ backgroundColor: borderHighlight }}></span>
-                Witness α
+                Source Text
               </div>
               <div
                 className="text-[11px] font-coptic p-3 rounded-sm border leading-relaxed"
@@ -165,7 +165,7 @@ const MatchCard: React.FC<{ match: AIIntertextualityMatch; index: number; lang?:
             <div>
               <div className="text-[9px] font-bold uppercase text-gray-500 mb-1 flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full" style={{ backgroundColor: borderHighlight }}></span>
-                Witness β
+                Target Text
               </div>
               <div
                 className="text-[11px] font-coptic p-3 rounded-sm border leading-relaxed"

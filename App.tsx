@@ -241,8 +241,8 @@ const App: React.FC = () => {
   const [fontFamily, setFontFamily] = useState<string>('serif');
   const [galleryZoom, setGalleryZoom] = useState<number>(1.0);
   const [activeHelpModal, setActiveHelpModal] = useState<string | null>(null);
-  const [witnessAlphaName, setWitnessAlphaName] = useState<string>('Witness α');
-  const [witnessBetaName, setWitnessBetaName] = useState<string>('Witness β');
+  const [witnessAlphaName, setWitnessAlphaName] = useState<string>('Source Text');
+  const [witnessBetaName, setWitnessBetaName] = useState<string>('Target Text');
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [onnxProgress, setOnnxProgress] = useState<OnnxAnalysisProgress | null>(null);
   const [showReportMenu, setShowReportMenu] = useState(false);
@@ -622,7 +622,7 @@ const App: React.FC = () => {
               <div className="flex flex-col" data-tour="step-source">
                 <div className="flex justify-between items-center mb-2 px-1">
                    <div className="flex items-center gap-1.5">
-                     <span className="text-[10px] font-bold shrink-0 w-4 h-4 rounded-full flex items-center justify-center" style={{background:'#2563eb', color:'#fff'}}>α</span>
+                     <span className="text-[10px] font-bold shrink-0 w-4 h-4 rounded-full flex items-center justify-center" style={{background:'#2563eb', color:'#fff'}}>S</span>
                      <div className="relative group">
                        <input
                          type="text"
@@ -643,7 +643,7 @@ const App: React.FC = () => {
               <div className="flex flex-col" data-tour="step-target">
                 <div className="flex justify-between items-center mb-2 px-1">
                    <div className="flex items-center gap-1.5">
-                     <span className="text-[10px] font-bold shrink-0 w-4 h-4 rounded-full flex items-center justify-center" style={{background:'#d97706', color:'#fff'}}>β</span>
+                     <span className="text-[10px] font-bold shrink-0 w-4 h-4 rounded-full flex items-center justify-center" style={{background:'#d97706', color:'#fff'}}>T</span>
                      <div className="relative group">
                        <input
                          type="text"
@@ -710,8 +710,8 @@ const App: React.FC = () => {
                     {onnxProgress ? (
                       <span className="text-[10px]">
                         {onnxProgress.phase === 'model' && t(lang, 'Loading ONNX Model...')}
-                        {onnxProgress.phase === 'embedding-alpha' && `${t(lang, 'Embedding')} α: ${onnxProgress.percent}%`}
-                        {onnxProgress.phase === 'embedding-beta' && `${t(lang, 'Embedding')} β: ${onnxProgress.percent}%`}
+                        {onnxProgress.phase === 'embedding-alpha' && `${t(lang, 'Embedding')} S: ${onnxProgress.percent}%`}
+                        {onnxProgress.phase === 'embedding-beta' && `${t(lang, 'Embedding')} T: ${onnxProgress.percent}%`}
                         {onnxProgress.phase === 'comparing' && `${t(lang, 'Comparing')}: ${onnxProgress.percent}%`}
                       </span>
                     ) : t(lang, 'PROCESSING LARGE DATASET...')}
@@ -772,8 +772,8 @@ const App: React.FC = () => {
                     <HelpButton topic="totalTokenCount" onClick={setActiveHelpModal} />
                   </div>
                   <div className="flex gap-4">
-                    <div className="px-3 py-1 text-white rounded-full text-[10px] font-mono" style={{background:'#2563eb'}}>α: {result.tokensA.length}</div>
-                    <div className="px-3 py-1 text-white rounded-full text-[10px] font-mono" style={{background:'#d97706'}}>β: {result.tokensB.length}</div>
+                    <div className="px-3 py-1 text-white rounded-full text-[10px] font-mono" style={{background:'#2563eb'}}>S: {result.tokensA.length}</div>
+                    <div className="px-3 py-1 text-white rounded-full text-[10px] font-mono" style={{background:'#d97706'}}>T: {result.tokensB.length}</div>
                   </div>
                </div>
             </div>
@@ -1045,7 +1045,7 @@ const App: React.FC = () => {
                   <li>Added <strong>Report Download</strong> in 4 formats: <strong>PDF</strong> (jsPDF + autoTable), <strong>DOCX</strong> (docx.js), <strong>LaTeX</strong> (.tex with booktabs/longtable), and <strong>TEI XML</strong> (P5-compliant).</li>
                   <li>Added <strong>Italiano (Italian)</strong> as a new UI language (7 languages total).</li>
                   <li>Complete <strong>i18n coverage</strong>: all algorithm names, UI controls, tooltips, match gallery labels, and chart controls now fully translated across all 7 languages.</li>
-                  <li>Added <strong>Editable Witness Names</strong>: inline-editable α/β name inputs propagate custom names throughout all visualization panels.</li>
+                  <li>Added <strong>Editable Witness Names</strong>: inline-editable Source/Target name inputs propagate custom names throughout all visualization panels.</li>
                   <li>Added <strong>Inline Diff View</strong> in Match Gallery: word-level LCS diff with colour-coded insertions/deletions for sub-100% matches.</li>
                   <li>Added <strong>Match Gallery Fullscreen</strong> with ranked card layout, medal badges for top 3 matches, and similarity progress bars.</li>
                   <li>Added <strong>Cross-Panel Synchronization</strong>: selecting a match in any panel (Histogram, Network Graph, Heatmap, Dispersion, Gallery) highlights it everywhere.</li>
@@ -1053,8 +1053,8 @@ const App: React.FC = () => {
                   <li><strong>Heatmap</strong> header reorganized into 3 rows (title, axis legends, toolbar) to prevent layout crowding.</li>
                   <li><strong>Fullscreen Exit</strong> button made more prominent with floating red bar, gradient overlay, and Esc key support.</li>
                   <li>Fixed <strong>zoom overflow</strong>: CSS <code>transform: scale()</code> no longer covers sibling components via <code>maxHeight</code> + <code>overflow: auto</code> containment.</li>
-                  <li>Unified all Witness naming to <strong>Greek lowercase</strong> (α/β) — removed forced CSS <code>uppercase</code> that turned α into Α.</li>
-                  <li>ONNX progress indicator: phase-specific feedback (model loading → embedding α → embedding β → comparing) with percentage.</li>
+                  <li>Unified all Witness naming to <strong>Source/Target</strong> — removed forced CSS <code>uppercase</code> styling.</li>
+                  <li>ONNX progress indicator: phase-specific feedback (model loading → embedding S → embedding T → comparing) with percentage.</li>
                 </ul>
               </div>
               <div>
@@ -1064,7 +1064,7 @@ const App: React.FC = () => {
                   <li>Added <strong>Old Japanese (万葉集 &amp; 注釈)</strong> example to Quick Load.</li>
                   <li>Added <strong>SVG/PNG download</strong> and <strong>fullscreen mode</strong> for all visualization panels.</li>
                   <li>Added <strong>font size and font family controls</strong> in the menu bar.</li>
-                  <li>Added interactive help modals (<strong>?</strong> buttons) for Heatmap axes (Witness α/β Position) and AI Intertextuality Analysis.</li>
+                  <li>Added interactive help modals (<strong>?</strong> buttons) for Heatmap axes (Source/Target Position) and AI Intertextuality Analysis.</li>
                   <li>Added <strong>confidence-based colour highlighting</strong> for AI analysis parallel passages, with per-category colour coding.</li>
                   <li>AI Analysis now <strong>auto-re-runs</strong> when the Collation Engine is triggered.</li>
                   <li>Fixed Claude API <strong>CORS / "Failed to fetch"</strong> issue via Vercel proxy rewrites.</li>

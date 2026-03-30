@@ -80,7 +80,7 @@ const INTERTEXTUALITY_CATEGORIES: Record<string, IntertextualityCategory> = {
 
 export { INTERTEXTUALITY_CATEGORIES };
 
-const SYSTEM_PROMPT = `You are an expert in computational philology, intertextuality studies, and historical linguistics. Your task is to analyze two texts (Witness α and Witness β) for all forms of intertextual relationships.
+const SYSTEM_PROMPT = `You are an expert in computational philology, intertextuality studies, and historical linguistics. Your task is to analyze two texts (Source Text and Target Text) for all forms of intertextual relationships.
 
 You must identify and classify each instance of intertextuality according to the following taxonomy:
 1. **Direct Quotation**: Verbatim or near-verbatim reproduction, with or without explicit attribution markers.
@@ -93,8 +93,8 @@ You must identify and classify each instance of intertextuality according to the
 8. **Other**: Any other intertextual relationship.
 
 For EACH identified instance, provide:
-- The specific passage from Witness α (source_passage)
-- The corresponding passage from Witness β (target_passage)
+- The specific passage from Source Text (source_passage)
+- The corresponding passage from Target Text (target_passage)
 - The category (one of: direct_quotation, allusion, echo, paraphrase, structural_parallel, thematic_reuse, formulaic_language, other)
 - A confidence score (0-100)
 - A scholarly explanation of the relationship
@@ -106,8 +106,8 @@ You MUST respond in valid JSON with this exact structure:
   "matches": [
     {
       "category": "direct_quotation",
-      "source_passage": "text from Witness α",
-      "target_passage": "text from Witness β",
+      "source_passage": "text from Source Text",
+      "target_passage": "text from Target Text",
       "confidence": 95,
       "explanation": "Scholarly explanation",
       "possible_source": "Optional external source"
@@ -121,10 +121,10 @@ Be thorough, precise, and scholarly in your analysis. Consider the linguistic, h
 const buildUserPrompt = (textA: string, textB: string): string => {
   return `Analyze the following two texts for all forms of intertextuality.
 
-=== WITNESS α (Primary Text) ===
+=== SOURCE TEXT (Primary Text) ===
 ${textA}
 
-=== WITNESS β (Comparandum) ===
+=== TARGET TEXT (Comparandum) ===
 ${textB}
 
 Provide your analysis in the specified JSON format. Be exhaustive in identifying all intertextual relationships.`;

@@ -198,11 +198,11 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ onLoadSession, isOpen, onCl
                   {/* Witness names preview */}
                   <div className="flex gap-2 mb-3 text-[10px] text-gray-400">
                     <span className="truncate" title={session.witnessAlphaName}>
-                      <strong style={{ color: '#2563eb' }}>α</strong> {session.witnessAlphaName}
+                      <strong style={{ color: '#2563eb' }}>S</strong> {session.witnessAlphaName}
                     </span>
                     <span className="text-gray-300">|</span>
                     <span className="truncate" title={session.witnessBetaName}>
-                      <strong style={{ color: '#d97706' }}>β</strong> {session.witnessBetaName}
+                      <strong style={{ color: '#d97706' }}>T</strong> {session.witnessBetaName}
                     </span>
                   </div>
 

@@ -3,8 +3,8 @@ import React, { useMemo } from 'react';
 /**
  * DiffView — word/character-level inline diff for source vs target phrases.
  * Uses LCS (Longest Common Subsequence) to compute a minimal diff.
- * Shows: common text as-is, deletions (in α only) with red background,
- * insertions (in β only) with green background.
+ * Shows: common text as-is, deletions (in Source Text only) with red background,
+ * insertions (in Target Text only) with green background.
  */
 
 type DiffSegment = { type: 'equal' | 'delete' | 'insert'; text: string };
@@ -92,8 +92,8 @@ const DiffView: React.FC<DiffViewProps> = ({
   target,
   similarity,
   fontSize = 11,
-  witnessAlphaName = 'Witness α',
-  witnessBetaName = 'Witness β'
+  witnessAlphaName = 'Source Text',
+  witnessBetaName = 'Target Text'
 }) => {
   const diff = useMemo(() => computeDiff(source, target), [source, target]);
 

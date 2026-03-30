@@ -27,8 +27,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'Quick Load': 'Quick Load',
 
     // Witness Labels
-    'Witness α (Primary)': 'Witness α (Primary)',
-    'Witness β (Comparandum)': 'Witness β (Comparandum)',
+    'Source Text (Primary)': 'Source Text (Primary)',
+    'Target Text (Comparandum)': 'Target Text (Comparandum)',
 
     // Text Input Placeholders
     'Insert primary text (Source)...': 'Insert primary text (Source)...',
@@ -63,8 +63,8 @@ export const translations: Record<Language, Record<string, string>> = {
       'The count of distinct matching sequences. If a specific phrase is reused 10 times, it counts as 10 alignments but only 1 unique N-gram.',
     'Unlike "Alignments", this metric deduplicates the matches. If a specific phrase is reused 10 times, it counts as 10 alignments but only 1 unique N-gram. A large difference between Alignments and Unique N-Grams indicates highly repetitive formulaic language.':
       'Unlike "Alignments", this metric deduplicates the matches. If a specific phrase is reused 10 times, it counts as 10 alignments but only 1 unique N-gram. A large difference between Alignments and Unique N-Grams indicates highly repetitive formulaic language.',
-    'This helps contextualize the "Reuse Coverage" metric. If Witness α is much larger than Witness β, a 100% coverage of β might only represent a 5% coverage of α.':
-      'This helps contextualize the "Reuse Coverage" metric. If Witness α is much larger than Witness β, a 100% coverage of β might only represent a 5% coverage of α.',
+    'This helps contextualize the "Reuse Coverage" metric. If Source Text is much larger than Target Text, a 100% coverage of Target Text might only represent a 5% coverage of S.':
+      'This helps contextualize the "Reuse Coverage" metric. If Source Text is much larger than Target Text, a 100% coverage of Target Text might only represent a 5% coverage of S.',
 
     // Visualization Titles
     'Macro-Level Alignment Flow': 'Macro-Level Alignment Flow',
@@ -75,20 +75,20 @@ export const translations: Record<Language, Record<string, string>> = {
     'Witness Dispersion': 'Witness Dispersion',
 
     // Visualization Descriptions
-    'The X-axis represents the position in Witness α, and the Y-axis represents the position in Witness β. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.':
-      'The X-axis represents the position in Witness α, and the Y-axis represents the position in Witness β. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.',
-    'Each coloured cell represents a detected match. The cell\'s position on the X-axis corresponds to where the match occurs in Witness α, and its Y-axis position corresponds to the location in Witness β. Colour intensity encodes similarity: warmer tones indicate higher similarity scores. Clicking a cell selects that match and highlights it across all visualizations.':
-      'Each coloured cell represents a detected match. The cell\'s position on the X-axis corresponds to where the match occurs in Witness α, and its Y-axis position corresponds to the location in Witness β. Colour intensity encodes similarity: warmer tones indicate higher similarity scores. Clicking a cell selects that match and highlights it across all visualizations.',
-    'X-Axis: Witness α Position': 'X-Axis: Witness α Position',
-    'Y-Axis: Witness β Position': 'Y-Axis: Witness β Position',
-    'The horizontal axis represents the token position within Witness α (the primary text).':
-      'The horizontal axis represents the token position within Witness α (the primary text).',
-    'Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Witness α. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.':
-      'Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Witness α. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.',
-    'The vertical axis represents the token position within Witness β (the comparandum).':
-      'The vertical axis represents the token position within Witness β (the comparandum).',
-    'Each unit on this axis corresponds to a token index in Witness β. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.':
-      'Each unit on this axis corresponds to a token index in Witness β. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.',
+    'The X-axis represents the position in Source Text, and the Y-axis represents the position in Target Text. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.':
+      'The X-axis represents the position in Source Text, and the Y-axis represents the position in Target Text. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.',
+    'Each coloured cell represents a detected match. The cell\'s position on the X-axis corresponds to where the match occurs in Source Text, and its Y-axis position corresponds to the location in Target Text. Colour intensity encodes similarity: warmer tones indicate higher similarity scores. Clicking a cell selects that match and highlights it across all visualizations.':
+      'Each coloured cell represents a detected match. The cell\'s position on the X-axis corresponds to where the match occurs in Source Text, and its Y-axis position corresponds to the location in Target Text. Colour intensity encodes similarity: warmer tones indicate higher similarity scores. Clicking a cell selects that match and highlights it across all visualizations.',
+    'X-Axis: Source Text Position': 'X-Axis: Source Text Position',
+    'Y-Axis: Target Text Position': 'Y-Axis: Target Text Position',
+    'The horizontal axis represents the token position within Source Text (the primary text).':
+      'The horizontal axis represents the token position within Source Text (the primary text).',
+    'Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Source Text. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.':
+      'Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Source Text. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.',
+    'The vertical axis represents the token position within Target Text (the comparandum).':
+      'The vertical axis represents the token position within Target Text (the comparandum).',
+    'Each unit on this axis corresponds to a token index in Target Text. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.':
+      'Each unit on this axis corresponds to a token index in Target Text. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.',
 
     // Match Gallery
     'TOP REUSES': 'TOP REUSES',
@@ -223,8 +223,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'Quick Load': 'クイックロード',
 
     // 証拠文本ラベル
-    'Witness α (Primary)': '証拠文本 α（一次テキスト）',
-    'Witness β (Comparandum)': '証拠文本 β（比較対象）',
+    'Source Text (Primary)': '証拠文本 Source Text（一次テキスト）',
+    'Target Text (Comparandum)': '証拠文本 Target Text（比較対象）',
 
     // テキスト入力プレースホルダー
     'Insert primary text (Source)...': '一次テキスト（原文）を挿入...',
@@ -259,8 +259,8 @@ export const translations: Record<Language, Record<string, string>> = {
       '異なるマッチング配列の数。特定のフレーズが10回再利用される場合、10個のアラインメントとしてカウントされますが、一意のN-グラムは1つのみです。',
     'Unlike "Alignments", this metric deduplicates the matches. If a specific phrase is reused 10 times, it counts as 10 alignments but only 1 unique N-gram. A large difference between Alignments and Unique N-Grams indicates highly repetitive formulaic language.':
       '「アラインメント」と異なり、このメトリクスはマッチを重複排除します。特定のフレーズが10回再利用される場合、10個のアラインメントとしてカウントされますが、一意のN-グラムは1つのみです。アラインメント数と一意のN-グラム数の大きな差は、定型的で反復性の高い言語を示しています。',
-    'This helps contextualize the "Reuse Coverage" metric. If Witness α is much larger than Witness β, a 100% coverage of β might only represent a 5% coverage of α.':
-      'これは「再利用カバレッジ」メトリクスの文脈化に役立ちます。証拠文本αが証拠文本βよりも大きい場合、βの100%カバレッジはαの5%カバレッジのみを表すかもしれません。',
+    'This helps contextualize the "Reuse Coverage" metric. If Source Text is much larger than Target Text, a 100% coverage of Target Text might only represent a 5% coverage of S.':
+      'これは「再利用カバレッジ」メトリクスの文脈化に役立ちます。証拠文本Source Textが証拠文本Target Textよりも大きい場合、Target Textの100%カバレッジはSource Textの5%カバレッジのみを表すかもしれません。',
 
     // ビジュアライゼーションタイトル
     'Macro-Level Alignment Flow': 'マクロレベルのアラインメントフロー',
@@ -271,20 +271,20 @@ export const translations: Record<Language, Record<string, string>> = {
     'Witness Dispersion': '証拠文本分散',
 
     // ビジュアライゼーション説明
-    'The X-axis represents the position in Witness α, and the Y-axis represents the position in Witness β. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.':
-      'X軸は証拠文本αの位置を表し、Y軸は証拠文本βの位置を表します。完全な対角線は同一の構造を示します。対角線から外れたポイントのクラスタは、構造的な再配置または局所的な再利用を示します。',
-    'Each coloured cell represents a detected match. The cell\'s position on the X-axis corresponds to where the match occurs in Witness α, and its Y-axis position corresponds to the location in Witness β. Colour intensity encodes similarity: warmer tones indicate higher similarity scores. Clicking a cell selects that match and highlights it across all visualizations.':
-      '各色付きセルは検出されたマッチを表します。セルのX軸位置は証拠文本αでのマッチの位置に対応し、Y軸位置は証拠文本βの位置に対応します。色の濃さは類似度をコード化します：暖色系はより高い類似度スコアを示します。セルをクリックするとそのマッチを選択し、すべてのビジュアライゼーションでハイライトします。',
-    'X-Axis: Witness α Position': 'X軸：証拠文本α の位置',
-    'Y-Axis: Witness β Position': 'Y軸：証拠文本β の位置',
-    'The horizontal axis represents the token position within Witness α (the primary text).':
-      '水平軸は証拠文本α（一次テキスト）内のトークン位置を表します。',
-    'Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Witness α. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.':
-      'この軸の各ユニットは、証拠文本αのトークンインデックス（選択したアルゴリズムによって単語または文字）に対応しています。X軸の位置50にプロットされたマッチは、マッチしたセグメントが一次テキストの約50番目のトークンから始まることを意味します。',
-    'The vertical axis represents the token position within Witness β (the comparandum).':
-      '垂直軸は証拠文本β（比較対象）内のトークン位置を表します。',
-    'Each unit on this axis corresponds to a token index in Witness β. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.':
-      'この軸の各ユニットは、証拠文本βのトークンインデックスに対応しています。Y軸の位置30にプロットされたマッチは、マッチしたセグメントが比較テキストの約30番目のトークンから始まることを意味します。',
+    'The X-axis represents the position in Source Text, and the Y-axis represents the position in Target Text. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.':
+      'X軸は証拠文本Source Textの位置を表し、Y軸は証拠文本Target Textの位置を表します。完全な対角線は同一の構造を示します。対角線から外れたポイントのクラスタは、構造的な再配置または局所的な再利用を示します。',
+    'Each coloured cell represents a detected match. The cell\'s position on the X-axis corresponds to where the match occurs in Source Text, and its Y-axis position corresponds to the location in Target Text. Colour intensity encodes similarity: warmer tones indicate higher similarity scores. Clicking a cell selects that match and highlights it across all visualizations.':
+      '各色付きセルは検出されたマッチを表します。セルのX軸位置は証拠文本Source Textでのマッチの位置に対応し、Y軸位置は証拠文本Target Textの位置に対応します。色の濃さは類似度をコード化します：暖色系はより高い類似度スコアを示します。セルをクリックするとそのマッチを選択し、すべてのビジュアライゼーションでハイライトします。',
+    'X-Axis: Source Text Position': 'X軸：証拠文本Source Text の位置',
+    'Y-Axis: Target Text Position': 'Y軸：証拠文本Target Text の位置',
+    'The horizontal axis represents the token position within Source Text (the primary text).':
+      '水平軸は証拠文本Source Text（一次テキスト）内のトークン位置を表します。',
+    'Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Source Text. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.':
+      'この軸の各ユニットは、証拠文本Source Textのトークンインデックス（選択したアルゴリズムによって単語または文字）に対応しています。X軸の位置50にプロットされたマッチは、マッチしたセグメントが一次テキストの約50番目のトークンから始まることを意味します。',
+    'The vertical axis represents the token position within Target Text (the comparandum).':
+      '垂直軸は証拠文本Target Text（比較対象）内のトークン位置を表します。',
+    'Each unit on this axis corresponds to a token index in Target Text. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.':
+      'この軸の各ユニットは、証拠文本Target Textのトークンインデックスに対応しています。Y軸の位置30にプロットされたマッチは、マッチしたセグメントが比較テキストの約30番目のトークンから始まることを意味します。',
 
     // マッチギャラリー
     'TOP REUSES': 'トップ再利用',
@@ -419,8 +419,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'Quick Load': '快速加载',
 
     // 证人文本标签
-    'Witness α (Primary)': '证人文本 α（一级文本）',
-    'Witness β (Comparandum)': '证人文本 β（对比文本）',
+    'Source Text (Primary)': '证人文本 Source Text（一级文本）',
+    'Target Text (Comparandum)': '证人文本 Target Text（对比文本）',
 
     // 文本输入占位符
     'Insert primary text (Source)...': '插入一级文本（源文本）...',
@@ -455,8 +455,8 @@ export const translations: Record<Language, Record<string, string>> = {
       '不同匹配序列的计数。如果特定短语被重用10次，它计为10个对齐但只有1个独特的N元组。',
     'Unlike "Alignments", this metric deduplicates the matches. If a specific phrase is reused 10 times, it counts as 10 alignments but only 1 unique N-gram. A large difference between Alignments and Unique N-Grams indicates highly repetitive formulaic language.':
       '与"对齐"不同，此指标对匹配进行重复数据删除。如果特定短语被重用10次，它计为10个对齐但只有1个独特的N元组。对齐和独特N元组之间的大差异表示高度重复的公式化语言。',
-    'This helps contextualize the "Reuse Coverage" metric. If Witness α is much larger than Witness β, a 100% coverage of β might only represent a 5% coverage of α.':
-      '这有助于将"重用覆盖率"指标置于语境中。如果证人α大于证人β，β的100%覆盖率可能仅代表α的5%覆盖率。',
+    'This helps contextualize the "Reuse Coverage" metric. If Source Text is much larger than Target Text, a 100% coverage of Target Text might only represent a 5% coverage of S.':
+      '这有助于将"重用覆盖率"指标置于语境中。如果证人Source Text大于证人Target Text，Target Text的100%覆盖率可能仅代表Source Text的5%覆盖率。',
 
     // 可视化标题
     'Macro-Level Alignment Flow': '宏观层面的对齐流',
@@ -467,20 +467,20 @@ export const translations: Record<Language, Record<string, string>> = {
     'Witness Dispersion': '证人文本分散',
 
     // 可视化描述
-    'The X-axis represents the position in Witness α, and the Y-axis represents the position in Witness β. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.':
-      'X轴表示证人α中的位置，Y轴表示证人β中的位置。完美的对角线表示相同的结构。偏离对角线的点簇表示结构重新排列或局部重用。',
-    'Each coloured cell represents a detected match. The cell\'s position on the X-axis corresponds to where the match occurs in Witness α, and its Y-axis position corresponds to the location in Witness β. Colour intensity encodes similarity: warmer tones indicate higher similarity scores. Clicking a cell selects that match and highlights it across all visualizations.':
-      '每个彩色单元代表一个检测到的匹配。单元格在X轴上的位置对应于匹配在证人α中的位置，其Y轴位置对应于证人β中的位置。颜色强度编码相似度：暖色表示较高的相似度得分。单击单元格选择该匹配并在所有可视化中突出显示。',
-    'X-Axis: Witness α Position': 'X轴：证人α位置',
-    'Y-Axis: Witness β Position': 'Y轴：证人β位置',
-    'The horizontal axis represents the token position within Witness α (the primary text).':
-      '水平轴表示证人α（一级文本）内的令牌位置。',
-    'Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Witness α. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.':
-      '该轴上的每个单位对应于证人α中的令牌索引（取决于所选算法的单词或字符）。在X轴位置50处绘制的匹配表示匹配的段从一级文本的第50个令牌处开始。',
-    'The vertical axis represents the token position within Witness β (the comparandum).':
-      '垂直轴表示证人β（对比文本）内的令牌位置。',
-    'Each unit on this axis corresponds to a token index in Witness β. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.':
-      '该轴上的每个单位对应于证人β中的令牌索引。在Y轴位置30处绘制的匹配表示匹配的段从对比文本的第30个令牌处开始。',
+    'The X-axis represents the position in Source Text, and the Y-axis represents the position in Target Text. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.':
+      'X轴表示证人Source Text中的位置，Y轴表示证人Target Text中的位置。完美的对角线表示相同的结构。偏离对角线的点簇表示结构重新排列或局部重用。',
+    'Each coloured cell represents a detected match. The cell\'s position on the X-axis corresponds to where the match occurs in Source Text, and its Y-axis position corresponds to the location in Target Text. Colour intensity encodes similarity: warmer tones indicate higher similarity scores. Clicking a cell selects that match and highlights it across all visualizations.':
+      '每个彩色单元代表一个检测到的匹配。单元格在X轴上的位置对应于匹配在证人Source Text中的位置，其Y轴位置对应于证人Target Text中的位置。颜色强度编码相似度：暖色表示较高的相似度得分。单击单元格选择该匹配并在所有可视化中突出显示。',
+    'X-Axis: Source Text Position': 'X轴：证人Source Text位置',
+    'Y-Axis: Target Text Position': 'Y轴：证人Target Text位置',
+    'The horizontal axis represents the token position within Source Text (the primary text).':
+      '水平轴表示证人Source Text（一级文本）内的令牌位置。',
+    'Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Source Text. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.':
+      '该轴上的每个单位对应于证人Source Text中的令牌索引（取决于所选算法的单词或字符）。在X轴位置50处绘制的匹配表示匹配的段从一级文本的第50个令牌处开始。',
+    'The vertical axis represents the token position within Target Text (the comparandum).':
+      '垂直轴表示证人Target Text（对比文本）内的令牌位置。',
+    'Each unit on this axis corresponds to a token index in Target Text. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.':
+      '该轴上的每个单位对应于证人Target Text中的令牌索引。在Y轴位置30处绘制的匹配表示匹配的段从对比文本的第30个令牌处开始。',
 
     // 匹配库
     'TOP REUSES': '顶部重用',
@@ -615,8 +615,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'Quick Load': '빠른 로드',
 
     // 증거 텍스트 레이블
-    'Witness α (Primary)': '증거 텍스트 α（기본 텍스트）',
-    'Witness β (Comparandum)': '증거 텍스트 β（비교 대상）',
+    'Source Text (Primary)': '증거 텍스트 Source Text（기본 텍스트）',
+    'Target Text (Comparandum)': '증거 텍스트 Target Text（비교 대상）',
 
     // 텍스트 입력 자리 표시자
     'Insert primary text (Source)...': '기본 텍스트（원본）를 삽입...',
@@ -651,8 +651,8 @@ export const translations: Record<Language, Record<string, string>> = {
       '별개의 일치 시퀀스의 수입니다. 특정 구문이 10번 재사용되면 10개의 정렬로 계산되지만 1개의 고유 N-그램만 계산됩니다.',
     'Unlike "Alignments", this metric deduplicates the matches. If a specific phrase is reused 10 times, it counts as 10 alignments but only 1 unique N-gram. A large difference between Alignments and Unique N-Grams indicates highly repetitive formulaic language.':
       '「정렬」과 달리 이 지표는 일치항목을 중복 제거합니다. 특정 구문이 10번 재사용되면 10개의 정렬로 계산되지만 1개의 고유 N-그램만 계산됩니다. 정렬과 고유 N-그램 간의 큰 차이는 매우 반복적인 공식적 언어를 나타냅니다.',
-    'This helps contextualize the "Reuse Coverage" metric. If Witness α is much larger than Witness β, a 100% coverage of β might only represent a 5% coverage of α.':
-      '이것은 「재사용 범위」 지표를 맥락화하는 데 도움이 됩니다. 증거 α가 증거 β보다 훨씬 크면 β의 100% 범위는 α의 5% 범위만 나타낼 수 있습니다.',
+    'This helps contextualize the "Reuse Coverage" metric. If Source Text is much larger than Target Text, a 100% coverage of Target Text might only represent a 5% coverage of S.':
+      '이것은 「재사용 범위」 지표를 맥락화하는 데 도움이 됩니다. 증거 Source Text가 증거 Target Text보다 훨씬 크면 Target Text의 100% 범위는 Source Text의 5% 범위만 나타낼 수 있습니다.',
 
     // 시각화 제목
     'Macro-Level Alignment Flow': '거시적 수준의 정렬 흐름',
@@ -663,20 +663,20 @@ export const translations: Record<Language, Record<string, string>> = {
     'Witness Dispersion': '증거 텍스트 분산',
 
     // 시각화 설명
-    'The X-axis represents the position in Witness α, and the Y-axis represents the position in Witness β. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.':
-      'X축은 증거 α의 위치를 나타내고 Y축은 증거 β의 위치를 나타냅니다. 완벽한 대각선은 동일한 구조를 나타냅니다. 대각선에서 벗어난 점의 클러스터는 구조적 재배열 또는 국소적 재사용을 나타냅니다.',
-    'Each coloured cell represents a detected match. The cell\'s position on the X-axis corresponds to where the match occurs in Witness α, and its Y-axis position corresponds to the location in Witness β. Colour intensity encodes similarity: warmer tones indicate higher similarity scores. Clicking a cell selects that match and highlights it across all visualizations.':
-      '각 색상 셀은 검출된 일치항목을 나타냅니다. 셀의 X축 위치는 증거 α에서 일치항목이 발생하는 위치에 해당하고 Y축 위치는 증거 β의 위치에 해당합니다. 색상 강도는 유사도를 인코딩합니다: 따뜻한 톤은 더 높은 유사도 점수를 나타냅니다. 셀을 클릭하면 해당 일치항목을 선택하고 모든 시각화에서 강조 표시합니다.',
-    'X-Axis: Witness α Position': 'X축: 증거 α 위치',
-    'Y-Axis: Witness β Position': 'Y축: 증거 β 위치',
-    'The horizontal axis represents the token position within Witness α (the primary text).':
-      '수평 축은 증거 α（기본 텍스트）내의 토큰 위치를 나타냅니다.',
-    'Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Witness α. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.':
-      '이 축의 각 단위는 증거 α의 토큰 인덱스（선택한 알고리즘에 따라 단어 또는 문자）에 해당합니다. X축의 위치 50에 표시된 일치는 일치하는 세그먼트가 기본 텍스트의 약 50번째 토큰부터 시작됨을 의미합니다.',
-    'The vertical axis represents the token position within Witness β (the comparandum).':
-      '수직 축은 증거 β（비교 대상）내의 토큰 위치를 나타냅니다.',
-    'Each unit on this axis corresponds to a token index in Witness β. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.':
-      '이 축의 각 단위는 증거 β의 토큰 인덱스에 해당합니다. Y축의 위치 30에 표시된 일치는 일치하는 세그먼트가 비교 텍스트의 약 30번째 토큰부터 시작됨을 의미합니다.',
+    'The X-axis represents the position in Source Text, and the Y-axis represents the position in Target Text. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.':
+      'X축은 증거 Source Text의 위치를 나타내고 Y축은 증거 Target Text의 위치를 나타냅니다. 완벽한 대각선은 동일한 구조를 나타냅니다. 대각선에서 벗어난 점의 클러스터는 구조적 재배열 또는 국소적 재사용을 나타냅니다.',
+    'Each coloured cell represents a detected match. The cell\'s position on the X-axis corresponds to where the match occurs in Source Text, and its Y-axis position corresponds to the location in Target Text. Colour intensity encodes similarity: warmer tones indicate higher similarity scores. Clicking a cell selects that match and highlights it across all visualizations.':
+      '각 색상 셀은 검출된 일치항목을 나타냅니다. 셀의 X축 위치는 증거 Source Text에서 일치항목이 발생하는 위치에 해당하고 Y축 위치는 증거 Target Text의 위치에 해당합니다. 색상 강도는 유사도를 인코딩합니다: 따뜻한 톤은 더 높은 유사도 점수를 나타냅니다. 셀을 클릭하면 해당 일치항목을 선택하고 모든 시각화에서 강조 표시합니다.',
+    'X-Axis: Source Text Position': 'X축: 증거 Source Text 위치',
+    'Y-Axis: Target Text Position': 'Y축: 증거 Target Text 위치',
+    'The horizontal axis represents the token position within Source Text (the primary text).':
+      '수평 축은 증거 Source Text（기본 텍스트）내의 토큰 위치를 나타냅니다.',
+    'Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Source Text. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.':
+      '이 축의 각 단위는 증거 Source Text의 토큰 인덱스（선택한 알고리즘에 따라 단어 또는 문자）에 해당합니다. X축의 위치 50에 표시된 일치는 일치하는 세그먼트가 기본 텍스트의 약 50번째 토큰부터 시작됨을 의미합니다.',
+    'The vertical axis represents the token position within Target Text (the comparandum).':
+      '수직 축은 증거 Target Text（비교 대상）내의 토큰 위치를 나타냅니다.',
+    'Each unit on this axis corresponds to a token index in Target Text. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.':
+      '이 축의 각 단위는 증거 Target Text의 토큰 인덱스에 해당합니다. Y축의 위치 30에 표시된 일치는 일치하는 세그먼트가 비교 텍스트의 약 30번째 토큰부터 시작됨을 의미합니다.',
 
     // 일치 갤러리
     'TOP REUSES': '상위 재사용',
@@ -812,8 +812,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'Quick Load': 'Schnellladen',
 
     // Zeugentextbezeichnungen
-    'Witness α (Primary)': 'Zeugentexte α (Primärtext)',
-    'Witness β (Comparandum)': 'Zeugentexte β (Vergleichstext)',
+    'Source Text (Primary)': 'Zeugentexte Source Text (Primärtext)',
+    'Target Text (Comparandum)': 'Zeugentexte Target Text (Vergleichstext)',
 
     // Texteingabe-Platzhalter
     'Insert primary text (Source)...': 'Primärtext (Quelle) einfügen...',
@@ -848,8 +848,8 @@ export const translations: Record<Language, Record<string, string>> = {
       'Die Anzahl unterschiedlicher Übereinstimmungssequenzen. Wenn eine bestimmte Phrase 10-mal wiederverwendet wird, zählt sie als 10 Ausrichtungen, aber nur 1 eindeutiges N-Gramm.',
     'Unlike "Alignments", this metric deduplicates the matches. If a specific phrase is reused 10 times, it counts as 10 alignments but only 1 unique N-gram. A large difference between Alignments and Unique N-Grams indicates highly repetitive formulaic language.':
       'Im Gegensatz zu „Ausrichtungen" dedupliziert diese Metrik die Übereinstimmungen. Wenn eine bestimmte Phrase 10-mal wiederverwendet wird, zählt sie als 10 Ausrichtungen, aber nur 1 eindeutiges N-Gramm. Ein großer Unterschied zwischen Ausrichtungen und eindeutigen N-Grammen deutet auf stark repetitive Formelsprache hin.',
-    'This helps contextualize the "Reuse Coverage" metric. If Witness α is much larger than Witness β, a 100% coverage of β might only represent a 5% coverage of α.':
-      'Dies hilft, die Metrik „Wiederverwertungsabdeckung" in den Kontext zu setzen. Wenn Zeugentexte α viel größer als Zeugentexte β ist, könnte eine 100%ige Abdeckung von β nur eine 5%ige Abdeckung von α darstellen.',
+    'This helps contextualize the "Reuse Coverage" metric. If Source Text is much larger than Target Text, a 100% coverage of Target Text might only represent a 5% coverage of S.':
+      'Dies hilft, die Metrik „Wiederverwertungsabdeckung" in den Kontext zu setzen. Wenn Zeugentexte Source Text viel größer als Zeugentexte Target Text ist, könnte eine 100%ige Abdeckung von Target Text nur eine 5%ige Abdeckung von Source Text darstellen.',
 
     // Visualisierungstitel
     'Macro-Level Alignment Flow': 'Ausrichtungsfluss auf Makroebene',
@@ -860,20 +860,20 @@ export const translations: Record<Language, Record<string, string>> = {
     'Witness Dispersion': 'Zeugentexte-Streuung',
 
     // Visualisierungsbeschreibungen
-    'The X-axis represents the position in Witness α, and the Y-axis represents the position in Witness β. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.':
-      'Die X-Achse stellt die Position in Zeugentexte α dar, und die Y-Achse stellt die Position in Zeugentexte β dar. Eine perfekte Diagonallinie zeigt identische Struktur an. Punktcluster außerhalb der Diagonalen deuten auf strukturelle Umgestaltung oder lokalisierte Wiederverwendung hin.',
-    'Each coloured cell represents a detected match. The cell\'s position on the X-axis corresponds to where the match occurs in Witness α, and its Y-axis position corresponds to the location in Witness β. Colour intensity encodes similarity: warmer tones indicate higher similarity scores. Clicking a cell selects that match and highlights it across all visualizations.':
-      'Jede farbige Zelle stellt eine erkannte Übereinstimmung dar. Die Position der Zelle auf der X-Achse entspricht dem Ort der Übereinstimmung in Zeugentexte α, und ihre Y-Achsenposition entspricht dem Ort in Zeugentexte β. Die Farbintensität kodiert Ähnlichkeit: wärmere Farbtöne zeigen höhere Ähnlichkeitswerte an. Das Klicken auf eine Zelle wählt diese Übereinstimmung aus und hebt sie in allen Visualisierungen hervor.',
-    'X-Axis: Witness α Position': 'X-Achse: Zeugentexte-α-Position',
-    'Y-Axis: Witness β Position': 'Y-Achse: Zeugentexte-β-Position',
-    'The horizontal axis represents the token position within Witness α (the primary text).':
-      'Die horizontale Achse stellt die Token-Position innerhalb von Zeugentexte α (dem Primärtext) dar.',
-    'Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Witness α. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.':
-      'Jede Einheit auf dieser Achse entspricht einem Token-Index (Wort oder Zeichen, je nach ausgewähltem Algorithmus) in Zeugentexte α. Eine Übereinstimmung bei Position 50 auf der X-Achse bedeutet, dass das übereinstimmende Segment ungefähr beim 50. Token des Primärtexts beginnt.',
-    'The vertical axis represents the token position within Witness β (the comparandum).':
-      'Die vertikale Achse stellt die Token-Position innerhalb von Zeugentexte β (dem Vergleichstext) dar.',
-    'Each unit on this axis corresponds to a token index in Witness β. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.':
-      'Jede Einheit auf dieser Achse entspricht einem Token-Index in Zeugentexte β. Eine Übereinstimmung bei Position 30 auf der Y-Achse bedeutet, dass das übereinstimmende Segment ungefähr beim 30. Token des Vergleichstexts beginnt.',
+    'The X-axis represents the position in Source Text, and the Y-axis represents the position in Target Text. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.':
+      'Die X-Achse stellt die Position in Zeugentexte Source Text dar, und die Y-Achse stellt die Position in Zeugentexte Target Text dar. Eine perfekte Diagonallinie zeigt identische Struktur an. Punktcluster außerhalb der Diagonalen deuten auf strukturelle Umgestaltung oder lokalisierte Wiederverwendung hin.',
+    'Each coloured cell represents a detected match. The cell\'s position on the X-axis corresponds to where the match occurs in Source Text, and its Y-axis position corresponds to the location in Target Text. Colour intensity encodes similarity: warmer tones indicate higher similarity scores. Clicking a cell selects that match and highlights it across all visualizations.':
+      'Jede farbige Zelle stellt eine erkannte Übereinstimmung dar. Die Position der Zelle auf der X-Achse entspricht dem Ort der Übereinstimmung in Zeugentexte S, und ihre Y-Achsenposition entspricht dem Ort in Zeugentexte Target Text. Die Farbintensität kodiert Ähnlichkeit: wärmere Farbtöne zeigen höhere Ähnlichkeitswerte an. Das Klicken auf eine Zelle wählt diese Übereinstimmung aus und hebt sie in allen Visualisierungen hervor.',
+    'X-Axis: Source Text Position': 'X-Achse: Zeugentexte-Source Text-Position',
+    'Y-Axis: Target Text Position': 'Y-Achse: Zeugentexte-Target Text-Position',
+    'The horizontal axis represents the token position within Source Text (the primary text).':
+      'Die horizontale Achse stellt die Token-Position innerhalb von Zeugentexte Source Text (dem Primärtext) dar.',
+    'Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Source Text. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.':
+      'Jede Einheit auf dieser Achse entspricht einem Token-Index (Wort oder Zeichen, je nach ausgewähltem Algorithmus) in Zeugentexte S. Eine Übereinstimmung bei Position 50 auf der X-Achse bedeutet, dass das übereinstimmende Segment ungefähr beim 50. Token des Primärtexts beginnt.',
+    'The vertical axis represents the token position within Target Text (the comparandum).':
+      'Die vertikale Achse stellt die Token-Position innerhalb von Zeugentexte Target Text (dem Vergleichstext) dar.',
+    'Each unit on this axis corresponds to a token index in Target Text. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.':
+      'Jede Einheit auf dieser Achse entspricht einem Token-Index in Zeugentexte Target Text. Eine Übereinstimmung bei Position 30 auf der Y-Achse bedeutet, dass das übereinstimmende Segment ungefähr beim 30. Token des Vergleichstexts beginnt.',
 
     // Übereinstimmungs-Galerie
     'TOP REUSES': 'WICHTIGSTE WIEDERVERWENDUNGEN',
@@ -1008,8 +1008,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'Quick Load': 'Celeriter Imponere',
 
     // Testimoniorum Nomina
-    'Witness α (Primary)': 'Testimonium α (Primarium)',
-    'Witness β (Comparandum)': 'Testimonium β (Comparandum)',
+    'Source Text (Primary)': 'Testimonium Source Text (Primarium)',
+    'Target Text (Comparandum)': 'Testimonium Target Text (Comparandum)',
 
     // Placeholders Textus Intromissionis
     'Insert primary text (Source)...': 'Textum primarium (Fontem) inserere...',
@@ -1044,8 +1044,8 @@ export const translations: Record<Language, Record<string, string>> = {
       'Numerus sequentiarum congruentium distinctarum. Si frasis specialis decies reiiteratur, decem congruentiis ponitur sed unum N-gramma singulare tantum.',
     'Unlike "Alignments", this metric deduplicates the matches. If a specific phrase is reused 10 times, it counts as 10 alignments but only 1 unique N-gram. A large difference between Alignments and Unique N-Grams indicates highly repetitive formulaic language.':
       'Praeter "Congruentiam", hoc metrum congruentia duplicata removet. Si frasis specialis decies reiteratur, decem congruentiis ponitur sed unum N-gramma singulare tantum. Magna differentia inter Congruentiam et N-grammata Singularia linguam formulaicam valde repetitivam ostendit.',
-    'This helps contextualize the "Reuse Coverage" metric. If Witness α is much larger than Witness β, a 100% coverage of β might only represent a 5% coverage of α.':
-      'Hoc metrum "Usus Reiterat Copertio" in contextum adiuvat. Si Testimonium α multo maius est quam Testimonium β, copertio 100% β tantummodo 5% copertionem α repraesentare potuit.',
+    'This helps contextualize the "Reuse Coverage" metric. If Source Text is much larger than Target Text, a 100% coverage of Target Text might only represent a 5% coverage of S.':
+      'Hoc metrum "Usus Reiterat Copertio" in contextum adiuvat. Si Testimonium Source Text multo maius est quam Testimonium Target Text, copertio 100% Target Text tantummodo 5% copertionem Source Text repraesentare potuit.',
 
     // Tituli Visualizationis
     'Macro-Level Alignment Flow': 'Fluxus Congruentiae Macro-Gradus',
@@ -1056,20 +1056,20 @@ export const translations: Record<Language, Record<string, string>> = {
     'Witness Dispersion': 'Dispersio Testimoniorum',
 
     // Descriptiones Visualizationis
-    'The X-axis represents the position in Witness α, and the Y-axis represents the position in Witness β. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.':
-      'Axis X positionem in Testimonio α repraesentat; axis Y positionem in Testimonio β. Linea diagonalis perfecta structuram identicum indicat. Acervuli punctorum a diagonali recedentes restructurationem vel usum locatum praebent.',
-    'Each coloured cell represents a detected match. The cell\'s position on the X-axis corresponds to where the match occurs in Witness α, and its Y-axis position corresponds to the location in Witness β. Colour intensity encodes similarity: warmer tones indicate higher similarity scores. Clicking a cell selects that match and highlights it across all visualizations.':
-      'Quaeque cellula colorata congruentiam detectionis repraesentat. Positio cellulae in axe X locum congruentiae in Testimonio α respondet; Y-axis positio locum in Testimonio β. Intensitas coloris similitudinem codit: colores calidiores puncta altiora similitudinis indicant. Cellulam clicare congruentiam eam ligit et per omnes visualizationes praelucet.',
-    'X-Axis: Witness α Position': 'Axis X: Positio Testimoniit α',
-    'Y-Axis: Witness β Position': 'Axis Y: Positio Testimoniit β',
-    'The horizontal axis represents the token position within Witness α (the primary text).':
-      'Axis horizontalis positionem symboli in Testimonio α (textum primarium) repraesentat.',
-    'Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Witness α. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.':
-      'Unitas quaeque in hoc axe indicem symboli (verbum vel characterem, ex algorothmo selectione pependens) in Testimonio α correspondet. Congruentia apud positionem 50 in axe X denotat segmentum congruum ad circiter 50-um symbolum textus primarii incipere.',
-    'The vertical axis represents the token position within Witness β (the comparandum).':
-      'Axis verticalis positionem symboli in Testimonio β (comparandum) repraesentat.',
-    'Each unit on this axis corresponds to a token index in Witness β. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.':
-      'Unitas quaeque in hoc axe indicem symboli in Testimonio β correspondet. Congruentia apud positionem 30 in axe Y denotat segmentum congruum ad circiter 30-um symbolum textus comparativi incipere.',
+    'The X-axis represents the position in Source Text, and the Y-axis represents the position in Target Text. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.':
+      'Axis X positionem in Testimonio Source Text repraesentat; axis Y positionem in Testimonio Target Text. Linea diagonalis perfecta structuram identicum indicat. Acervuli punctorum a diagonali recedentes restructurationem vel usum locatum praebent.',
+    'Each coloured cell represents a detected match. The cell\'s position on the X-axis corresponds to where the match occurs in Source Text, and its Y-axis position corresponds to the location in Target Text. Colour intensity encodes similarity: warmer tones indicate higher similarity scores. Clicking a cell selects that match and highlights it across all visualizations.':
+      'Quaeque cellula colorata congruentiam detectionis repraesentat. Positio cellulae in axe X locum congruentiae in Testimonio Source Text respondet; Y-axis positio locum in Testimonio Target Text. Intensitas coloris similitudinem codit: colores calidiores puncta altiora similitudinis indicant. Cellulam clicare congruentiam eam ligit et per omnes visualizationes praelucet.',
+    'X-Axis: Source Text Position': 'Axis X: Positio Testimoniit Source Text',
+    'Y-Axis: Target Text Position': 'Axis Y: Positio Testimoniit Target Text',
+    'The horizontal axis represents the token position within Source Text (the primary text).':
+      'Axis horizontalis positionem symboli in Testimonio Source Text (textum primarium) repraesentat.',
+    'Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Source Text. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.':
+      'Unitas quaeque in hoc axe indicem symboli (verbum vel characterem, ex algorothmo selectione pependens) in Testimonio Source Text correspondet. Congruentia apud positionem 50 in axe X denotat segmentum congruum ad circiter 50-um symbolum textus primarii incipere.',
+    'The vertical axis represents the token position within Target Text (the comparandum).':
+      'Axis verticalis positionem symboli in Testimonio Target Text (comparandum) repraesentat.',
+    'Each unit on this axis corresponds to a token index in Target Text. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.':
+      'Unitas quaeque in hoc axe indicem symboli in Testimonio Target Text correspondet. Congruentia apud positionem 30 in axe Y denotat segmentum congruum ad circiter 30-um symbolum textus comparativi incipere.',
 
     // Peristasium Congruentiae
     'TOP REUSES': 'USUSIONES PRAECIPUI',
@@ -1205,8 +1205,8 @@ export const translations: Record<Language, Record<string, string>> = {
     'Quick Load': 'Caricamento Rapido',
 
     // Etichette Testimone
-    'Witness α (Primary)': 'Testimone α (Primario)',
-    'Witness β (Comparandum)': 'Testimone β (Comparandum)',
+    'Source Text (Primary)': 'Testimone Source Text (Primario)',
+    'Target Text (Comparandum)': 'Testimone Target Text (Comparandum)',
 
     // Placeholder Input Testo
     'Insert primary text (Source)...': 'Inserire il testo primario (Sorgente)...',
@@ -1241,8 +1241,8 @@ export const translations: Record<Language, Record<string, string>> = {
       'Il conteggio delle sequenze corrispondenti distinte. Se una frase specifica viene riutilizzata 10 volte, conta come 10 allineamenti ma solo 1 N-gramma unico.',
     'Unlike "Alignments", this metric deduplicates the matches. If a specific phrase is reused 10 times, it counts as 10 alignments but only 1 unique N-gram. A large difference between Alignments and Unique N-Grams indicates highly repetitive formulaic language.':
       'A differenza degli "Allineamenti", questa metrica elimina i duplicati. Se una frase specifica viene riutilizzata 10 volte, conta come 10 allineamenti ma solo 1 N-gramma unico. Una grande differenza tra Allineamenti e N-Grammi Unici indica un linguaggio formulaico altamente ripetitivo.',
-    'This helps contextualize the "Reuse Coverage" metric. If Witness α is much larger than Witness β, a 100% coverage of β might only represent a 5% coverage of α.':
-      'Questo aiuta a contestualizzare la metrica "Copertura di Riuso". Se il Testimone α è molto più grande del Testimone β, una copertura del 100% di β potrebbe rappresentare solo il 5% della copertura di α.',
+    'This helps contextualize the "Reuse Coverage" metric. If Source Text is much larger than Target Text, a 100% coverage of Target Text might only represent a 5% coverage of S.':
+      'Questo aiuta a contestualizzare la metrica "Copertura di Riuso". Se il Testimone Source Text è molto più grande del Testimone Target Text, una copertura del 100% di Target Text potrebbe rappresentare solo il 5% della copertura di S.',
 
     // Titoli Visualizzazione
     'Macro-Level Alignment Flow': 'Flusso di Allineamento Macro',
@@ -1253,20 +1253,20 @@ export const translations: Record<Language, Record<string, string>> = {
     'Witness Dispersion': 'Dispersione del Testimone',
 
     // Descrizioni Visualizzazione
-    'The X-axis represents the position in Witness α, and the Y-axis represents the position in Witness β. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.':
-      'L\'asse X rappresenta la posizione nel Testimone α e l\'asse Y rappresenta la posizione nel Testimone β. Una linea diagonale perfetta indica una struttura identica. Cluster di punti fuori dalla diagonale indicano riarrangiamento strutturale o riuso localizzato.',
-    'Each coloured cell represents a detected match. The cell\'s position on the X-axis corresponds to where the match occurs in Witness α, and its Y-axis position corresponds to the location in Witness β. Colour intensity encodes similarity: warmer tones indicate higher similarity scores. Clicking a cell selects that match and highlights it across all visualizations.':
-      'Ogni cella colorata rappresenta una corrispondenza rilevata. La posizione della cella sull\'asse X corrisponde alla posizione della corrispondenza nel Testimone α, e la posizione sull\'asse Y corrisponde alla posizione nel Testimone β. L\'intensità del colore codifica la similarità: toni più caldi indicano punteggi di similarità più elevati. Cliccando una cella si seleziona la corrispondenza e la si evidenzia in tutte le visualizzazioni.',
-    'X-Axis: Witness α Position': 'Asse X: Posizione Testimone α',
-    'Y-Axis: Witness β Position': 'Asse Y: Posizione Testimone β',
-    'The horizontal axis represents the token position within Witness α (the primary text).':
-      'L\'asse orizzontale rappresenta la posizione del token nel Testimone α (il testo primario).',
-    'Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Witness α. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.':
-      'Ogni unità su questo asse corrisponde a un indice di token (parola o carattere, a seconda dell\'algoritmo selezionato) nel Testimone α. Una corrispondenza posizionata alla posizione 50 sull\'asse X significa che il segmento corrispondente inizia approssimativamente al 50° token del testo primario.',
-    'The vertical axis represents the token position within Witness β (the comparandum).':
-      'L\'asse verticale rappresenta la posizione del token nel Testimone β (il comparandum).',
-    'Each unit on this axis corresponds to a token index in Witness β. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.':
-      'Ogni unità su questo asse corrisponde a un indice di token nel Testimone β. Una corrispondenza posizionata alla posizione 30 sull\'asse Y significa che il segmento corrispondente inizia approssimativamente al 30° token del testo comparativo.',
+    'The X-axis represents the position in Source Text, and the Y-axis represents the position in Target Text. A perfect diagonal line indicates identical structure. Clusters of points off the diagonal indicate structural rearrangement or localized reuse.':
+      'L\'asse X rappresenta la posizione nel Testimone Source Text e l\'asse Y rappresenta la posizione nel Testimone Target Text. Una linea diagonale perfetta indica una struttura identica. Cluster di punti fuori dalla diagonale indicano riarrangiamento strutturale o riuso localizzato.',
+    'Each coloured cell represents a detected match. The cell\'s position on the X-axis corresponds to where the match occurs in Source Text, and its Y-axis position corresponds to the location in Target Text. Colour intensity encodes similarity: warmer tones indicate higher similarity scores. Clicking a cell selects that match and highlights it across all visualizations.':
+      'Ogni cella colorata rappresenta una corrispondenza rilevata. La posizione della cella sull\'asse X corrisponde alla posizione della corrispondenza nel Testimone S, e la posizione sull\'asse Y corrisponde alla posizione nel Testimone Target Text. L\'intensità del colore codifica la similarità: toni più caldi indicano punteggi di similarità più elevati. Cliccando una cella si seleziona la corrispondenza e la si evidenzia in tutte le visualizzazioni.',
+    'X-Axis: Source Text Position': 'Asse X: Posizione Testimone Source Text',
+    'Y-Axis: Target Text Position': 'Asse Y: Posizione Testimone Target Text',
+    'The horizontal axis represents the token position within Source Text (the primary text).':
+      'L\'asse orizzontale rappresenta la posizione del token nel Testimone Source Text (il testo primario).',
+    'Each unit on this axis corresponds to a token index (word or character, depending on the selected algorithm) in Source Text. A match plotted at position 50 on the X-axis means the matched segment begins at approximately the 50th token of the primary text.':
+      'Ogni unità su questo asse corrisponde a un indice di token (parola o carattere, a seconda dell\'algoritmo selezionato) nel Testimone S. Una corrispondenza posizionata alla posizione 50 sull\'asse X significa che il segmento corrispondente inizia approssimativamente al 50° token del testo primario.',
+    'The vertical axis represents the token position within Target Text (the comparandum).':
+      'L\'asse verticale rappresenta la posizione del token nel Testimone Target Text (il comparandum).',
+    'Each unit on this axis corresponds to a token index in Target Text. A match plotted at position 30 on the Y-axis means the matched segment begins at approximately the 30th token of the comparative text.':
+      'Ogni unità su questo asse corrisponde a un indice di token nel Testimone Target Text. Una corrispondenza posizionata alla posizione 30 sull\'asse Y significa che il segmento corrispondente inizia approssimativamente al 30° token del testo comparativo.',
 
     // Galleria Corrispondenze
     'TOP REUSES': 'PRINCIPALI RIUSI',

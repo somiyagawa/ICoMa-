@@ -18,8 +18,8 @@ const DispersionPlot: React.FC<DispersionPlotProps> = ({
   targetLength,
   onSelectMatch,
   selectedMatch,
-  witnessAlphaName = 'Witness α',
-  witnessBetaName = 'Witness β'
+  witnessAlphaName = 'Source Text',
+  witnessBetaName = 'Target Text'
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -55,7 +55,7 @@ const DispersionPlot: React.FC<DispersionPlotProps> = ({
     matches.forEach(match => {
         const x1 = (match.sourcePosition / sourceLength) * width;
         const w1 = Math.max(2, (match.sourcePhrase.length / sourceLength) * width);
-        
+
         const x2 = (match.targetPosition / targetLength) * width;
         const w2 = Math.max(2, (match.targetPhrase.length / targetLength) * width);
 
@@ -63,7 +63,7 @@ const DispersionPlot: React.FC<DispersionPlotProps> = ({
         const color = isSelected ? "#c9302c" : (match.similarity >= 80 ? "#2563eb" : "#94a3b8");
         const opacity = isSelected ? 1 : (selectedMatch ? 0.3 : 0.6);
 
-        // Bar α
+        // Bar S
         g.append("rect")
          .attr("x", x1)
          .attr("y", row1Y)
@@ -75,7 +75,7 @@ const DispersionPlot: React.FC<DispersionPlotProps> = ({
          .on("click", (e) => { e.stopPropagation(); onSelectMatch(match); })
          .append("title").text(`${witnessAlphaName} pos: ${match.sourcePosition} (Click to view)`);
 
-        // Bar β
+        // Bar T
         g.append("rect")
          .attr("x", x2)
          .attr("y", row2Y)

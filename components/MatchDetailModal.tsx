@@ -11,8 +11,8 @@ interface MatchDetailModalProps {
 const MatchDetailModal: React.FC<MatchDetailModalProps> = ({
   match,
   onClose,
-  witnessAlphaName = 'Witness α',
-  witnessBetaName = 'Witness β'
+  witnessAlphaName = 'Source Text',
+  witnessBetaName = 'Target Text'
 }) => {
   if (!match) return null;
 
@@ -40,7 +40,7 @@ const MatchDetailModal: React.FC<MatchDetailModalProps> = ({
 
         {/* Content */}
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 bg-academic-cream">
-          {/* Witness α */}
+          {/* Source Text */}
           <div className="flex flex-col">
             <span className="text-xs font-bold text-gray-400 mb-2 border-b border-gray-200 pb-1">
               {witnessAlphaName} <span className="font-mono ml-2">Pos: {match.sourcePosition}</span>
@@ -52,7 +52,7 @@ const MatchDetailModal: React.FC<MatchDetailModalProps> = ({
             </div>
           </div>
 
-          {/* Witness β */}
+          {/* Target Text */}
           <div className="flex flex-col">
             <span className="text-xs font-bold text-gray-400 mb-2 border-b border-gray-200 pb-1">
               {witnessBetaName} <span className="font-mono ml-2">Pos: {match.targetPosition}</span>

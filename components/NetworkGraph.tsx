@@ -10,7 +10,7 @@ interface NetworkGraphProps {
   witnessBetaName?: string;
 }
 
-const NetworkGraph: React.FC<NetworkGraphProps> = ({ matches, onSelectMatch, selectedMatch, witnessAlphaName = 'Witness α', witnessBetaName = 'Witness β' }) => {
+const NetworkGraph: React.FC<NetworkGraphProps> = ({ matches, onSelectMatch, selectedMatch, witnessAlphaName = 'Source Text', witnessBetaName = 'Target Text' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
   const simulationRef = useRef<d3.Simulation<any, undefined> | null>(null);

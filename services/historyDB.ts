@@ -10,8 +10,8 @@ export interface HistorySession {
   id?: number;                     // auto-incremented
   timestamp: number;               // Date.now()
   label: string;                   // user-editable session name
-  witnessAlphaName: string;        // custom name for Witness α
-  witnessBetaName: string;         // custom name for Witness β
+  witnessAlphaName: string;        // custom name for Source Text
+  witnessBetaName: string;         // custom name for Target Text
   sourceText: string;
   targetText: string;
   config: AnalysisConfig;
