@@ -612,7 +612,7 @@ const App: React.FC = () => {
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
           {/* Input Section */}
           <div className="xl:col-span-8 bg-white p-6 border border-gray-200 shadow-md rounded-sm">
-            <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-100 pb-4">
+            <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-100 pb-4" data-tour="step-quickload">
               <span className="text-[10px] font-bold text-gray-400 uppercase flex items-center mr-2">{t(lang, 'Quick Load')}:</span>
               {Object.entries(EXAMPLES).map(([key, val]) => (
                 <button key={key} onClick={() => { setSourceText(val.a); setTargetText(val.b); if (val.alphaName) setWitnessAlphaName(val.alphaName); if (val.betaName) setWitnessBetaName(val.betaName); }} className="text-[10px] px-3 py-1.5 bg-gray-50 border border-gray-200 hover:bg-academic-blue hover:text-white hover:border-academic-blue transition-all uppercase font-mono rounded-sm shadow-sm">{val.label}</button>
