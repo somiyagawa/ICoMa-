@@ -100,11 +100,11 @@ const OB: Record<string, Record<Language, string>> = {
     en: 'of', ja: '/', zh: '/', ko: '/', de: 'von', la: 'ex', it: 'di',
   },
   step1_title: {
-    en: 'Enter the Source Text (Witness Î±)',
-    ja: 'å¼ç¨åãã­ã¹ããå¥åï¼Witness Î±ï¼',
-    zh: 'è¾å¥åæææ¬ï¼è§è¯Î±ï¼', ko: 'ìë³¸ íì¤í¸ ìë ¥ (Witness Î±)',
-    de: 'Quelltext eingeben (Witness Î±)', la: 'Textum fontem insere (Witness Î±)',
-    it: 'Inserisci il testo fonte (Witness Î±)',
+    en: 'Enter the Source Text',
+    ja: 'å¼ç¨åãã­ã¹ããå¥åï¼Witness Source Textï¼',
+    zh: 'è¾å¥åæææ¬ï¼è§è¯Source Textï¼', ko: 'ìë³¸ íì¤í¸ ìë ¥',
+    de: 'Quelltext eingeben', la: 'Textum fontem insere',
+    it: 'Inserisci il testo fonte',
   },
   step1_desc: {
     en: 'Paste or type the original text that may have been quoted, reused, or alluded to. You can rename the witness by clicking the name field above the text area.',
@@ -123,11 +123,11 @@ const OB: Record<string, Record<Language, string>> = {
     la: 'e.g. psalmus, inscriptio, articulusâ¦', it: 'es. Un salmo, un\'iscrizioneâ¦',
   },
   step2_title: {
-    en: 'Enter the Target Text (Witness Î²)',
-    ja: 'å¼ç¨åãã­ã¹ããå¥åï¼Witness Î²ï¼',
-    zh: 'è¾å¥ç®æ ææ¬ï¼è§è¯Î²ï¼', ko: 'ëì íì¤í¸ ìë ¥ (Witness Î²)',
-    de: 'Zieltext eingeben (Witness Î²)', la: 'Textum comparandum insere (Witness Î²)',
-    it: 'Inserisci il testo di confronto (Witness Î²)',
+    en: 'Enter the Target Text',
+    ja: 'å¼ç¨åãã­ã¹ããå¥åï¼Witness Target Textï¼',
+    zh: 'è¾å¥ç®æ ææ¬ï¼è§è¯Target Textï¼', ko: 'ëì íì¤í¸ ìë ¥',
+    de: 'Zieltext eingeben', la: 'Textum comparandum insere',
+    it: 'Inserisci il testo di confronto',
   },
   step2_desc: {
     en: 'Paste or type the text that may contain quotations from, or parallels to, the source.',
@@ -208,8 +208,8 @@ function tx(key: string, lang: Language): string {
 function StepIcon({ type, color, size = 28 }: { type: string; color: string; size?: number }) {
   const cls = `shrink-0 rounded-full flex items-center justify-center text-white font-bold shadow`;
   const s = { width: size, height: size, background: color, fontSize: size * 0.45 };
-  if (type === 'alpha') return <span className={cls} style={s}>Î±</span>;
-  if (type === 'beta') return <span className={cls} style={s}>Î²</span>;
+  if (type === 'source') return <span className={cls} style={s}>S</span>;
+  if (type === 'target') return <span className={cls} style={s}>T</span>;
   if (type === 'samples') return (
     <span className={cls} style={s}>
       <svg width={size * 0.5} height={size * 0.5} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
