@@ -136,7 +136,7 @@ const Heatmap: React.FC<HeatmapProps> = ({
         </div>
       </div>
       {/* Chart */}
-      <div ref={containerRef} className="w-full flex-1 min-h-[280px] overflow-y-auto px-2 pb-2" />
+      <div ref={containerRef} className="w-full flex-1 min-h-[280px] overflow-auto px-2 pb-2" style={{minWidth: 0}} />
     </div>
   );
 };

@@ -87,31 +87,43 @@ export const tokenize = (text: string, mode: ScriptMode = 'auto'): Token[] => {
   return tokens;
 };
 
-const levenshteinDistance = (str1: string, str2: string): number => {
+/**
+ * Levenshtein distance with optional early-exit when distance exceeds maxDist.
+ * Avoids unnecessary computation for pairs that clearly won't meet the threshold.
+ */
+const levenshteinDistance = (str1: string, str2: string, maxDist?: number): number => {
   if (str1 === str2) return 0;
-  if (str1.length === 0) return str2.length;
-  if (str2.length === 0) return str1.length;
+  const len1 = str1.length;
+  const len2 = str2.length;
+  if (len1 === 0) return len2;
+  if (len2 === 0) return len1;
+  // If length difference alone exceeds maxDist, skip
+  if (maxDist !== undefined && Math.abs(len1 - len2) > maxDist) return maxDist + 1;
 
-  // Use two rows instead of a full matrix for O(min(N,M)) space and better cache locality
-  let v0 = new Int32Array(str2.length + 1);
-  let v1 = new Int32Array(str2.length + 1);
+  // Ensure str1 is shorter (less memory for row arrays)
+  if (len1 > len2) return levenshteinDistance(str2, str1, maxDist);
 
-  for (let i = 0; i <= str2.length; i++) {
-    v0[i] = i;
-  }
+  let v0 = new Int32Array(len2 + 1);
+  let v1 = new Int32Array(len2 + 1);
+  for (let i = 0; i <= len2; i++) v0[i] = i;
 
-  for (let i = 0; i < str1.length; i++) {
+  for (let i = 0; i < len1; i++) {
     v1[0] = i + 1;
-    for (let j = 0; j < str2.length; j++) {
-      const cost = str1[i] === str2[j] ? 0 : 1;
-      v1[j + 1] = Math.min(v1[j] + 1, v0[j + 1] + 1, v0[j] + cost);
+    let rowMin = v1[0]; // track row minimum for early exit
+    const c1 = str1.charCodeAt(i);
+    for (let j = 0; j < len2; j++) {
+      const cost = c1 === str2.charCodeAt(j) ? 0 : 1;
+      const val = v1[j] + 1;
+      const val2 = v0[j + 1] + 1;
+      const val3 = v0[j] + cost;
+      v1[j + 1] = val < val2 ? (val < val3 ? val : val3) : (val2 < val3 ? val2 : val3);
+      if (v1[j + 1] < rowMin) rowMin = v1[j + 1];
     }
-    // Swap v0 and v1
-    let temp = v0;
-    v0 = v1;
-    v1 = temp;
+    // Early exit: if every cell in this row exceeds maxDist, no point continuing
+    if (maxDist !== undefined && rowMin > maxDist) return maxDist + 1;
+    const temp = v0; v0 = v1; v1 = temp;
   }
-  return v0[str2.length];
+  return v0[len2];
 };
 
 const calculateCopticSimilarity = (s1: string, s2: string): number => {
@@ -130,9 +142,26 @@ const calculateCopticSimilarity = (s1: string, s2: string): number => {
   const n1 = normalize(s1);
   const n2 = normalize(s2);
   if (n1 === n2) return 100;
-  const dist = levenshteinDistance(n1, n2);
   const maxLen = Math.max(n1.length, n2.length);
-  return maxLen === 0 ? 100 : (1 - dist / maxLen) * 100;
+  if (maxLen === 0) return 100;
+  const dist = levenshteinDistance(n1, n2);
+  return (1 - dist / maxLen) * 100;
+};
+
+/**
+ * Threshold-aware similarity: returns similarity only if it can meet minSim.
+ * Uses early-exit Levenshtein to skip expensive computation for unlikely matches.
+ */
+const quickSimilarity = (s1: string, s2: string, minSim: number): number => {
+  if (s1 === s2) return 100;
+  const maxLen = Math.max(s1.length, s2.length);
+  if (maxLen === 0) return 100;
+  // Max edit distance allowed to meet threshold
+  const maxDist = Math.floor(maxLen * (1 - minSim / 100));
+  if (Math.abs(s1.length - s2.length) > maxDist) return 0;
+  const dist = levenshteinDistance(s1, s2, maxDist);
+  if (dist > maxDist) return 0;
+  return (1 - dist / maxLen) * 100;
 };
 
 const jaccard = (a: any[], b: any[]): number => {
@@ -235,11 +264,72 @@ const runSmithWaterman = (tokensA: Token[], tokensB: Token[], threshold: number)
   return results;
 };
 
+// ── Pre-computation helpers ──────────────────────────────────────────
+
+/** Pre-compute n-gram phrase data for sliding window — avoids repeated slice/map/join */
+function precomputeWindowPhrases(tokens: Token[], n: number): { text: string; norm: string }[] {
+  const count = tokens.length - n + 1;
+  if (count <= 0) return [];
+  const result = new Array(count);
+  // Build first window
+  let textParts: string[] = [];
+  let normParts: string[] = [];
+  for (let k = 0; k < n; k++) {
+    textParts.push(tokens[k].text);
+    normParts.push(tokens[k].normalized);
+  }
+  result[0] = { text: textParts.join(' '), norm: normParts.join('') };
+  // Slide: drop first, add last (rebuild is cheap for small n)
+  for (let i = 1; i < count; i++) {
+    textParts.shift();
+    textParts.push(tokens[i + n - 1].text);
+    normParts.shift();
+    normParts.push(tokens[i + n - 1].normalized);
+    result[i] = { text: textParts.join(' '), norm: normParts.join('') };
+  }
+  return result;
+}
+
+/** Build inverted index: normalized word → list of token indices */
+function buildWordIndex(tokens: Token[]): Map<string, number[]> {
+  const idx = new Map<string, number[]>();
+  for (let i = 0; i < tokens.length; i++) {
+    const w = tokens[i].normalized;
+    const list = idx.get(w);
+    if (list) list.push(i);
+    else idx.set(w, [i]);
+  }
+  return idx;
+}
+
+/** Simple hash of an n-gram window for fast pre-filtering */
+function windowHash(tokens: Token[], start: number, n: number): string {
+  // Use sorted unique normalized words as fingerprint
+  const words: string[] = [];
+  for (let k = 0; k < n; k++) words.push(tokens[start + k].normalized);
+  return words.sort().join('\0');
+}
+
+/** Cosine similarity between two sparse frequency vectors */
+function cosineSim(freqA: Record<string, number>, freqB: Record<string, number>): number {
+  let dot = 0, nA = 0, nB = 0;
+  for (const key in freqA) {
+    const a = freqA[key];
+    nA += a * a;
+    if (key in freqB) dot += a * freqB[key];
+  }
+  for (const key in freqB) nB += freqB[key] * freqB[key];
+  return (nA === 0 || nB === 0) ? 0 : (dot / (Math.sqrt(nA) * Math.sqrt(nB))) * 100;
+}
+
+// ── Main Analysis ────────────────────────────────────────────────────
+
 export const runAnalysis = (
-  textA: string, 
-  textB: string, 
+  textA: string,
+  textB: string,
   config: { windowSize: number; threshold: number; algorithm: AlgorithmType; scriptMode: ScriptMode }
 ) => {
+  const t0 = performance.now();
   const tokensA = tokenize(textA, config.scriptMode);
   const tokensB = tokenize(textB, config.scriptMode);
   let matches: Match[] = [];
@@ -248,26 +338,118 @@ export const runAnalysis = (
     matches = runSmithWaterman(tokensA, tokensB, config.threshold);
   } else if (config.algorithm === 'char-ngram') {
     const n = config.windowSize;
-    for (let i = 0; i <= tokensA.length - n; i++) {
-      const sliceA = tokensA.slice(i, i + n);
-      const phraseA = sliceA.map(t => t.text).join('');
-      for (let j = 0; j <= tokensB.length - n; j++) {
-        const sliceB = tokensB.slice(j, j + n);
-        const phraseB = sliceB.map(t => t.text).join('');
-        const sim = calculateCopticSimilarity(phraseA, phraseB);
+    // Pre-compute char n-gram phrases
+    const phrasesA: string[] = [];
+    const phrasesB: string[] = [];
+    for (let i = 0; i <= tokensA.length - n; i++)
+      phrasesA.push(tokensA.slice(i, i + n).map(t => t.text).join(''));
+    for (let j = 0; j <= tokensB.length - n; j++)
+      phrasesB.push(tokensB.slice(j, j + n).map(t => t.text).join(''));
+    for (let i = 0; i < phrasesA.length; i++) {
+      for (let j = 0; j < phrasesB.length; j++) {
+        const sim = calculateCopticSimilarity(phrasesA[i], phrasesB[j]);
         if (sim >= config.threshold) {
-          matches.push({ sourceIndex: i, targetIndex: j, sourcePhrase: phraseA, targetPhrase: phraseB, similarity: sim, sourcePosition: i, targetPosition: j, length: n });
+          matches.push({ sourceIndex: i, targetIndex: j, sourcePhrase: phrasesA[i], targetPhrase: phrasesB[j], similarity: sim, sourcePosition: i, targetPosition: j, length: n });
         }
       }
     }
   } else {
     const n = config.windowSize;
-    
-    let tokenVectorsA: Record<string, number>[] = [];
-    let tokenVectorsB: Record<string, number>[] = [];
-    let contextVectors: Record<string, Record<string, number>> = {};
+    const threshold = config.threshold;
 
-    if (config.algorithm === 'fasttext') {
+    // Pre-compute window phrase data (avoids repeated slice/map/join in inner loop)
+    const windowsA = precomputeWindowPhrases(tokensA, n);
+    const windowsB = precomputeWindowPhrases(tokensB, n);
+
+    if (config.algorithm === 'levenshtein' || config.algorithm === 'coptic-aware') {
+      // ── Hash-based pre-filter for Levenshtein/Coptic ──
+      // For each window in B, build a hash → indices map
+      // Then for each window in A, check if any B window shares ≥1 word
+      // This dramatically reduces the number of expensive comparisons
+
+      // Build inverted index: each unique word in B → which B-windows contain it
+      const wordToB = new Map<string, Set<number>>();
+      for (let j = 0; j < windowsB.length; j++) {
+        for (let k = 0; k < n && (j + k) < tokensB.length; k++) {
+          const w = tokensB[j + k].normalized;
+          let s = wordToB.get(w);
+          if (!s) { s = new Set(); wordToB.set(w, s); }
+          s.add(j);
+        }
+      }
+
+      for (let i = 0; i < windowsA.length; i++) {
+        // Collect candidate B-windows that share at least one word with A-window
+        const candidates = new Set<number>();
+        for (let k = 0; k < n && (i + k) < tokensA.length; k++) {
+          const indices = wordToB.get(tokensA[i + k].normalized);
+          if (indices) {
+            for (const j of indices) candidates.add(j);
+          }
+        }
+
+        // Only compute expensive distance for candidates
+        const normA = windowsA[i].norm;
+        for (const j of candidates) {
+          const normB = windowsB[j].norm;
+          let sim: number;
+          if (config.algorithm === 'coptic-aware') {
+            sim = calculateCopticSimilarity(windowsA[i].text, windowsB[j].text);
+          } else {
+            sim = quickSimilarity(normA, normB, threshold);
+          }
+          if (sim >= threshold) {
+            matches.push({ sourceIndex: i, targetIndex: j, sourcePhrase: windowsA[i].text, targetPhrase: windowsB[j].text, similarity: sim, sourcePosition: i, targetPosition: j, length: n });
+          }
+        }
+      }
+    } else if (config.algorithm === 'word-ngram' || config.algorithm === 'jaccard') {
+      // For Jaccard-based: use sorted word fingerprint for fast exact-match filter
+      const hashesB = new Map<string, number[]>();
+      for (let j = 0; j < windowsB.length; j++) {
+        const h = windowHash(tokensB, j, n);
+        const list = hashesB.get(h);
+        if (list) list.push(j); else hashesB.set(h, [j]);
+      }
+
+      for (let i = 0; i < windowsA.length; i++) {
+        const hA = windowHash(tokensA, i, n);
+        // Fast path: exact hash match = 100% Jaccard
+        const exactMatches = hashesB.get(hA);
+        if (exactMatches) {
+          for (const j of exactMatches) {
+            matches.push({ sourceIndex: i, targetIndex: j, sourcePhrase: windowsA[i].text, targetPhrase: windowsB[j].text, similarity: 100, sourcePosition: i, targetPosition: j, length: n });
+          }
+        }
+        // For near-matches, still do the full comparison but only for B-windows
+        // that share at least one word (inverted index approach)
+        const wordSetA = new Set<string>();
+        for (let k = 0; k < n; k++) wordSetA.add(tokensA[i + k].normalized);
+
+        for (let j = 0; j < windowsB.length; j++) {
+          if (exactMatches && exactMatches.includes(j)) continue;
+          // Quick check: does B share any word with A?
+          let shared = false;
+          for (let k = 0; k < n; k++) {
+            if (wordSetA.has(tokensB[j + k].normalized)) { shared = true; break; }
+          }
+          if (!shared) continue;
+
+          let sim: number;
+          if (config.algorithm === 'word-ngram') {
+            const wordsA = Array.from(wordSetA);
+            const wordsB: string[] = [];
+            for (let k = 0; k < n; k++) wordsB.push(tokensB[j + k].normalized);
+            sim = jaccard(wordsA, wordsB) * 100;
+          } else {
+            sim = jaccard(windowsA[i].text.split(''), windowsB[j].text.split('')) * 100;
+          }
+          if (sim >= threshold) {
+            matches.push({ sourceIndex: i, targetIndex: j, sourcePhrase: windowsA[i].text, targetPhrase: windowsB[j].text, similarity: sim, sourcePosition: i, targetPosition: j, length: n });
+          }
+        }
+      }
+    } else if (config.algorithm === 'fasttext') {
       const getVector = (word: string) => {
         const freq: Record<string, number> = {};
         const padded = `<${word}>`;
@@ -280,10 +462,30 @@ export const runAnalysis = (
         freq[word] = (freq[word] || 0) + 1;
         return freq;
       };
-      tokenVectorsA = tokensA.map(t => getVector(t.normalized));
-      tokenVectorsB = tokensB.map(t => getVector(t.normalized));
+      const tokenVectorsA = tokensA.map(t => getVector(t.normalized));
+      const tokenVectorsB = tokensB.map(t => getVector(t.normalized));
+
+      // Pre-compute window vectors incrementally
+      for (let i = 0; i < windowsA.length; i++) {
+        const freqA: Record<string, number> = {};
+        for (let k = 0; k < n; k++) {
+          const vec = tokenVectorsA[i + k];
+          for (const key in vec) freqA[key] = (freqA[key] || 0) + vec[key];
+        }
+        for (let j = 0; j < windowsB.length; j++) {
+          const freqB: Record<string, number> = {};
+          for (let k = 0; k < n; k++) {
+            const vec = tokenVectorsB[j + k];
+            for (const key in vec) freqB[key] = (freqB[key] || 0) + vec[key];
+          }
+          const sim = cosineSim(freqA, freqB);
+          if (sim >= threshold) {
+            matches.push({ sourceIndex: i, targetIndex: j, sourcePhrase: windowsA[i].text, targetPhrase: windowsB[j].text, similarity: sim, sourcePosition: i, targetPosition: j, length: n });
+          }
+        }
+      }
     } else if (config.algorithm === 'word2vec') {
-      // Build a local co-occurrence matrix (context window of +/- 2 words)
+      const contextVectors: Record<string, Record<string, number>> = {};
       const buildContext = (tokens: Token[], window: number = 2) => {
         for (let i = 0; i < tokens.length; i++) {
           const word = tokens[i].normalized;
@@ -298,102 +500,78 @@ export const runAnalysis = (
       };
       buildContext(tokensA);
       buildContext(tokensB);
-    }
 
-    for (let i = 0; i <= tokensA.length - n; i++) {
-      const sliceA = tokensA.slice(i, i + n);
-      const phraseA = sliceA.map(t => t.text).join(' ');
-      const normA = sliceA.map(t => t.normalized).join('');
-      for (let j = 0; j <= tokensB.length - n; j++) {
-        const sliceB = tokensB.slice(j, j + n);
-        const phraseB = sliceB.map(t => t.text).join(' ');
-        const normB = sliceB.map(t => t.normalized).join('');
-        let sim = 0;
-        if (config.algorithm === 'word-ngram') sim = jaccard(sliceA.map(t => t.normalized), sliceB.map(t => t.normalized)) * 100;
-        else if (config.algorithm === 'jaccard') sim = jaccard(phraseA.split(''), phraseB.split('')) * 100;
-        else if (config.algorithm === 'levenshtein') {
-          const dist = levenshteinDistance(normA, normB);
-          const max = Math.max(normA.length, normB.length);
-          sim = max === 0 ? 0 : (1 - dist / max) * 100;
-        } else if (config.algorithm === 'coptic-aware') sim = calculateCopticSimilarity(phraseA, phraseB);
-        else if (config.algorithm === 'fasttext') {
-          const freqA: Record<string, number> = {};
-          const freqB: Record<string, number> = {};
-          for (let k = 0; k < n; k++) {
-            const vecA = tokenVectorsA[i + k];
-            for (const key in vecA) freqA[key] = (freqA[key] || 0) + vecA[key];
-            const vecB = tokenVectorsB[j + k];
-            for (const key in vecB) freqB[key] = (freqB[key] || 0) + vecB[key];
-          }
-          let dotProduct = 0;
-          let normA = 0;
-          let normB = 0;
-          for (const key in freqA) {
-            const a = freqA[key];
-            normA += a * a;
-            if (freqB[key]) dotProduct += a * freqB[key];
-          }
-          for (const key in freqB) {
-            normB += freqB[key] * freqB[key];
-          }
-          sim = normA === 0 || normB === 0 ? 0 : (dotProduct / (Math.sqrt(normA) * Math.sqrt(normB))) * 100;
-        } else if (config.algorithm === 'word2vec') {
-          const freqA: Record<string, number> = {};
-          const freqB: Record<string, number> = {};
-          for (let k = 0; k < n; k++) {
-            const wordA = tokensA[i + k].normalized;
-            const vecA = contextVectors[wordA] || {};
-            for (const key in vecA) freqA[key] = (freqA[key] || 0) + vecA[key];
-            
-            const wordB = tokensB[j + k].normalized;
-            const vecB = contextVectors[wordB] || {};
-            for (const key in vecB) freqB[key] = (freqB[key] || 0) + vecB[key];
-          }
-          let dotProduct = 0;
-          let normA = 0;
-          let normB = 0;
-          for (const key in freqA) {
-            const a = freqA[key];
-            normA += a * a;
-            if (freqB[key]) dotProduct += a * freqB[key];
-          }
-          for (const key in freqB) {
-            normB += freqB[key] * freqB[key];
-          }
-          if (normA === 0 && normB === 0) {
-            // Fallback for very short texts with no context
-            sim = jaccard(sliceA.map(t => t.normalized), sliceB.map(t => t.normalized)) * 100;
-          } else {
-            sim = normA === 0 || normB === 0 ? 0 : (dotProduct / (Math.sqrt(normA) * Math.sqrt(normB))) * 100;
-          }
+      for (let i = 0; i < windowsA.length; i++) {
+        const freqA: Record<string, number> = {};
+        for (let k = 0; k < n; k++) {
+          const vec = contextVectors[tokensA[i + k].normalized] || {};
+          for (const key in vec) freqA[key] = (freqA[key] || 0) + vec[key];
         }
-
-        if (sim >= config.threshold) {
-          matches.push({ sourceIndex: i, targetIndex: j, sourcePhrase: phraseA, targetPhrase: phraseB, similarity: sim, sourcePosition: i, targetPosition: j, length: n });
+        for (let j = 0; j < windowsB.length; j++) {
+          const freqB: Record<string, number> = {};
+          for (let k = 0; k < n; k++) {
+            const vec = contextVectors[tokensB[j + k].normalized] || {};
+            for (const key in vec) freqB[key] = (freqB[key] || 0) + vec[key];
+          }
+          let sim = cosineSim(freqA, freqB);
+          if (sim === 0) {
+            // Fallback for very short texts
+            const wordsA = []; const wordsB = [];
+            for (let k = 0; k < n; k++) { wordsA.push(tokensA[i+k].normalized); wordsB.push(tokensB[j+k].normalized); }
+            sim = jaccard(wordsA, wordsB) * 100;
+          }
+          if (sim >= threshold) {
+            matches.push({ sourceIndex: i, targetIndex: j, sourcePhrase: windowsA[i].text, targetPhrase: windowsB[j].text, similarity: sim, sourcePosition: i, targetPosition: j, length: n });
+          }
         }
       }
     }
   }
 
+  // ── Alignments: Inverted-index approach (replaces O(N×M) brute force) ──
+  // Instead of comparing every pair, use a word index to find candidate pairs
   const alignments: Alignment[] = [];
-  
-  // Optimization: Only compute Levenshtein for words with similar lengths (length diff <= 2)
-  // and use a fast path for exact matches
-  tokensA.forEach((tA, i) => {
-    tokensB.forEach((tB, j) => {
-       const lenDiff = Math.abs(tA.normalized.length - tB.normalized.length);
-       if (lenDiff > 3) return; // Skip obviously different words
-       
-       let sim = 0;
-       if (tA.normalized === tB.normalized) {
-         sim = 100;
-       } else {
-         sim = calculateCopticSimilarity(tA.normalized, tB.normalized);
-       }
-       
-       if (sim >= 40) alignments.push({ sourceIndex: i, targetIndex: j, similarity: sim, sourceText: tA.text, targetText: tB.text });
-    });
-  });
+  const idxB = buildWordIndex(tokensB);
+
+  // Phase 1: Exact matches via inverted index — O(N × avg_matches)
+  for (let i = 0; i < tokensA.length; i++) {
+    const tA = tokensA[i];
+    const exactMatches = idxB.get(tA.normalized);
+    if (exactMatches) {
+      for (const j of exactMatches) {
+        alignments.push({ sourceIndex: i, targetIndex: j, similarity: 100, sourceText: tA.text, targetText: tokensB[j].text });
+      }
+    }
+  }
+
+  // Phase 2: Near-matches — only for tokens with similar lengths
+  // Group B tokens by length for efficient candidate selection
+  const lenBuckets = new Map<number, number[]>();
+  for (let j = 0; j < tokensB.length; j++) {
+    const len = tokensB[j].normalized.length;
+    for (let d = -2; d <= 2; d++) {
+      const key = len + d;
+      if (key <= 0) continue;
+      const list = lenBuckets.get(key);
+      if (list) list.push(j); else lenBuckets.set(key, [j]);
+    }
+  }
+
+  const exactPairs = new Set(alignments.map(a => `${a.sourceIndex}:${a.targetIndex}`));
+  for (let i = 0; i < tokensA.length; i++) {
+    const tA = tokensA[i];
+    const candidates = lenBuckets.get(tA.normalized.length);
+    if (!candidates) continue;
+    for (const j of candidates) {
+      if (exactPairs.has(`${i}:${j}`)) continue;
+      const tB = tokensB[j];
+      if (tA.normalized === tB.normalized) continue; // already covered
+      const sim = quickSimilarity(tA.normalized, tB.normalized, 40);
+      if (sim >= 40) {
+        alignments.push({ sourceIndex: i, targetIndex: j, similarity: sim, sourceText: tA.text, targetText: tB.text });
+      }
+    }
+  }
 
   const avgSim = matches.length > 0 ? matches.reduce((acc, m) => acc + m.similarity, 0) / matches.length : 0;
   const coveredA = new Set<number>();
@@ -405,6 +583,9 @@ export const runAnalysis = (
       if (m.targetPosition + k < tokensB.length) coveredB.add(m.targetPosition + k);
     }
   });
+
+  const elapsed = performance.now() - t0;
+  console.log(`[ICoMa] Analysis completed in ${elapsed.toFixed(0)}ms — ${tokensA.length}×${tokensB.length} tokens, ${matches.length} matches, ${alignments.length} alignments`);
 
   return {
     tokensA, tokensB, matches, alignments,

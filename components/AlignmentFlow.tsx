@@ -137,8 +137,8 @@ const AlignmentFlow: React.FC<AlignmentFlowProps> = ({
   }, [matches, sourceLength, targetLength, selectedMatch, witnessAlphaName, witnessBetaName]);
 
   return (
-    <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm p-2">
-      <div ref={containerRef} className="w-full h-[280px]" />
+    <div className="w-full bg-white border border-gray-200 rounded-sm shadow-sm p-2 overflow-x-auto max-w-full">
+      <div ref={containerRef} className="w-full h-[280px] min-w-[320px]" />
       <div className="text-[10px] text-gray-500 text-center mt-1">Click ribbons to view specific reuse pair</div>
     </div>
   );

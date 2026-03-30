@@ -16,6 +16,7 @@ import HistoryPanel from './components/HistoryPanel';
 import { HistorySession, saveSession } from './services/historyDB';
 import { runOnnxAnalysis, OnnxAnalysisProgress } from './services/onnxAnalysis';
 import { downloadReport, ReportData, captureChartFromRef, ChartImage } from './services/reportGenerator';
+import OnboardingGuide from './components/OnboardingGuide';
 
 const EXAMPLES = {
   english_long: {
@@ -222,8 +223,8 @@ const StatItem = ({ label, value, description, topic, onHelpClick }: { label: st
 );
 
 const App: React.FC = () => {
-  const [sourceText, setSourceText] = useState(EXAMPLES.english_long.a);
-  const [targetText, setTargetText] = useState(EXAMPLES.english_long.b);
+  const [sourceText, setSourceText] = useState('');
+  const [targetText, setTargetText] = useState('');
   const [config, setConfig] = useState<AnalysisConfig>({
     windowSize: 4,
     threshold: 60,
@@ -246,6 +247,9 @@ const App: React.FC = () => {
   const [onnxProgress, setOnnxProgress] = useState<OnnxAnalysisProgress | null>(null);
   const [showReportMenu, setShowReportMenu] = useState(false);
   const [aiAnalysisResults, setAiAnalysisResults] = useState<any[]>([]);
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    try { return localStorage.getItem('icoma-onboarding-dismissed') !== 'true'; } catch { return true; }
+  });
 
   // Close report menu on outside click
   useEffect(() => {
@@ -289,7 +293,7 @@ const App: React.FC = () => {
         });
         const coverage = res.tokensA.length > 0 ? (coveredPositions.size / res.tokensA.length) * 100 : 0;
 
-        setResult({
+        const onnxResult = {
           tokensA: res.tokensA,
           tokensB: res.tokensB,
           matches: res.matches,
@@ -300,9 +304,19 @@ const App: React.FC = () => {
             totalAlignments: res.matches.length,
             uniqueNgrams: uniquePhrases.size,
           },
-        });
+        };
+        setResult(onnxResult);
         setSelectedMatch(null);
         setCollationTrigger(prev => prev + 1);
+        // Auto-save to history
+        try {
+          await saveSession({
+            timestamp: Date.now(),
+            label: `${witnessAlphaName} ↔ ${witnessBetaName} — ${new Date().toLocaleString()}`,
+            witnessAlphaName, witnessBetaName, sourceText, targetText, config,
+            result: onnxResult,
+          });
+        } catch (e) { console.warn('Auto-save failed:', e); }
       } catch (err) {
         console.error('ONNX analysis failed:', err);
         alert('ONNX semantic analysis failed. Check console for details.');
@@ -312,15 +326,28 @@ const App: React.FC = () => {
       }
     } else {
       // Use timeout to allow UI to render 'Processing' state
-      setTimeout(() => {
+      setTimeout(async () => {
         const res = runAnalysis(sourceText, targetText, config);
         setResult(res);
         setSelectedMatch(null);
         setIsProcessing(false);
         setCollationTrigger(prev => prev + 1);
+        // Auto-save to history
+        try {
+          await saveSession({
+            timestamp: Date.now(),
+            label: `${witnessAlphaName} ↔ ${witnessBetaName} — ${new Date().toLocaleString()}`,
+            witnessAlphaName,
+            witnessBetaName,
+            sourceText,
+            targetText,
+            config,
+            result: res,
+          });
+        } catch (e) { console.warn('Auto-save failed:', e); }
       }, 50);
     }
-  }, [sourceText, targetText, config]);
+  }, [sourceText, targetText, config, witnessAlphaName, witnessBetaName]);
 
   const handleSaveSession = useCallback(async () => {
     if (!result) return;
@@ -476,6 +503,9 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-academic-cream text-academic-blue pb-20 flex flex-col" style={{ fontFamily: fontFamily }}>
+      {showOnboarding && (
+        <OnboardingGuide lang={lang} onDismiss={() => setShowOnboarding(false)} />
+      )}
       <header className="bg-gradient-to-r from-academic-lightBlue to-academic-blue text-white border-b-4 border-academic-red px-6 py-5 shadow-lg shrink-0">
         <div className="w-full flex justify-between items-center">
           <div>
@@ -560,6 +590,10 @@ const App: React.FC = () => {
                 <button onClick={() => setIsHistoryOpen(true)} className="flex flex-col items-center gap-0.5 group" title={t(lang, 'Session History')}>
                   <div className="text-[10px] text-gray-400 uppercase font-sans">{t(lang, 'History')}</div>
                   <svg className="w-5 h-5 text-blue-300 group-hover:text-blue-100 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </button>
+                <button onClick={() => { setShowOnboarding(true); try { localStorage.removeItem('icoma-onboarding-dismissed'); } catch {} }} className="flex flex-col items-center gap-0.5 group" title="How to Use">
+                  <div className="text-[10px] text-gray-400 uppercase font-sans">Guide</div>
+                  <svg className="w-5 h-5 text-blue-300 group-hover:text-blue-100 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </button>
              </div>
 
@@ -699,7 +733,7 @@ const App: React.FC = () => {
         </div>
 
         {result && (
-          <div className="flex flex-col gap-8 animate-fade-in flex-1">
+          <div className="flex flex-col gap-8 animate-fade-in flex-1 overflow-x-hidden max-w-full">
             {/* Global Stats Dashboard */}
             <div className="bg-white px-8 py-6 rounded-sm border border-gray-200 shadow-lg flex flex-wrap justify-between items-center gap-8 divide-x divide-gray-100">
                <div className="flex flex-wrap gap-0">
@@ -745,7 +779,7 @@ const App: React.FC = () => {
             </div>
 
             {/* Macro-level Alignment Flow */}
-            <div ref={alignmentFlowRef} className="bg-white p-6 rounded-sm border border-gray-200 shadow-lg" style={{resize:'vertical', overflow:'auto', minHeight:'120px'}}>
+            <div ref={alignmentFlowRef} className="bg-white p-6 rounded-sm border border-gray-200 shadow-lg max-w-full" style={{resize:'vertical', overflow:'auto', minHeight:'120px'}}>
               <h3 className="text-xs font-bold uppercase text-academic-blue tracking-widest mb-4 flex items-center justify-between">
                 <span className="flex items-center">
                   {t(lang, 'Macro-Level Alignment Flow')}

@@ -90,7 +90,7 @@ const DispersionPlot: React.FC<DispersionPlotProps> = ({
 
   }, [matches, sourceLength, targetLength, selectedMatch, witnessAlphaName, witnessBetaName]);
 
-  return <div ref={containerRef} className="w-full h-[100px]" />;
+  return <div className="w-full overflow-x-auto max-w-full"><div ref={containerRef} className="w-full h-[100px] min-w-[280px]" /></div>;
 };
 
 export default DispersionPlot;
